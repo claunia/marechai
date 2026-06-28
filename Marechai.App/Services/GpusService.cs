@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -259,5 +261,109 @@ public class GpusService
 
             return [];
         }
+    }
+
+    /// <summary>
+    ///     Creates a new video link for a GPU.
+    /// </summary>
+    public async Task<(GpuVideoDto? dto, string? error)> CreateVideoAsync(int gpuId, string provider, string videoId,
+                                                                          string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Creating video link for GPU {GpuId}", gpuId);
+
+            GpuVideoDto? dto = await _apiClient.Gpus[gpuId]
+                                               .Videos
+                                               .PostAsync(new CreateGpuVideoRequest
+                                                {
+                                                    Provider = provider,
+                                                    VideoId  = videoId,
+                                                    Title    = title
+                                                });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error creating GPU video for {GpuId}", gpuId);
+
+            return (null, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating GPU video for {GpuId}", gpuId);
+
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Updates a GPU video title.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> UpdateVideoTitleAsync(long id, string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Updating GPU video {VideoId}", id);
+
+            await _apiClient.Gpus.Videos[id]
+                            .PutAsync(new UpdateGpuVideoRequest
+                             {
+                                 Title = title
+                             });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error updating GPU video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating GPU video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a GPU video.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting GPU video {VideoId}", id);
+
+            await _apiClient.Gpus.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error deleting GPU video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting GPU video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    static string? ExtractDetail(ApiException exception)
+    {
+        if(exception is ProblemDetails problemDetails)
+        {
+            if(!string.IsNullOrWhiteSpace(problemDetails.Detail)) return problemDetails.Detail;
+            if(!string.IsNullOrWhiteSpace(problemDetails.Title)) return problemDetails.Title;
+        }
+
+        return string.IsNullOrWhiteSpace(exception.Message) ? "Unknown error" : exception.Message;
     }
 }

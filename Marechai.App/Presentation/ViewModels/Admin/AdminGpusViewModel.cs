@@ -132,6 +132,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         OpenAddGpuCommand     = new RelayCommand(OpenAddGpu);
         OpenEditGpuCommand    = new RelayCommand<GpuDto>(OpenEditGpu);
         OpenPhotosCommand     = new RelayCommand<GpuDto>(OpenPhotos);
+        OpenVideosCommand     = new RelayCommand<GpuDto>(OpenVideos);
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
         SaveGpuCommand        = new AsyncRelayCommand(SaveGpuAsync);
         CancelEditCommand     = new RelayCommand(CancelEdit);
@@ -147,6 +148,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IRelayCommand               OpenAddGpuCommand  { get; }
     public IRelayCommand<GpuDto>       OpenEditGpuCommand { get; }
     public IRelayCommand<GpuDto>       OpenPhotosCommand { get; }
+    public IRelayCommand<GpuDto>       OpenVideosCommand { get; }
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
     public IAsyncRelayCommand          SaveGpuCommand     { get; }
     public IRelayCommand               CancelEditCommand  { get; }
@@ -247,6 +249,19 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminGpuPhotosPage), parameters);
+    }
+
+    private void OpenVideos(GpuDto? gpu)
+    {
+        if(gpu?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.GpuId, gpu.Id.Value },
+            { NavParamKeys.GpuName, gpu.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminGpuVideosPage), parameters);
     }
 
     // --- Edit GPU ---

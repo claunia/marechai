@@ -493,6 +493,27 @@ public class LocalizedStrings
     public string GpuPhotosSubtitle => _l["GpuPhotosSubtitle"];
     public string GpuPhotosMgmtAccessDeniedTitle => _l["GpuPhotosMgmtAccessDeniedTitle"];
     public string GpuPhotosMgmtAccessDeniedMessage => _l["GpuPhotosMgmtAccessDeniedMessage"];
+    public string GpuVideosTitle => _l["GpuVideosTitle"];
+    public string GpuVideosSubtitle => _l["GpuVideosSubtitle"];
+    public string GpuVideosMgmtAccessDeniedTitle => _l["GpuVideosMgmtAccessDeniedTitle"];
+    public string GpuVideosMgmtAccessDeniedMessage => _l["GpuVideosMgmtAccessDeniedMessage"];
+    public string GpuVideosLinkSectionTitle => _l["GpuVideosLinkSectionTitle"];
+    public string GpuVideosLinkSectionSubtitle => _l["GpuVideosLinkSectionSubtitle"];
+    public string GpuVideosUrlInputLabel => _l["GpuVideosUrlInputLabel"];
+    public string GpuVideosDetectedIdLabel => _l["GpuVideosDetectedIdLabel"];
+    public string GpuVideosAdvancedSectionTitle => _l["GpuVideosAdvancedSectionTitle"];
+    public string GpuVideosManualIdLabel => _l["GpuVideosManualIdLabel"];
+    public string GpuVideosManualIdHelpText => _l["GpuVideosManualIdHelpText"];
+    public string GpuVideosLinkButton => _l["GpuVideosLinkButton"];
+    public string GpuVideosEmptyMessage => _l["GpuVideosEmptyMessage"];
+    public string GpuVideosLoadFailed => _l["GpuVideosLoadFailed"];
+    public string GpuVideosLinkFailed => _l["GpuVideosLinkFailed"];
+    public string GpuVideosUpdateFailed => _l["GpuVideosUpdateFailed"];
+    public string GpuVideosDeleteFailed => _l["GpuVideosDeleteFailed"];
+    public string GpuVideosOpenFailed => _l["GpuVideosOpenFailed"];
+    public string GpuVideosLinkedSuccessfully => _l["GpuVideosLinkedSuccessfully"];
+    public string GpuVideosUpdatedSuccessfully => _l["GpuVideosUpdatedSuccessfully"];
+    public string GpuVideosDeletedSuccessfully => _l["GpuVideosDeletedSuccessfully"];
     public string GpuPhotosBatchSectionTitle => _l["GpuPhotosBatchSectionTitle"];
     public string GpuPhotosBatchSectionSubtitle => _l["GpuPhotosBatchSectionSubtitle"];
     public string GpuPhotosAddImagesButton => _l["GpuPhotosAddImagesButton"];
@@ -527,6 +548,7 @@ public class LocalizedStrings
     public string ViewDetailsButton => _l["ViewDetailsButton"];
     public string DeleteButton => _l["DeleteButton"];
     public string PhotosButton => _l["PhotosButton"];
+    public string VideosButton => _l["VideosButton"];
     public string RefreshButton => _l["RefreshButton"];
 
     // People management

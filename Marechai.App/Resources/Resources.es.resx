@@ -2070,6 +2070,27 @@
   <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Error en la subida</value></data>
   <data name="GpuPhotosTitle" xml:space="preserve"><value>Fotos de GPU</value></data>
   <data name="GpuPhotosSubtitle" xml:space="preserve"><value>Ver, subir y gestionar fotos de GPU</value></data>
+  <data name="GpuVideosTitle" xml:space="preserve"><value>Vídeos de GPU</value></data>
+  <data name="GpuVideosSubtitle" xml:space="preserve"><value>Enlazar, revisar y gestionar vídeos de GPU</value></data>
+  <data name="GpuVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="GpuVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar vídeos de GPU.</value></data>
+  <data name="GpuVideosLinkSectionTitle" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="GpuVideosLinkSectionSubtitle" xml:space="preserve"><value>Añada un nuevo enlace de vídeo para esta GPU mediante una URL de YouTube, un ID de vídeo de YouTube o un par personalizado de proveedor/ID de vídeo.</value></data>
+  <data name="GpuVideosUrlInputLabel" xml:space="preserve"><value>URL de YouTube o ID de vídeo</value></data>
+  <data name="GpuVideosDetectedIdLabel" xml:space="preserve"><value>ID de vídeo detectado</value></data>
+  <data name="GpuVideosAdvancedSectionTitle" xml:space="preserve"><value>Opciones avanzadas</value></data>
+  <data name="GpuVideosManualIdLabel" xml:space="preserve"><value>ID de vídeo manual</value></data>
+  <data name="GpuVideosManualIdHelpText" xml:space="preserve"><value>Úselo cuando no se pueda analizar la URL o cuando quiera enlazar un proveedor distinto de YouTube.</value></data>
+  <data name="GpuVideosLinkButton" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="GpuVideosEmptyMessage" xml:space="preserve"><value>Todavía no hay vídeos vinculados a esta GPU.</value></data>
+  <data name="GpuVideosLoadFailed" xml:space="preserve"><value>No se pudieron cargar los vídeos de la GPU.</value></data>
+  <data name="GpuVideosLinkFailed" xml:space="preserve"><value>No se pudo enlazar el vídeo de la GPU.</value></data>
+  <data name="GpuVideosUpdateFailed" xml:space="preserve"><value>No se pudo actualizar el vídeo de la GPU.</value></data>
+  <data name="GpuVideosDeleteFailed" xml:space="preserve"><value>No se pudo eliminar el vídeo de la GPU.</value></data>
+  <data name="GpuVideosOpenFailed" xml:space="preserve"><value>No se pudo abrir el vídeo de la GPU.</value></data>
+  <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
+  <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
+  <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de GPU.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
@@ -2172,6 +2193,7 @@
   <data name="ViewDetailsButton" xml:space="preserve"><value>Ver detalles</value></data>
   <data name="DeleteButton" xml:space="preserve"><value>Eliminar</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
+  <data name="VideosButton" xml:space="preserve"><value>Vídeos</value></data>
   <data name="RefreshButton" xml:space="preserve"><value>Actualizar</value></data>
   <data name="PeopleManagementButton" xml:space="preserve"><value>Gestión de personas</value></data>
   <data name="PeopleManagementTitle" xml:space="preserve"><value>Gestión de personas</value></data>
