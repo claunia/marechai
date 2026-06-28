@@ -878,6 +878,35 @@ public class LocalizedStrings
     public string ReviewReportsResolveButton => _l["ReviewReportsResolveButton"];
     public string ReviewReportsDeleteButton => _l["ReviewReportsDeleteButton"];
 
+    // Suggestions queue
+    public string SuggestionsManagementButton => _l["SuggestionsManagementButton"];
+    public string SuggestionsTitle => _l["SuggestionsTitle"];
+    public string SuggestionsSubtitle => _l["SuggestionsSubtitle"];
+    public string SuggestionsShowHistory => _l["SuggestionsShowHistory"];
+    public string SuggestionsRefresh => _l["SuggestionsRefresh"];
+    public string SuggestionsEmpty => _l["SuggestionsEmpty"];
+    public string SuggestionsAccessDeniedTitle => _l["SuggestionsAccessDeniedTitle"];
+    public string SuggestionsAccessDeniedMessage => _l["SuggestionsAccessDeniedMessage"];
+    public string SuggestionsLoadFailed => _l["SuggestionsLoadFailed"];
+    public string SuggestionsEntityColumn => _l["SuggestionsEntityColumn"];
+    public string SuggestionsItemColumn => _l["SuggestionsItemColumn"];
+    public string SuggestionsSuggestedByColumn => _l["SuggestionsSuggestedByColumn"];
+    public string SuggestionsStatusColumn => _l["SuggestionsStatusColumn"];
+    public string SuggestionsSubmittedColumn => _l["SuggestionsSubmittedColumn"];
+    public string SuggestionsActionsColumn => _l["SuggestionsActionsColumn"];
+    public string SuggestionsReviewButton => _l["SuggestionsReviewButton"];
+    public string SuggestionsReviewTitle => _l["SuggestionsReviewTitle"];
+    public string SuggestionsEntityMissing => _l["SuggestionsEntityMissing"];
+    public string SuggestionsNewEntityAlert => _l["SuggestionsNewEntityAlert"];
+    public string SuggestionsUserComment => _l["SuggestionsUserComment"];
+    public string SuggestionsCurrentValueLabel => _l["SuggestionsCurrentValueLabel"];
+    public string SuggestionsSuggestedValueLabel => _l["SuggestionsSuggestedValueLabel"];
+    public string SuggestionsAdminCommentLabel => _l["SuggestionsAdminCommentLabel"];
+    public string SuggestionsCancelButton => _l["SuggestionsCancelButton"];
+    public string SuggestionsRejectAllButton => _l["SuggestionsRejectAllButton"];
+    public string SuggestionsAcceptSelectedButton => _l["SuggestionsAcceptSelectedButton"];
+    public string SuggestionsSubmitFailed => _l["SuggestionsSubmitFailed"];
+
     // Message reports management
     public string MessageReportsTitle => _l["MessageReportsTitle"];
     public string MessageReportsSubtitle => _l["MessageReportsSubtitle"];

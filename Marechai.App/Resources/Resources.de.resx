@@ -2600,6 +2600,39 @@
   <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Irreführend</value></data>
   <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Themenfremd</value></data>
   <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="SuggestionsManagementButton" xml:space="preserve"><value>Vorschlagswarteschlange</value></data>
+  <data name="SuggestionsTitle" xml:space="preserve"><value>Vorschlagswarteschlange</value></data>
+  <data name="SuggestionsSubtitle" xml:space="preserve"><value>Von Benutzern vorgeschlagene Änderungen an Katalogeinträgen überprüfen.</value></data>
+  <data name="SuggestionsShowHistory" xml:space="preserve"><value>Vergangene Vorschläge anzeigen</value></data>
+  <data name="SuggestionsRefresh" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="SuggestionsEmpty" xml:space="preserve"><value>Keine Vorschläge zur Überprüfung.</value></data>
+  <data name="SuggestionsAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="SuggestionsAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Vorschläge zu verwalten.</value></data>
+  <data name="SuggestionsLoadFailed" xml:space="preserve"><value>Vorschläge konnten nicht geladen werden</value></data>
+  <data name="SuggestionsEntityColumn" xml:space="preserve"><value>Entität</value></data>
+  <data name="SuggestionsItemColumn" xml:space="preserve"><value>Element</value></data>
+  <data name="SuggestionsSuggestedByColumn" xml:space="preserve"><value>Vorgeschlagen von</value></data>
+  <data name="SuggestionsStatusColumn" xml:space="preserve"><value>Status</value></data>
+  <data name="SuggestionsSubmittedColumn" xml:space="preserve"><value>Eingereicht</value></data>
+  <data name="SuggestionsActionsColumn" xml:space="preserve"><value>Aktionen</value></data>
+  <data name="SuggestionsReviewButton" xml:space="preserve"><value>Überprüfen</value></data>
+  <data name="SuggestionsStatusPending" xml:space="preserve"><value>Ausstehend</value></data>
+  <data name="SuggestionsStatusAccepted" xml:space="preserve"><value>Akzeptiert</value></data>
+  <data name="SuggestionsStatusPartiallyAccepted" xml:space="preserve"><value>Teilweise akzeptiert</value></data>
+  <data name="SuggestionsStatusRejected" xml:space="preserve"><value>Abgelehnt</value></data>
+  <data name="SuggestionsStatusStale" xml:space="preserve"><value>Veraltet</value></data>
+  <data name="SuggestionsStatusWithdrawn" xml:space="preserve"><value>Zurückgezogen</value></data>
+  <data name="SuggestionsReviewTitle" xml:space="preserve"><value>Vorschlag überprüfen</value></data>
+  <data name="SuggestionsEntityMissing" xml:space="preserve"><value>Die Zielentität wurde gelöscht. Beim Akzeptieren wird der Vorschlag als veraltet geschlossen.</value></data>
+  <data name="SuggestionsNewEntityAlert" xml:space="preserve"><value>Dies ist ein Vorschlag für eine völlig neue Entität.</value></data>
+  <data name="SuggestionsUserComment" xml:space="preserve"><value>Benutzerkommentar:</value></data>
+  <data name="SuggestionsCurrentValueLabel" xml:space="preserve"><value>Aktuell: </value></data>
+  <data name="SuggestionsSuggestedValueLabel" xml:space="preserve"><value>Vorgeschlagen: </value></data>
+  <data name="SuggestionsAdminCommentLabel" xml:space="preserve"><value>Kommentar des Prüfers (optional — wird in der Nachricht an den Benutzer enthalten)</value></data>
+  <data name="SuggestionsCancelButton" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="SuggestionsRejectAllButton" xml:space="preserve"><value>Alle ablehnen</value></data>
+  <data name="SuggestionsAcceptSelectedButton" xml:space="preserve"><value>Auswahl akzeptieren</value></data>
+  <data name="SuggestionsSubmitFailed" xml:space="preserve"><value>Überprüfung konnte nicht übermittelt werden.</value></data>
   <data name="MessageReportsTitle" xml:space="preserve"><value>Nachrichtenmeldungen</value></data>
   <data name="MessageReportsSubtitle" xml:space="preserve"><value>Überprüfen Sie Meldungen von Nutzern zu privaten Nachrichten. Lösen Sie eine Meldung, sobald sie bearbeitet wurde, oder öffnen Sie die Unterhaltung, um sie zu untersuchen.</value></data>
   <data name="MessageReportsShowResolved" xml:space="preserve"><value>Gelöste anzeigen</value></data>

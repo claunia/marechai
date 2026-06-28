@@ -2740,6 +2740,39 @@
   <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Engañoso</value></data>
   <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Fuera de tema</value></data>
   <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Otro</value></data>
+  <data name="SuggestionsManagementButton" xml:space="preserve"><value>Cola de sugerencias</value></data>
+  <data name="SuggestionsTitle" xml:space="preserve"><value>Cola de sugerencias</value></data>
+  <data name="SuggestionsSubtitle" xml:space="preserve"><value>Revise los cambios sugeridos por los usuarios a las entidades del catálogo.</value></data>
+  <data name="SuggestionsShowHistory" xml:space="preserve"><value>Mostrar sugerencias pasadas</value></data>
+  <data name="SuggestionsRefresh" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="SuggestionsEmpty" xml:space="preserve"><value>No hay sugerencias para revisar.</value></data>
+  <data name="SuggestionsAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="SuggestionsAccessDeniedMessage" xml:space="preserve"><value>Debe ser administrador para gestionar sugerencias.</value></data>
+  <data name="SuggestionsLoadFailed" xml:space="preserve"><value>No se pudieron cargar las sugerencias</value></data>
+  <data name="SuggestionsEntityColumn" xml:space="preserve"><value>Entidad</value></data>
+  <data name="SuggestionsItemColumn" xml:space="preserve"><value>Elemento</value></data>
+  <data name="SuggestionsSuggestedByColumn" xml:space="preserve"><value>Sugerido por</value></data>
+  <data name="SuggestionsStatusColumn" xml:space="preserve"><value>Estado</value></data>
+  <data name="SuggestionsSubmittedColumn" xml:space="preserve"><value>Enviado</value></data>
+  <data name="SuggestionsActionsColumn" xml:space="preserve"><value>Acciones</value></data>
+  <data name="SuggestionsReviewButton" xml:space="preserve"><value>Revisar</value></data>
+  <data name="SuggestionsStatusPending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="SuggestionsStatusAccepted" xml:space="preserve"><value>Aceptada</value></data>
+  <data name="SuggestionsStatusPartiallyAccepted" xml:space="preserve"><value>Parcialmente aceptada</value></data>
+  <data name="SuggestionsStatusRejected" xml:space="preserve"><value>Rechazada</value></data>
+  <data name="SuggestionsStatusStale" xml:space="preserve"><value>Caducada</value></data>
+  <data name="SuggestionsStatusWithdrawn" xml:space="preserve"><value>Retirada</value></data>
+  <data name="SuggestionsReviewTitle" xml:space="preserve"><value>Revisar sugerencia</value></data>
+  <data name="SuggestionsEntityMissing" xml:space="preserve"><value>La entidad objetivo ha sido eliminada. Al aceptar, la sugerencia se cerrará como caducada.</value></data>
+  <data name="SuggestionsNewEntityAlert" xml:space="preserve"><value>Esta es una sugerencia de una entidad completamente nueva.</value></data>
+  <data name="SuggestionsUserComment" xml:space="preserve"><value>Comentario del usuario:</value></data>
+  <data name="SuggestionsCurrentValueLabel" xml:space="preserve"><value>Actual: </value></data>
+  <data name="SuggestionsSuggestedValueLabel" xml:space="preserve"><value>Sugerido: </value></data>
+  <data name="SuggestionsAdminCommentLabel" xml:space="preserve"><value>Comentario del revisor (opcional — se incluirá en el mensaje al usuario)</value></data>
+  <data name="SuggestionsCancelButton" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="SuggestionsRejectAllButton" xml:space="preserve"><value>Rechazar todo</value></data>
+  <data name="SuggestionsAcceptSelectedButton" xml:space="preserve"><value>Aceptar selección</value></data>
+  <data name="SuggestionsSubmitFailed" xml:space="preserve"><value>No se pudo enviar la revisión.</value></data>
   <data name="MessageReportsTitle" xml:space="preserve"><value>Reportes de mensajes</value></data>
   <data name="MessageReportsSubtitle" xml:space="preserve"><value>Revise los reportes de los usuarios sobre mensajes privados. Resuelva un reporte una vez atendido, o abra la conversación para investigarlo.</value></data>
   <data name="MessageReportsShowResolved" xml:space="preserve"><value>Mostrar resueltos</value></data>

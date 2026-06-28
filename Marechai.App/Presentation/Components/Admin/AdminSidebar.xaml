@@ -298,6 +298,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Suggestions Queue -->
+                <Button Content="{Binding SuggestionsManagementButtonText}"
+                        Command="{Binding NavigateToAdminSuggestionsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Software Release Management -->
                 <Button Content="{Binding SoftwareReleaseManagementButtonText}"
                         Command="{Binding NavigateToAdminSoftwareReleasesCommand}"

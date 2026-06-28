@@ -38,4 +38,5 @@ public static class NavParamKeys
     public const string ProfileUsername     = "ProfileUsername";
     public const string ConversationId      = "ConversationId";
     public const string MessageFolder       = "MessageFolder";
+    public const string SuggestionId        = "SuggestionId";
 }

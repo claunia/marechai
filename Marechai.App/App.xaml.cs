@@ -208,6 +208,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<MessagingService>();
         containerRegistry.RegisterSingleton<InvitationCodesService>();
         containerRegistry.RegisterSingleton<ReviewReportsService>();
+        containerRegistry.RegisterSingleton<SuggestionsService>();
         containerRegistry.RegisterSingleton<ToastActivationService>();
         containerRegistry.RegisterSingleton<INativeToastService, NativeToastService>();
         containerRegistry.RegisterSingleton<MessageNotificationStateService>();
@@ -314,6 +315,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminMessageReportsViewModel>();
         containerRegistry.Register<AdminInvitationCodesViewModel>();
         containerRegistry.Register<AdminReviewReportsViewModel>();
+        containerRegistry.Register<AdminSuggestionsViewModel>();
+        containerRegistry.Register<AdminSuggestionReviewViewModel>();
         containerRegistry.Register<ScreenshotDetailViewModel>();
         containerRegistry.Register<CoverDetailViewModel>();
 
@@ -410,6 +413,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminMessageReportsPage, AdminMessageReportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInvitationCodesPage, AdminInvitationCodesViewModel>();
         containerRegistry.RegisterForNavigation<AdminReviewReportsPage, AdminReviewReportsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSuggestionsPage, AdminSuggestionsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSuggestionReviewPage, AdminSuggestionReviewViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
         containerRegistry.RegisterForNavigation<CoverDetailPage, CoverDetailViewModel>();
         containerRegistry.RegisterForNavigation<SoftwarePromoArtDetailPage, SoftwarePromoArtDetailViewModel>();

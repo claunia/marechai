@@ -1,0 +1,179 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.Admin.AdminSuggestionReviewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:models="using:Marechai.App.Presentation.Models"
+      x:Name="PageRoot"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SuggestionsReviewTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding Header.EntityTypeText}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Access Denied -->
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=SuggestionsAccessDeniedTitle}"
+                         Message="{Binding Source={StaticResource Strings}, Path=SuggestionsAccessDeniedMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                <!-- Loading -->
+                <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="64"
+                                  Width="64"
+                                  Foreground="{ThemeResource SystemAccentColor}" />
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="24"
+                            Spacing="16"
+                            MaxWidth="400">
+                    <InfoBar IsOpen="True"
+                             Severity="Error"
+                             Title="{Binding Source={StaticResource Strings}, Path=SuggestionsLoadFailed}"
+                             Message="{Binding ErrorMessage}"
+                             IsClosable="False" />
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                            Command="{Binding RefreshCommand}"
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+
+                <!-- Data -->
+                <ScrollViewer Visibility="{Binding IsDataLoaded, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Padding="24"
+                                Spacing="16"
+                                MaxWidth="700">
+
+                        <InfoBar IsOpen="{Binding EntityMissing}"
+                                 Severity="Warning"
+                                 Message="{Binding Source={StaticResource Strings}, Path=SuggestionsEntityMissing}"
+                                 IsClosable="False" />
+
+                        <InfoBar IsOpen="{Binding Header.IsNew}"
+                                 Severity="Informational"
+                                 Message="{Binding Source={StaticResource Strings}, Path=SuggestionsNewEntityAlert}"
+                                 IsClosable="False" />
+
+                        <TextBlock Text="{Binding Header.EntityDisplayName}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    Visibility="{Binding UserComment, Converter={StaticResource StringToVisibilityConverter}}">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SuggestionsUserComment}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding UserComment}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding Fields}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:SuggestionFieldDiffItem">
+                                    <Grid Padding="0,8"
+                                          BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                          BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Grid.Column="0"
+                                                  IsChecked="{Binding IsAccepted, Mode=TwoWay}"
+                                                  IsEnabled="{Binding DataContext.Header.IsPending, ElementName=PageRoot}"
+                                                  VerticalAlignment="Top" />
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="2">
+                                            <TextBlock Text="{Binding FieldName}"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock TextWrapping="Wrap">
+                                                <Run Text="{Binding Source={StaticResource Strings}, Path=SuggestionsCurrentValueLabel}" />
+                                                <Run Text="{Binding CurrentLabel}" />
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap"
+                                                       Foreground="{ThemeResource SystemAccentColor}">
+                                                <Run Text="{Binding Source={StaticResource Strings}, Path=SuggestionsSuggestedValueLabel}" />
+                                                <Run Text="{Binding SuggestedLabel}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=SuggestionsAdminCommentLabel}"
+                                 Text="{Binding AdminComment, Mode=TwoWay}"
+                                 IsEnabled="{Binding Header.IsPending}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MaxLength="2000"
+                                 Height="80" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8"
+                                    HorizontalAlignment="Right">
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=SuggestionsCancelButton}"
+                                    Command="{Binding CancelCommand}" />
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=SuggestionsRejectAllButton}"
+                                    Command="{Binding RejectAllCommand}"
+                                    Visibility="{Binding Header.IsPending, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    IsEnabled="{Binding IsSubmitting, Converter={StaticResource InvertBoolConverter}}" />
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=SuggestionsAcceptSelectedButton}"
+                                    Command="{Binding AcceptSelectedCommand}"
+                                    Visibility="{Binding Header.IsPending, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    IsEnabled="{Binding IsSubmitting, Converter={StaticResource InvertBoolConverter}}"
+                                    Style="{ThemeResource AccentButtonStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

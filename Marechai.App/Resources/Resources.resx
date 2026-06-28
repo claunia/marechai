@@ -3130,6 +3130,39 @@
   <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Misleading</value></data>
   <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Off-topic</value></data>
   <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Other</value></data>
+  <data name="SuggestionsManagementButton" xml:space="preserve"><value>Suggestions Queue</value></data>
+  <data name="SuggestionsTitle" xml:space="preserve"><value>Suggestions Queue</value></data>
+  <data name="SuggestionsSubtitle" xml:space="preserve"><value>Review user-suggested changes to catalog entities.</value></data>
+  <data name="SuggestionsShowHistory" xml:space="preserve"><value>Show past suggestions</value></data>
+  <data name="SuggestionsRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="SuggestionsEmpty" xml:space="preserve"><value>No suggestions to review.</value></data>
+  <data name="SuggestionsAccessDeniedTitle" xml:space="preserve"><value>Access denied</value></data>
+  <data name="SuggestionsAccessDeniedMessage" xml:space="preserve"><value>You must be an administrator to manage suggestions.</value></data>
+  <data name="SuggestionsLoadFailed" xml:space="preserve"><value>Could not load suggestions</value></data>
+  <data name="SuggestionsEntityColumn" xml:space="preserve"><value>Entity</value></data>
+  <data name="SuggestionsItemColumn" xml:space="preserve"><value>Item</value></data>
+  <data name="SuggestionsSuggestedByColumn" xml:space="preserve"><value>Suggested by</value></data>
+  <data name="SuggestionsStatusColumn" xml:space="preserve"><value>Status</value></data>
+  <data name="SuggestionsSubmittedColumn" xml:space="preserve"><value>Submitted</value></data>
+  <data name="SuggestionsActionsColumn" xml:space="preserve"><value>Actions</value></data>
+  <data name="SuggestionsReviewButton" xml:space="preserve"><value>Review</value></data>
+  <data name="SuggestionsStatusPending" xml:space="preserve"><value>Pending</value></data>
+  <data name="SuggestionsStatusAccepted" xml:space="preserve"><value>Accepted</value></data>
+  <data name="SuggestionsStatusPartiallyAccepted" xml:space="preserve"><value>Partially accepted</value></data>
+  <data name="SuggestionsStatusRejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="SuggestionsStatusStale" xml:space="preserve"><value>Stale</value></data>
+  <data name="SuggestionsStatusWithdrawn" xml:space="preserve"><value>Withdrawn</value></data>
+  <data name="SuggestionsReviewTitle" xml:space="preserve"><value>Review suggestion</value></data>
+  <data name="SuggestionsEntityMissing" xml:space="preserve"><value>The targeted entity has been deleted. Accepting will close the suggestion as stale.</value></data>
+  <data name="SuggestionsNewEntityAlert" xml:space="preserve"><value>This is a brand-new entity suggestion.</value></data>
+  <data name="SuggestionsUserComment" xml:space="preserve"><value>User comment:</value></data>
+  <data name="SuggestionsCurrentValueLabel" xml:space="preserve"><value>Current: </value></data>
+  <data name="SuggestionsSuggestedValueLabel" xml:space="preserve"><value>Suggested: </value></data>
+  <data name="SuggestionsAdminCommentLabel" xml:space="preserve"><value>Reviewer comment (optional — included in the message back to the user)</value></data>
+  <data name="SuggestionsCancelButton" xml:space="preserve"><value>Cancel</value></data>
+  <data name="SuggestionsRejectAllButton" xml:space="preserve"><value>Reject all</value></data>
+  <data name="SuggestionsAcceptSelectedButton" xml:space="preserve"><value>Accept selected</value></data>
+  <data name="SuggestionsSubmitFailed" xml:space="preserve"><value>Failed to submit review.</value></data>
   <data name="MessageReportsTitle" xml:space="preserve"><value>Message Reports</value></data>
   <data name="MessageReportsSubtitle" xml:space="preserve"><value>Review user reports filed against private messages. Resolve a report once it has been handled, or open the conversation to investigate it.</value></data>
   <data name="MessageReportsShowResolved" xml:space="preserve"><value>Show resolved</value></data>

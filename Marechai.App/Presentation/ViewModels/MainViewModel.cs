@@ -87,6 +87,7 @@ public partial class MainViewModel : ObservableObject
     public string MessageReportsManagementButtonText  => "Message Reports";
     public string InvitationCodesManagementButtonText => _localizer["InvitationCodesManagementButton"];
     public string ReviewReportsManagementButtonText   => _localizer["ReviewReportsManagementButton"];
+    public string SuggestionsManagementButtonText     => _localizer["SuggestionsManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AboutButtonText                => _localizer["AboutButton"];
     public string ContactButtonText              => _localizer["ContactButton"];
@@ -167,6 +168,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminMessageReportsCommand               = new RelayCommand(() => NavigateTo(nameof(AdminMessageReportsPage)));
         NavigateToAdminInvitationCodesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminInvitationCodesPage)));
         NavigateToAdminReviewReportsCommand                = new RelayCommand(() => NavigateTo(nameof(AdminReviewReportsPage)));
+        NavigateToAdminSuggestionsCommand                  = new RelayCommand(() => NavigateTo(nameof(AdminSuggestionsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         NavigateToAboutCommand                    = new RelayCommand(() => NavigateTo(nameof(AboutPage)));
         NavigateToContactCommand                  = new RelayCommand(() => NavigateTo(nameof(ContactPage)));
@@ -238,6 +240,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminMessageReportsCommand      { get; }
     public ICommand NavigateToAdminInvitationCodesCommand     { get; }
     public ICommand NavigateToAdminReviewReportsCommand       { get; }
+    public ICommand NavigateToAdminSuggestionsCommand         { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand NavigateToAboutCommand                    { get; }
     public ICommand NavigateToContactCommand                  { get; }
