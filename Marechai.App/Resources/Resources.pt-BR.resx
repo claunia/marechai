@@ -2934,4 +2934,21 @@
   <data name="FailedToDiscardOldDosImport" xml:space="preserve"><value>Failed to discard old-dos import.</value></data>
   <data name="FailedToCreateOldDosCompany" xml:space="preserve"><value>Failed to create company.</value></data>
   <data name="CreatedOldDosCompanyMessage" xml:space="preserve"><value>Created company #{0}: {1}</value></data>
+  <data name="PromoArtButton" xml:space="preserve"><value>Material promocional</value></data>
+  <data name="MachinePromoArtTitle" xml:space="preserve"><value>Material promocional da máquina</value></data>
+  <data name="MachinePromoArtSubtitle" xml:space="preserve"><value>Envie, revise e gerencie o material promocional desta máquina</value></data>
+  <data name="MachinePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="MachinePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para gerenciar o material promocional de máquinas.</value></data>
+  <data name="MachinePromoArtUploadSectionTitle" xml:space="preserve"><value>Enviar material promocional</value></data>
+  <data name="MachinePromoArtGroupLabel" xml:space="preserve"><value>Grupo</value></data>
+  <data name="MachinePromoArtCaptionLabel" xml:space="preserve"><value>Legenda</value></data>
+  <data name="MachinePromoArtUploadButton" xml:space="preserve"><value>Selecionar arquivo e enviar</value></data>
+  <data name="MachinePromoArtEmptyMessage" xml:space="preserve"><value>Ainda não foi enviado material promocional para esta máquina.</value></data>
+  <data name="MachinePromoArtLoadFailed" xml:space="preserve"><value>Não foi possível carregar o material promocional da máquina.</value></data>
+  <data name="MachinePromoArtUploadFailed" xml:space="preserve"><value>Não foi possível enviar o material promocional da máquina.</value></data>
+  <data name="MachinePromoArtUpdateFailed" xml:space="preserve"><value>Não foi possível atualizar o material promocional da máquina.</value></data>
+  <data name="MachinePromoArtDeleteFailed" xml:space="preserve"><value>Não foi possível excluir o material promocional da máquina.</value></data>
+  <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Material promocional enviado com sucesso.</value></data>
+  <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Material promocional atualizado com sucesso.</value></data>
+  <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Material promocional excluído com sucesso.</value></data>
 </root>

@@ -303,6 +303,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminCompanyLogosViewModel>();
         containerRegistry.Register<AdminMachinePhotosViewModel>();
         containerRegistry.Register<AdminMachineVideosViewModel>();
+        containerRegistry.Register<AdminMachinePromoArtViewModel>();
         containerRegistry.Register<AdminPeopleViewModel>();
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
@@ -410,6 +411,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminCompanyLogosPage, AdminCompanyLogosViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachinePhotosPage, AdminMachinePhotosViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachineVideosPage, AdminMachineVideosViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMachinePromoArtPage, AdminMachinePromoArtViewModel>();
         containerRegistry.RegisterForNavigation<AdminPeoplePage, AdminPeopleViewModel>();
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();

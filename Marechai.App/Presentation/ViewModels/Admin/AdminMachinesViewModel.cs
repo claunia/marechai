@@ -163,6 +163,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         RemoveSoftwarePlatformCommand = new AsyncRelayCommand<string>(RemoveSoftwarePlatformByDisplayAsync);
         OpenPhotosCommand      = new RelayCommand<MachineDto>(OpenPhotos);
         OpenVideosCommand      = new RelayCommand<MachineDto>(OpenVideos);
+        OpenPromoArtCommand    = new RelayCommand<MachineDto>(OpenPromoArt);
 
         CheckAdminRole();
     }
@@ -191,6 +192,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveSoftwarePlatformCommand { get; }
     public IRelayCommand<MachineDto> OpenPhotosCommand { get; }
     public IRelayCommand<MachineDto> OpenVideosCommand { get; }
+    public IRelayCommand<MachineDto> OpenPromoArtCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -798,5 +800,18 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminMachineVideosPage), parameters);
+    }
+
+    private void OpenPromoArt(MachineDto? machine)
+    {
+        if(machine?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MachineId, machine.Id.Value },
+            { NavParamKeys.MachineName, machine.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminMachinePromoArtPage), parameters);
     }
 }

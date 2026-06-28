@@ -2934,4 +2934,21 @@
   <data name="FailedToDiscardOldDosImport" xml:space="preserve"><value>Failed to discard old-dos import.</value></data>
   <data name="FailedToCreateOldDosCompany" xml:space="preserve"><value>Failed to create company.</value></data>
   <data name="CreatedOldDosCompanyMessage" xml:space="preserve"><value>Created company #{0}: {1}</value></data>
+  <data name="PromoArtButton" xml:space="preserve"><value>Werbegrafik</value></data>
+  <data name="MachinePromoArtTitle" xml:space="preserve"><value>Werbegrafik der Maschine</value></data>
+  <data name="MachinePromoArtSubtitle" xml:space="preserve"><value>Werbegrafik für diese Maschine hochladen, prüfen und verwalten</value></data>
+  <data name="MachinePromoArtMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="MachinePromoArtMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Werbegrafik von Maschinen zu verwalten.</value></data>
+  <data name="MachinePromoArtUploadSectionTitle" xml:space="preserve"><value>Werbegrafik hochladen</value></data>
+  <data name="MachinePromoArtGroupLabel" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="MachinePromoArtCaptionLabel" xml:space="preserve"><value>Beschriftung</value></data>
+  <data name="MachinePromoArtUploadButton" xml:space="preserve"><value>Datei auswählen &amp; hochladen</value></data>
+  <data name="MachinePromoArtEmptyMessage" xml:space="preserve"><value>Für diese Maschine wurde noch keine Werbegrafik hochgeladen.</value></data>
+  <data name="MachinePromoArtLoadFailed" xml:space="preserve"><value>Werbegrafik der Maschine konnte nicht geladen werden.</value></data>
+  <data name="MachinePromoArtUploadFailed" xml:space="preserve"><value>Werbegrafik der Maschine konnte nicht hochgeladen werden.</value></data>
+  <data name="MachinePromoArtUpdateFailed" xml:space="preserve"><value>Werbegrafik der Maschine konnte nicht aktualisiert werden.</value></data>
+  <data name="MachinePromoArtDeleteFailed" xml:space="preserve"><value>Werbegrafik der Maschine konnte nicht gelöscht werden.</value></data>
+  <data name="MachinePromoArtUploadedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich hochgeladen.</value></data>
+  <data name="MachinePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich aktualisiert.</value></data>
+  <data name="MachinePromoArtDeletedSuccessfully" xml:space="preserve"><value>Werbegrafik erfolgreich gelöscht.</value></data>
 </root>
