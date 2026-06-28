@@ -2099,6 +2099,37 @@
   <data name="GpuPhotosQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
   <data name="GpuPhotosSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
   <data name="GpuPhotosFailedCardStatus" xml:space="preserve"><value>Error en la subida</value></data>
+  <data name="ProcessorPhotosTitle" xml:space="preserve"><value>Fotos de procesador</value></data>
+  <data name="ProcessorPhotosSubtitle" xml:space="preserve"><value>Ver, subir y gestionar fotos de procesador</value></data>
+  <data name="ProcessorPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="ProcessorPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de procesador.</value></data>
+  <data name="ProcessorPhotosBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
+  <data name="ProcessorPhotosBatchSectionSubtitle" xml:space="preserve"><value>Prepare hasta 25 fotos de procesador, asigne una licencia compartida al lote y, si lo desea, indique una URL de origen para cada foto.</value></data>
+  <data name="ProcessorPhotosAddImagesButton" xml:space="preserve"><value>Añadir imágenes</value></data>
+  <data name="ProcessorPhotosClearStagedButton" xml:space="preserve"><value>Limpiar preparación</value></data>
+  <data name="ProcessorPhotosSubmitBatchButton" xml:space="preserve"><value>Subir fotos</value></data>
+  <data name="ProcessorPhotosNoImagesStaged" xml:space="preserve"><value>Aún no hay imágenes preparadas. Añada una o más fotos para iniciar una carga por lotes.</value></data>
+  <data name="ProcessorPhotosPreviewUnavailable" xml:space="preserve"><value>Vista previa no disponible</value></data>
+  <data name="ProcessorPhotosProcessingTitle" xml:space="preserve"><value>Procesando la carga</value></data>
+  <data name="ProcessorPhotosBatchProgressText" xml:space="preserve"><value>Se han procesado {0} de {1} fotos preparadas.</value></data>
+  <data name="ProcessorPhotosPickerCanceled" xml:space="preserve"><value>No se seleccionó ningún archivo.</value></data>
+  <data name="ProcessorPhotosSelectionTrimmed" xml:space="preserve"><value>Solo se prepararon los primeros {0} archivos porque un lote puede contener como máximo {1} fotos.</value></data>
+  <data name="ProcessorPhotosMaxImagesReached" xml:space="preserve"><value>Ya ha alcanzado el máximo de {0} fotos preparadas.</value></data>
+  <data name="ProcessorPhotosUnsupportedFormat" xml:space="preserve"><value>{0} utiliza un formato de imagen no compatible.</value></data>
+  <data name="ProcessorPhotosFileTooLarge" xml:space="preserve"><value>{0} supera el límite de carga de 50 MB.</value></data>
+  <data name="ProcessorPhotosBatchNotReady" xml:space="preserve"><value>Seleccione una licencia y espere a que todas las fotos preparadas terminen de cargarse antes de enviar el lote.</value></data>
+  <data name="ProcessorPhotosCommitFailed" xml:space="preserve"><value>No se pudo enviar el lote preparado.</value></data>
+  <data name="ProcessorPhotosPollingFailed" xml:space="preserve"><value>No se pudo recuperar el progreso de carga del lote preparado.</value></data>
+  <data name="ProcessorPhotosBatchFinished" xml:space="preserve"><value>Lote finalizado. {0} foto(s) se subieron correctamente y {1} fallaron.</value></data>
+  <data name="ProcessorPhotosFailedToRemoveStaged" xml:space="preserve"><value>No se pudo quitar la foto preparada.</value></data>
+  <data name="ProcessorPhotosUploadingCardStatus" xml:space="preserve"><value>Subiendo al área temporal...</value></data>
+  <data name="ProcessorPhotosReadyCardStatus" xml:space="preserve"><value>Lista para enviar</value></data>
+  <data name="ProcessorPhotosFileRejectedStatus" xml:space="preserve"><value>Preparación fallida</value></data>
+  <data name="ProcessorPhotosCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="ProcessorPhotosProcessingCardStatus" xml:space="preserve"><value>Procesando en el servidor...</value></data>
+  <data name="ProcessorPhotosQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
+  <data name="ProcessorPhotosSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
+  <data name="ProcessorPhotosFailedCardStatus" xml:space="preserve"><value>Error en la subida</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Seleccione una licencia...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Seleccione una licencia antes de subir.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>URL de origen (opcional)</value></data>

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -12,10 +14,11 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
 {
     private readonly Client                          _apiClient;
-    private readonly IJwtService                        _jwtService;
-    private readonly IStringLocalizer                   _localizer;
-    private readonly ILogger<AdminProcessorsViewModel>  _logger;
-    private readonly ITokenService                      _tokenService;
+    private readonly IJwtService                     _jwtService;
+    private readonly IStringLocalizer                _localizer;
+    private readonly ILogger<AdminProcessorsViewModel> _logger;
+    private readonly IRegionManager                  _regionManager;
+    private readonly ITokenService                   _tokenService;
 
     // --- List state ---
     [ObservableProperty]
@@ -161,20 +164,23 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private List<InstructionSetExtensionDto>? _allAvailableExtensions;
 
     public AdminProcessorsViewModel(Client                          apiClient,
-                                    IJwtService                        jwtService,
-                                    ITokenService                      tokenService,
-                                    ILogger<AdminProcessorsViewModel>  logger,
-                                    IStringLocalizer                   localizer)
+                                    IJwtService                     jwtService,
+                                    ITokenService                   tokenService,
+                                    ILogger<AdminProcessorsViewModel> logger,
+                                    IStringLocalizer                localizer,
+                                    IRegionManager                  regionManager)
     {
         _apiClient    = apiClient;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _regionManager = regionManager;
 
         LoadProcessorsCommand    = new AsyncRelayCommand(LoadProcessorsAsync);
         OpenAddProcessorCommand  = new RelayCommand(OpenAddProcessor);
         OpenEditProcessorCommand = new RelayCommand<ProcessorDto>(OpenEditProcessor);
+        OpenPhotosCommand        = new RelayCommand<ProcessorDto>(OpenPhotos);
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
         SaveProcessorCommand     = new AsyncRelayCommand(SaveProcessorAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
@@ -188,6 +194,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand               LoadProcessorsCommand    { get; }
     public IRelayCommand                    OpenAddProcessorCommand  { get; }
     public IRelayCommand<ProcessorDto>      OpenEditProcessorCommand { get; }
+    public IRelayCommand<ProcessorDto>      OpenPhotosCommand        { get; }
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
     public IAsyncRelayCommand               SaveProcessorCommand     { get; }
     public IRelayCommand                    CancelEditCommand        { get; }
@@ -274,6 +281,19 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         EditPanelTitle      = _localizer["AddProcessorDialog_Title"];
         ClearForm();
         IsEditing = true;
+    }
+
+    private void OpenPhotos(ProcessorDto? proc)
+    {
+        if(proc?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.ProcessorId, proc.Id.Value },
+            { NavParamKeys.ProcessorName, proc.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminProcessorPhotosPage), parameters);
     }
 
     // --- Edit ---

@@ -12,6 +12,7 @@ public static class NavParamKeys
     public const string CompanyName     = "CompanyName";
     public const string MachineName     = "MachineName";
     public const string GpuName         = "GpuName";
+    public const string ProcessorName   = "ProcessorName";
     public const string NavigationSource = "NavigationSource";
     public const string FilterType       = "FilterType";
     public const string FilterValue      = "FilterValue";

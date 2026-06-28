@@ -2420,6 +2420,37 @@
   <data name="GpuPhotosQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
   <data name="GpuPhotosSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
   <data name="GpuPhotosFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
+  <data name="ProcessorPhotosTitle" xml:space="preserve"><value>Processor Photos</value></data>
+  <data name="ProcessorPhotosSubtitle" xml:space="preserve"><value>View, upload, and manage processor photos</value></data>
+  <data name="ProcessorPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="ProcessorPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage processor photos.</value></data>
+  <data name="ProcessorPhotosBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
+  <data name="ProcessorPhotosBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 processor photos, assign one license to the batch, and optionally set a source URL per photo.</value></data>
+  <data name="ProcessorPhotosAddImagesButton" xml:space="preserve"><value>Add Images</value></data>
+  <data name="ProcessorPhotosClearStagedButton" xml:space="preserve"><value>Clear Staged</value></data>
+  <data name="ProcessorPhotosSubmitBatchButton" xml:space="preserve"><value>Upload Photos</value></data>
+  <data name="ProcessorPhotosNoImagesStaged" xml:space="preserve"><value>No images staged yet. Add one or more photos to start a batch upload.</value></data>
+  <data name="ProcessorPhotosPreviewUnavailable" xml:space="preserve"><value>Preview unavailable</value></data>
+  <data name="ProcessorPhotosProcessingTitle" xml:space="preserve"><value>Processing Upload</value></data>
+  <data name="ProcessorPhotosBatchProgressText" xml:space="preserve"><value>Processed {0} of {1} staged photos.</value></data>
+  <data name="ProcessorPhotosPickerCanceled" xml:space="preserve"><value>No files were selected.</value></data>
+  <data name="ProcessorPhotosSelectionTrimmed" xml:space="preserve"><value>Only the first {0} files were staged because a batch can hold at most {1} photos.</value></data>
+  <data name="ProcessorPhotosMaxImagesReached" xml:space="preserve"><value>You already have the maximum of {0} staged photos.</value></data>
+  <data name="ProcessorPhotosUnsupportedFormat" xml:space="preserve"><value>{0} uses an unsupported image format.</value></data>
+  <data name="ProcessorPhotosFileTooLarge" xml:space="preserve"><value>{0} exceeds the 50 MB upload limit.</value></data>
+  <data name="ProcessorPhotosBatchNotReady" xml:space="preserve"><value>Select a license and wait for every staged photo to finish uploading before submitting the batch.</value></data>
+  <data name="ProcessorPhotosCommitFailed" xml:space="preserve"><value>Failed to submit the staged batch.</value></data>
+  <data name="ProcessorPhotosPollingFailed" xml:space="preserve"><value>Unable to retrieve upload progress for the staged batch.</value></data>
+  <data name="ProcessorPhotosBatchFinished" xml:space="preserve"><value>Batch finished. {0} photo(s) succeeded and {1} failed.</value></data>
+  <data name="ProcessorPhotosFailedToRemoveStaged" xml:space="preserve"><value>Failed to remove the staged photo.</value></data>
+  <data name="ProcessorPhotosUploadingCardStatus" xml:space="preserve"><value>Uploading to staging...</value></data>
+  <data name="ProcessorPhotosReadyCardStatus" xml:space="preserve"><value>Ready to submit</value></data>
+  <data name="ProcessorPhotosFileRejectedStatus" xml:space="preserve"><value>Staging failed</value></data>
+  <data name="ProcessorPhotosCommittingCardStatus" xml:space="preserve"><value>Submitting batch...</value></data>
+  <data name="ProcessorPhotosProcessingCardStatus" xml:space="preserve"><value>Processing on server...</value></data>
+  <data name="ProcessorPhotosQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
+  <data name="ProcessorPhotosSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
+  <data name="ProcessorPhotosFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Select a license...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Please select a license before uploading.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>Source URL (optional)</value></data>
