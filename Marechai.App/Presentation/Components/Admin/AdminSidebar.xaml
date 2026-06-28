@@ -286,6 +286,18 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
+                <!-- Review Reports -->
+                <Button Content="{Binding ReviewReportsManagementButtonText}"
+                        Command="{Binding NavigateToAdminReviewReportsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
                 <!-- Software Release Management -->
                 <Button Content="{Binding SoftwareReleaseManagementButtonText}"
                         Command="{Binding NavigateToAdminSoftwareReleasesCommand}"

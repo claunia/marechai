@@ -859,4 +859,22 @@ public class LocalizedStrings
     public string InvitationCodesStatusUnused => _l["InvitationCodesStatusUnused"];
     public string InvitationCodesRevokeButton => _l["InvitationCodesRevokeButton"];
     public string InvitationCodesFailedToLoad => _l["InvitationCodesFailedToLoad"];
+
+    // Review reports management
+    public string ReviewReportsManagementButton => _l["ReviewReportsManagementButton"];
+    public string ReviewReportsTitle => _l["ReviewReportsTitle"];
+    public string ReviewReportsSubtitle => _l["ReviewReportsSubtitle"];
+    public string ReviewReportsShowResolved => _l["ReviewReportsShowResolved"];
+    public string ReviewReportsAccessDeniedTitle => _l["ReviewReportsAccessDeniedTitle"];
+    public string ReviewReportsAccessDeniedMessage => _l["ReviewReportsAccessDeniedMessage"];
+    public string ReviewReportsFailedToLoad => _l["ReviewReportsFailedToLoad"];
+    public string ReviewReportsReporterColumn => _l["ReviewReportsReporterColumn"];
+    public string ReviewReportsSoftwareColumn => _l["ReviewReportsSoftwareColumn"];
+    public string ReviewReportsReviewerColumn => _l["ReviewReportsReviewerColumn"];
+    public string ReviewReportsReasonColumn => _l["ReviewReportsReasonColumn"];
+    public string ReviewReportsStatusColumn => _l["ReviewReportsStatusColumn"];
+    public string ReviewReportsDateColumn => _l["ReviewReportsDateColumn"];
+    public string ReviewReportsActionsColumn => _l["ReviewReportsActionsColumn"];
+    public string ReviewReportsResolveButton => _l["ReviewReportsResolveButton"];
+    public string ReviewReportsDeleteButton => _l["ReviewReportsDeleteButton"];
 }

@@ -3105,4 +3105,29 @@
   <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Unused</value></data>
   <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revoke</value></data>
   <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Could not load invitation codes</value></data>
+  <data name="ReviewReportsManagementButton" xml:space="preserve"><value>Review Reports</value></data>
+  <data name="ReviewReportsTitle" xml:space="preserve"><value>Review Reports</value></data>
+  <data name="ReviewReportsSubtitle" xml:space="preserve"><value>Review user reports filed against software reviews. Resolve a report once it has been handled, or delete it if it no longer needs attention.</value></data>
+  <data name="ReviewReportsShowResolved" xml:space="preserve"><value>Show resolved</value></data>
+  <data name="ReviewReportsAccessDeniedTitle" xml:space="preserve"><value>Access denied</value></data>
+  <data name="ReviewReportsAccessDeniedMessage" xml:space="preserve"><value>You must be an administrator to manage review reports.</value></data>
+  <data name="ReviewReportsFailedToLoad" xml:space="preserve"><value>Could not load review reports</value></data>
+  <data name="ReviewReportsReporterColumn" xml:space="preserve"><value>Reporter</value></data>
+  <data name="ReviewReportsSoftwareColumn" xml:space="preserve"><value>Software</value></data>
+  <data name="ReviewReportsReviewerColumn" xml:space="preserve"><value>Reviewer</value></data>
+  <data name="ReviewReportsReasonColumn" xml:space="preserve"><value>Reason</value></data>
+  <data name="ReviewReportsStatusColumn" xml:space="preserve"><value>Status</value></data>
+  <data name="ReviewReportsDateColumn" xml:space="preserve"><value>Date</value></data>
+  <data name="ReviewReportsActionsColumn" xml:space="preserve"><value>Actions</value></data>
+  <data name="ReviewReportsResolveButton" xml:space="preserve"><value>Resolve</value></data>
+  <data name="ReviewReportsDeleteButton" xml:space="preserve"><value>Delete Report</value></data>
+  <data name="ReviewReportsFailedToResolve" xml:space="preserve"><value>Failed to resolve report.</value></data>
+  <data name="ReviewReportsFailedToDelete" xml:space="preserve"><value>Failed to delete report.</value></data>
+  <data name="ReviewReportsStatusResolved" xml:space="preserve"><value>Resolved</value></data>
+  <data name="ReviewReportsStatusPending" xml:space="preserve"><value>Pending</value></data>
+  <data name="ReviewReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="ReviewReportsReasonOffensive" xml:space="preserve"><value>Offensive</value></data>
+  <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Misleading</value></data>
+  <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Off-topic</value></data>
+  <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Other</value></data>
 </root>

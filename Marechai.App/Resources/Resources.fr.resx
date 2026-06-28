@@ -2679,4 +2679,29 @@
   <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Non utilisé</value></data>
   <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Révoquer</value></data>
   <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Impossible de charger les codes d'invitation</value></data>
+  <data name="ReviewReportsManagementButton" xml:space="preserve"><value>Signalements d'avis</value></data>
+  <data name="ReviewReportsTitle" xml:space="preserve"><value>Signalements d'avis</value></data>
+  <data name="ReviewReportsSubtitle" xml:space="preserve"><value>Examinez les signalements déposés par les utilisateurs concernant les avis logiciels. Résolvez un signalement une fois traité, ou supprimez-le s'il ne nécessite plus d'attention.</value></data>
+  <data name="ReviewReportsShowResolved" xml:space="preserve"><value>Afficher les résolus</value></data>
+  <data name="ReviewReportsAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="ReviewReportsAccessDeniedMessage" xml:space="preserve"><value>Vous devez être administrateur pour gérer les signalements d'avis.</value></data>
+  <data name="ReviewReportsFailedToLoad" xml:space="preserve"><value>Impossible de charger les signalements d'avis</value></data>
+  <data name="ReviewReportsReporterColumn" xml:space="preserve"><value>Signalé par</value></data>
+  <data name="ReviewReportsSoftwareColumn" xml:space="preserve"><value>Logiciel</value></data>
+  <data name="ReviewReportsReviewerColumn" xml:space="preserve"><value>Auteur de l'avis</value></data>
+  <data name="ReviewReportsReasonColumn" xml:space="preserve"><value>Motif</value></data>
+  <data name="ReviewReportsStatusColumn" xml:space="preserve"><value>Statut</value></data>
+  <data name="ReviewReportsDateColumn" xml:space="preserve"><value>Date</value></data>
+  <data name="ReviewReportsActionsColumn" xml:space="preserve"><value>Actions</value></data>
+  <data name="ReviewReportsResolveButton" xml:space="preserve"><value>Résoudre</value></data>
+  <data name="ReviewReportsDeleteButton" xml:space="preserve"><value>Supprimer le signalement</value></data>
+  <data name="ReviewReportsFailedToResolve" xml:space="preserve"><value>Impossible de résoudre le signalement.</value></data>
+  <data name="ReviewReportsFailedToDelete" xml:space="preserve"><value>Impossible de supprimer le signalement.</value></data>
+  <data name="ReviewReportsStatusResolved" xml:space="preserve"><value>Résolu</value></data>
+  <data name="ReviewReportsStatusPending" xml:space="preserve"><value>En attente</value></data>
+  <data name="ReviewReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="ReviewReportsReasonOffensive" xml:space="preserve"><value>Offensant</value></data>
+  <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Trompeur</value></data>
+  <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Hors sujet</value></data>
+  <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Autre</value></data>
 </root>

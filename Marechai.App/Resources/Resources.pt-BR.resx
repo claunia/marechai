@@ -2575,4 +2575,29 @@
   <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>Não usado</value></data>
   <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revogar</value></data>
   <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>Não foi possível carregar os códigos de convite</value></data>
+  <data name="ReviewReportsManagementButton" xml:space="preserve"><value>Denúncias de avaliações</value></data>
+  <data name="ReviewReportsTitle" xml:space="preserve"><value>Denúncias de avaliações</value></data>
+  <data name="ReviewReportsSubtitle" xml:space="preserve"><value>Analise as denúncias enviadas por usuários sobre avaliações de software. Resolva uma denúncia depois de tratá-la, ou exclua-a se ela não precisar mais de atenção.</value></data>
+  <data name="ReviewReportsShowResolved" xml:space="preserve"><value>Mostrar resolvidas</value></data>
+  <data name="ReviewReportsAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="ReviewReportsAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser administrador para gerenciar denúncias de avaliações.</value></data>
+  <data name="ReviewReportsFailedToLoad" xml:space="preserve"><value>Não foi possível carregar as denúncias de avaliações</value></data>
+  <data name="ReviewReportsReporterColumn" xml:space="preserve"><value>Denunciante</value></data>
+  <data name="ReviewReportsSoftwareColumn" xml:space="preserve"><value>Software</value></data>
+  <data name="ReviewReportsReviewerColumn" xml:space="preserve"><value>Avaliador</value></data>
+  <data name="ReviewReportsReasonColumn" xml:space="preserve"><value>Motivo</value></data>
+  <data name="ReviewReportsStatusColumn" xml:space="preserve"><value>Status</value></data>
+  <data name="ReviewReportsDateColumn" xml:space="preserve"><value>Data</value></data>
+  <data name="ReviewReportsActionsColumn" xml:space="preserve"><value>Ações</value></data>
+  <data name="ReviewReportsResolveButton" xml:space="preserve"><value>Resolver</value></data>
+  <data name="ReviewReportsDeleteButton" xml:space="preserve"><value>Excluir denúncia</value></data>
+  <data name="ReviewReportsFailedToResolve" xml:space="preserve"><value>Falha ao resolver a denúncia.</value></data>
+  <data name="ReviewReportsFailedToDelete" xml:space="preserve"><value>Falha ao excluir a denúncia.</value></data>
+  <data name="ReviewReportsStatusResolved" xml:space="preserve"><value>Resolvida</value></data>
+  <data name="ReviewReportsStatusPending" xml:space="preserve"><value>Pendente</value></data>
+  <data name="ReviewReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="ReviewReportsReasonOffensive" xml:space="preserve"><value>Ofensivo</value></data>
+  <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Enganoso</value></data>
+  <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Fora do tópico</value></data>
+  <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Outro</value></data>
 </root>

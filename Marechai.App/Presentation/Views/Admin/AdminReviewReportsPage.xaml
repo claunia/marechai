@@ -1,0 +1,161 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.Admin.AdminReviewReportsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+      x:Name="PageRoot"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ReviewReportsTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ReviewReportsSubtitle}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,8" />
+                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=ReviewReportsShowResolved}"
+                          IsChecked="{Binding ShowResolved, Mode=TwoWay}"
+                          Command="{Binding ToggleShowResolvedCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Access Denied -->
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=ReviewReportsAccessDeniedTitle}"
+                         Message="{Binding Source={StaticResource Strings}, Path=ReviewReportsAccessDeniedMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <!-- Content (admin only) -->
+            <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                <!-- Loading -->
+                <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="64"
+                                  Width="64"
+                                  Foreground="{ThemeResource SystemAccentColor}" />
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="24"
+                            Spacing="16"
+                            MaxWidth="400">
+                    <InfoBar IsOpen="True"
+                             Severity="Error"
+                             Title="{Binding Source={StaticResource Strings}, Path=ReviewReportsFailedToLoad}"
+                             Message="{Binding ErrorMessage}"
+                             IsClosable="False" />
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                            Command="{Binding RefreshCommand}"
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+
+                <!-- Data -->
+                <Grid Visibility="{Binding IsDataLoaded, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <controls:DataGrid Margin="16"
+                                       ItemsSource="{Binding Reports}"
+                                       AutoGenerateColumns="False"
+                                       GridLinesVisibility="None"
+                                       HeadersVisibility="Column"
+                                       AlternatingRowBackground="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                       CanUserReorderColumns="True"
+                                       CanUserResizeColumns="True"
+                                       CanUserSortColumns="True"
+                                       IsReadOnly="True"
+                                       SelectionMode="Single"
+                                       HorizontalScrollBarVisibility="Auto"
+                                       VerticalScrollBarVisibility="Auto">
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsReporterColumn}"
+                                Binding="{Binding ReporterName}"
+                                Width="*" />
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsSoftwareColumn}"
+                                Binding="{Binding SoftwareName}"
+                                Width="*" />
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsReviewerColumn}"
+                                Binding="{Binding ReviewerName}"
+                                Width="*" />
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsReasonColumn}"
+                                Binding="{Binding ReasonText}"
+                                Width="*" />
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsStatusColumn}"
+                                Binding="{Binding StatusText}"
+                                Width="*" />
+                            <controls:DataGridTextColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsDateColumn}"
+                                Binding="{Binding CreatedOnText}"
+                                Width="*" />
+                            <controls:DataGridTemplateColumn
+                                Header="{Binding Source={StaticResource Strings}, Path=ReviewReportsActionsColumn}"
+                                Width="Auto">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Spacing="4">
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ReviewReportsResolveButton}"
+                                                    Visibility="{Binding IsResolved, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                                                    Command="{Binding DataContext.ResolveReportCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{ThemeResource TextBlockButtonStyle}"
+                                                    Padding="8,4" />
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ReviewReportsDeleteButton}"
+                                                    Click="DeleteButton_OnClick"
+                                                    Foreground="{ThemeResource SystemErrorTextColor}"
+                                                    Style="{ThemeResource TextBlockButtonStyle}"
+                                                    Padding="8,4" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

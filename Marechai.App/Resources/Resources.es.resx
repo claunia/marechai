@@ -2715,4 +2715,29 @@
   <data name="InvitationCodesStatusUnused" xml:space="preserve"><value>No usado</value></data>
   <data name="InvitationCodesRevokeButton" xml:space="preserve"><value>Revocar</value></data>
   <data name="InvitationCodesFailedToLoad" xml:space="preserve"><value>No se pudieron cargar los códigos de invitación</value></data>
+  <data name="ReviewReportsManagementButton" xml:space="preserve"><value>Reportes de reseñas</value></data>
+  <data name="ReviewReportsTitle" xml:space="preserve"><value>Reportes de reseñas</value></data>
+  <data name="ReviewReportsSubtitle" xml:space="preserve"><value>Revise los reportes de los usuarios sobre las reseñas de software. Resuelva un reporte una vez atendido, o elimínelo si ya no requiere atención.</value></data>
+  <data name="ReviewReportsShowResolved" xml:space="preserve"><value>Mostrar resueltos</value></data>
+  <data name="ReviewReportsAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="ReviewReportsAccessDeniedMessage" xml:space="preserve"><value>Debe ser administrador para gestionar los reportes de reseñas.</value></data>
+  <data name="ReviewReportsFailedToLoad" xml:space="preserve"><value>No se pudieron cargar los reportes de reseñas</value></data>
+  <data name="ReviewReportsReporterColumn" xml:space="preserve"><value>Reportado por</value></data>
+  <data name="ReviewReportsSoftwareColumn" xml:space="preserve"><value>Software</value></data>
+  <data name="ReviewReportsReviewerColumn" xml:space="preserve"><value>Revisor</value></data>
+  <data name="ReviewReportsReasonColumn" xml:space="preserve"><value>Motivo</value></data>
+  <data name="ReviewReportsStatusColumn" xml:space="preserve"><value>Estado</value></data>
+  <data name="ReviewReportsDateColumn" xml:space="preserve"><value>Fecha</value></data>
+  <data name="ReviewReportsActionsColumn" xml:space="preserve"><value>Acciones</value></data>
+  <data name="ReviewReportsResolveButton" xml:space="preserve"><value>Resolver</value></data>
+  <data name="ReviewReportsDeleteButton" xml:space="preserve"><value>Eliminar reporte</value></data>
+  <data name="ReviewReportsFailedToResolve" xml:space="preserve"><value>No se pudo resolver el reporte.</value></data>
+  <data name="ReviewReportsFailedToDelete" xml:space="preserve"><value>No se pudo eliminar el reporte.</value></data>
+  <data name="ReviewReportsStatusResolved" xml:space="preserve"><value>Resuelto</value></data>
+  <data name="ReviewReportsStatusPending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="ReviewReportsReasonSpam" xml:space="preserve"><value>Spam</value></data>
+  <data name="ReviewReportsReasonOffensive" xml:space="preserve"><value>Ofensivo</value></data>
+  <data name="ReviewReportsReasonMisleading" xml:space="preserve"><value>Engañoso</value></data>
+  <data name="ReviewReportsReasonOffTopic" xml:space="preserve"><value>Fuera de tema</value></data>
+  <data name="ReviewReportsReasonOther" xml:space="preserve"><value>Otro</value></data>
 </root>
