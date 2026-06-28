@@ -165,7 +165,7 @@ public sealed class NativeToastService(ToastActivationService activationService)
                     "$toast=[Windows.UI.Notifications.ToastNotification]::new($xml);" +
                     "[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Marechai').Show($toast);";
 
-                Process.Start(new ProcessStartInfo("powershell", $"-NoProfile -Command \"{script}\"")
+                System.Diagnostics.Process.Start(new ProcessStartInfo("powershell", $"-NoProfile -Command \"{script}\"")
                 {
                     UseShellExecute = false,
                     CreateNoWindow  = true
@@ -182,7 +182,7 @@ public sealed class NativeToastService(ToastActivationService activationService)
 
     static void StartShellCommand(string command)
     {
-        Process.Start(new ProcessStartInfo("bash", $"-lc \"{command}\"")
+        System.Diagnostics.Process.Start(new ProcessStartInfo("bash", $"-lc \"{command}\"")
         {
             UseShellExecute = false,
             CreateNoWindow  = true
