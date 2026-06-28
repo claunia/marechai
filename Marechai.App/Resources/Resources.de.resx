@@ -1901,6 +1901,33 @@
   <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
   <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Maschinenfotos zu verwalten.</value></data>
   <data name="UploadPhotoLabel" xml:space="preserve"><value>Foto hochladen</value></data>
+  <data name="MachinePhotosBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>
+  <data name="MachinePhotosBatchSectionSubtitle" xml:space="preserve"><value>Bereiten Sie bis zu 25 Maschinenfotos vor, weisen Sie dem Stapel eine gemeinsame Lizenz zu und hinterlegen Sie bei Bedarf für jedes Foto eine Quell-URL.</value></data>
+  <data name="MachinePhotosAddImagesButton" xml:space="preserve"><value>Bilder hinzufügen</value></data>
+  <data name="MachinePhotosClearStagedButton" xml:space="preserve"><value>Vorbereitung leeren</value></data>
+  <data name="MachinePhotosSubmitBatchButton" xml:space="preserve"><value>Fotos hochladen</value></data>
+  <data name="MachinePhotosNoImagesStaged" xml:space="preserve"><value>Noch keine Bilder vorbereitet. Fügen Sie ein oder mehrere Fotos hinzu, um einen Stapel-Upload zu starten.</value></data>
+  <data name="MachinePhotosPreviewUnavailable" xml:space="preserve"><value>Vorschau nicht verfügbar</value></data>
+  <data name="MachinePhotosProcessingTitle" xml:space="preserve"><value>Upload wird verarbeitet</value></data>
+  <data name="MachinePhotosBatchProgressText" xml:space="preserve"><value>{0} von {1} vorbereiteten Fotos wurden verarbeitet.</value></data>
+  <data name="MachinePhotosPickerCanceled" xml:space="preserve"><value>Es wurden keine Dateien ausgewählt.</value></data>
+  <data name="MachinePhotosSelectionTrimmed" xml:space="preserve"><value>Nur die ersten {0} Dateien wurden vorbereitet, da ein Stapel höchstens {1} Fotos enthalten kann.</value></data>
+  <data name="MachinePhotosMaxImagesReached" xml:space="preserve"><value>Sie haben bereits das Maximum von {0} vorbereiteten Fotos erreicht.</value></data>
+  <data name="MachinePhotosUnsupportedFormat" xml:space="preserve"><value>{0} verwendet ein nicht unterstütztes Bildformat.</value></data>
+  <data name="MachinePhotosFileTooLarge" xml:space="preserve"><value>{0} überschreitet das Upload-Limit von 50 MB.</value></data>
+  <data name="MachinePhotosBatchNotReady" xml:space="preserve"><value>Wählen Sie eine Lizenz aus und warten Sie, bis alle vorbereiteten Fotos vollständig hochgeladen sind, bevor Sie den Stapel senden.</value></data>
+  <data name="MachinePhotosCommitFailed" xml:space="preserve"><value>Der vorbereitete Stapel konnte nicht gesendet werden.</value></data>
+  <data name="MachinePhotosPollingFailed" xml:space="preserve"><value>Der Upload-Fortschritt für den vorbereiteten Stapel konnte nicht abgerufen werden.</value></data>
+  <data name="MachinePhotosBatchFinished" xml:space="preserve"><value>Stapel abgeschlossen. {0} Foto(s) erfolgreich, {1} fehlgeschlagen.</value></data>
+  <data name="MachinePhotosFailedToRemoveStaged" xml:space="preserve"><value>Das vorbereitete Foto konnte nicht entfernt werden.</value></data>
+  <data name="MachinePhotosUploadingCardStatus" xml:space="preserve"><value>Upload in den Vorbereitungsbereich...</value></data>
+  <data name="MachinePhotosReadyCardStatus" xml:space="preserve"><value>Bereit zum Senden</value></data>
+  <data name="MachinePhotosFileRejectedStatus" xml:space="preserve"><value>Vorbereitung fehlgeschlagen</value></data>
+  <data name="MachinePhotosCommittingCardStatus" xml:space="preserve"><value>Stapel wird gesendet...</value></data>
+  <data name="MachinePhotosProcessingCardStatus" xml:space="preserve"><value>Wird auf dem Server verarbeitet...</value></data>
+  <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>Zur Verarbeitung in der Warteschlange</value></data>
+  <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Erfolgreich hochgeladen</value></data>
+  <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Upload fehlgeschlagen</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Lizenz auswählen...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Bitte wählen Sie eine Lizenz vor dem Hochladen.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>Quell-URL (optional)</value></data>

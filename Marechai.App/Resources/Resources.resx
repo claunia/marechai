@@ -2362,6 +2362,33 @@
   <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
   <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage machine photos.</value></data>
   <data name="UploadPhotoLabel" xml:space="preserve"><value>Upload Photo</value></data>
+  <data name="MachinePhotosBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
+  <data name="MachinePhotosBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 machine photos, assign one license to the batch, and optionally set a source URL per photo.</value></data>
+  <data name="MachinePhotosAddImagesButton" xml:space="preserve"><value>Add Images</value></data>
+  <data name="MachinePhotosClearStagedButton" xml:space="preserve"><value>Clear Staged</value></data>
+  <data name="MachinePhotosSubmitBatchButton" xml:space="preserve"><value>Upload Photos</value></data>
+  <data name="MachinePhotosNoImagesStaged" xml:space="preserve"><value>No images staged yet. Add one or more photos to start a batch upload.</value></data>
+  <data name="MachinePhotosPreviewUnavailable" xml:space="preserve"><value>Preview unavailable</value></data>
+  <data name="MachinePhotosProcessingTitle" xml:space="preserve"><value>Processing Upload</value></data>
+  <data name="MachinePhotosBatchProgressText" xml:space="preserve"><value>Processed {0} of {1} staged photos.</value></data>
+  <data name="MachinePhotosPickerCanceled" xml:space="preserve"><value>No files were selected.</value></data>
+  <data name="MachinePhotosSelectionTrimmed" xml:space="preserve"><value>Only the first {0} files were staged because a batch can hold at most {1} photos.</value></data>
+  <data name="MachinePhotosMaxImagesReached" xml:space="preserve"><value>You already have the maximum of {0} staged photos.</value></data>
+  <data name="MachinePhotosUnsupportedFormat" xml:space="preserve"><value>{0} uses an unsupported image format.</value></data>
+  <data name="MachinePhotosFileTooLarge" xml:space="preserve"><value>{0} exceeds the 50 MB upload limit.</value></data>
+  <data name="MachinePhotosBatchNotReady" xml:space="preserve"><value>Select a license and wait for every staged photo to finish uploading before submitting the batch.</value></data>
+  <data name="MachinePhotosCommitFailed" xml:space="preserve"><value>Failed to submit the staged batch.</value></data>
+  <data name="MachinePhotosPollingFailed" xml:space="preserve"><value>Unable to retrieve upload progress for the staged batch.</value></data>
+  <data name="MachinePhotosBatchFinished" xml:space="preserve"><value>Batch finished. {0} photo(s) succeeded and {1} failed.</value></data>
+  <data name="MachinePhotosFailedToRemoveStaged" xml:space="preserve"><value>Failed to remove the staged photo.</value></data>
+  <data name="MachinePhotosUploadingCardStatus" xml:space="preserve"><value>Uploading to staging...</value></data>
+  <data name="MachinePhotosReadyCardStatus" xml:space="preserve"><value>Ready to submit</value></data>
+  <data name="MachinePhotosFileRejectedStatus" xml:space="preserve"><value>Staging failed</value></data>
+  <data name="MachinePhotosCommittingCardStatus" xml:space="preserve"><value>Submitting batch...</value></data>
+  <data name="MachinePhotosProcessingCardStatus" xml:space="preserve"><value>Processing on server...</value></data>
+  <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>Queued for processing</value></data>
+  <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Uploaded successfully</value></data>
+  <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Upload failed</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Select a license...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Please select a license before uploading.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>Source URL (optional)</value></data>

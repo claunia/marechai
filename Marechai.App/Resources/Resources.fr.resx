@@ -2005,6 +2005,33 @@
   <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les photos de machines.</value></data>
   <data name="UploadPhotoLabel" xml:space="preserve"><value>Télécharger une photo</value></data>
+  <data name="MachinePhotosBatchSectionTitle" xml:space="preserve"><value>Téléversement par lot</value></data>
+  <data name="MachinePhotosBatchSectionSubtitle" xml:space="preserve"><value>Préparez jusqu'à 25 photos de machine, attribuez une licence commune au lot et définissez éventuellement une URL source pour chaque photo.</value></data>
+  <data name="MachinePhotosAddImagesButton" xml:space="preserve"><value>Ajouter des images</value></data>
+  <data name="MachinePhotosClearStagedButton" xml:space="preserve"><value>Vider la sélection</value></data>
+  <data name="MachinePhotosSubmitBatchButton" xml:space="preserve"><value>Téléverser les photos</value></data>
+  <data name="MachinePhotosNoImagesStaged" xml:space="preserve"><value>Aucune image n'a encore été préparée. Ajoutez une ou plusieurs photos pour lancer un téléversement par lot.</value></data>
+  <data name="MachinePhotosPreviewUnavailable" xml:space="preserve"><value>Aperçu indisponible</value></data>
+  <data name="MachinePhotosProcessingTitle" xml:space="preserve"><value>Traitement du téléversement</value></data>
+  <data name="MachinePhotosBatchProgressText" xml:space="preserve"><value>{0} photo(s) préparée(s) sur {1} ont été traitée(s).</value></data>
+  <data name="MachinePhotosPickerCanceled" xml:space="preserve"><value>Aucun fichier n'a été sélectionné.</value></data>
+  <data name="MachinePhotosSelectionTrimmed" xml:space="preserve"><value>Seuls les {0} premiers fichiers ont été préparés, car un lot ne peut contenir que {1} photos au maximum.</value></data>
+  <data name="MachinePhotosMaxImagesReached" xml:space="preserve"><value>Vous avez déjà atteint le maximum de {0} photos préparées.</value></data>
+  <data name="MachinePhotosUnsupportedFormat" xml:space="preserve"><value>{0} utilise un format d'image non pris en charge.</value></data>
+  <data name="MachinePhotosFileTooLarge" xml:space="preserve"><value>{0} dépasse la limite de téléversement de 50 Mo.</value></data>
+  <data name="MachinePhotosBatchNotReady" xml:space="preserve"><value>Sélectionnez une licence et attendez que toutes les photos préparées aient terminé leur téléversement avant d'envoyer le lot.</value></data>
+  <data name="MachinePhotosCommitFailed" xml:space="preserve"><value>Impossible d'envoyer le lot préparé.</value></data>
+  <data name="MachinePhotosPollingFailed" xml:space="preserve"><value>Impossible de récupérer la progression du téléversement pour le lot préparé.</value></data>
+  <data name="MachinePhotosBatchFinished" xml:space="preserve"><value>Lot terminé. {0} photo(s) ont réussi et {1} ont échoué.</value></data>
+  <data name="MachinePhotosFailedToRemoveStaged" xml:space="preserve"><value>Impossible de retirer la photo préparée.</value></data>
+  <data name="MachinePhotosUploadingCardStatus" xml:space="preserve"><value>Téléversement vers la zone de préparation...</value></data>
+  <data name="MachinePhotosReadyCardStatus" xml:space="preserve"><value>Prête à être envoyée</value></data>
+  <data name="MachinePhotosFileRejectedStatus" xml:space="preserve"><value>Préparation échouée</value></data>
+  <data name="MachinePhotosCommittingCardStatus" xml:space="preserve"><value>Envoi du lot...</value></data>
+  <data name="MachinePhotosProcessingCardStatus" xml:space="preserve"><value>Traitement sur le serveur...</value></data>
+  <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>En file d'attente</value></data>
+  <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Téléversée avec succès</value></data>
+  <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Échec du téléversement</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Sélectionner une licence...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Veuillez sélectionner une licence avant de télécharger.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>URL source (optionnel)</value></data>
