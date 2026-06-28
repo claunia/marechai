@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -536,6 +538,152 @@ public class MagazinesService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error removing machine family from magazine {Id}", id);
+
+            return false;
+        }
+    }
+
+    // --- Magazine Issue admin CRUD ---
+    public async Task<List<MagazineIssueDto>> GetIssuesByMagazineAsync(long magazineId)
+    {
+        try
+        {
+            List<MagazineIssueDto>? issues = await _apiClient.Magazines[magazineId].Issues.GetAsync();
+
+            return issues ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching issues for magazine {Id}", magazineId);
+
+            return [];
+        }
+    }
+
+    public async Task<long?> CreateIssueAsync(MagazineIssueDto dto)
+    {
+        try
+        {
+            return await _apiClient.Magazines.Issues.PostAsync(dto);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating magazine issue");
+
+            return null;
+        }
+    }
+
+    public async Task<bool> UpdateIssueAsync(long id, MagazineIssueDto dto)
+    {
+        try
+        {
+            await _apiClient.Magazines.Issues[id].PutAsync(dto);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating magazine issue {Id}", id);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteIssueAsync(long id)
+    {
+        try
+        {
+            await _apiClient.Magazines.Issues[id].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting magazine issue {Id}", id);
+
+            return false;
+        }
+    }
+
+    // --- Magazine Issue cover ---
+    public async Task<MagazineIssueDto?> UploadIssueCoverAsync(long issueId, byte[] fileBytes, string fileName,
+                                                                string? contentType)
+    {
+        try
+        {
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", contentType ?? "application/octet-stream", new MemoryStream(fileBytes),
+                                  fileName);
+
+            return await _apiClient.Magazines.Issues[issueId].Cover.Upload.PostAsync(body);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading cover for magazine issue {Id}", issueId);
+
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteIssueCoverAsync(long issueId)
+    {
+        try
+        {
+            await _apiClient.Magazines.Issues[issueId].Cover.DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting cover for magazine issue {Id}", issueId);
+
+            return false;
+        }
+    }
+
+    // --- Software junction ---
+    public async Task<List<MagazineBySoftwareDto>> GetSoftwareByMagazineAsync(long magazineId)
+    {
+        try
+        {
+            List<MagazineBySoftwareDto>? software = await _apiClient.Magazines[magazineId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software for magazine {Id}", magazineId);
+
+            return [];
+        }
+    }
+
+    public async Task<long?> AddSoftwareToMagazineAsync(MagazineBySoftwareDto dto)
+    {
+        try
+        {
+            return await _apiClient.MagazinesBySoftware.PostAsync(dto);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding software to magazine");
+
+            return null;
+        }
+    }
+
+    public async Task<bool> RemoveSoftwareFromMagazineAsync(long id)
+    {
+        try
+        {
+            await _apiClient.MagazinesBySoftware[id].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing software from magazine {Id}", id);
 
             return false;
         }

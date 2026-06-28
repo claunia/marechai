@@ -2441,6 +2441,38 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Error al guardar revista.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Error al eliminar revista.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>El título es obligatorio.</value></data>
+  <data name="IssuesButton" xml:space="preserve"><value>Números</value></data>
+  <data name="BackToMagazinesButton" xml:space="preserve"><value>Volver a Revistas</value></data>
+  <data name="MagazineIssuesManagementTitle" xml:space="preserve"><value>Números de Revista</value></data>
+  <data name="AddMagazineIssueButton" xml:space="preserve"><value>Añadir Número</value></data>
+  <data name="RefreshMagazineIssuesButton" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="MagazineIssueNumberColumn" xml:space="preserve"><value>Número de Edición</value></data>
+  <data name="MagazineIssueCaptionColumn" xml:space="preserve"><value>Título</value></data>
+  <data name="MagazineIssueNativeCaptionColumn" xml:space="preserve"><value>Título Original</value></data>
+  <data name="MagazineIssueProductCodeColumn" xml:space="preserve"><value>Código de Producto</value></data>
+  <data name="MagazineIssuePagesColumn" xml:space="preserve"><value>Páginas</value></data>
+  <data name="EditMagazineIssueButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteMagazineIssueButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="MagazineIssueCaptionLabel" xml:space="preserve"><value>Título</value></data>
+  <data name="MagazineIssueNativeCaptionLabel" xml:space="preserve"><value>Título Original</value></data>
+  <data name="MagazineIssueNumberLabel" xml:space="preserve"><value>Número de Edición</value></data>
+  <data name="MagazineIssueProductCodeLabel" xml:space="preserve"><value>Código de Producto</value></data>
+  <data name="MagazineIssuePagesLabel" xml:space="preserve"><value>Páginas</value></data>
+  <data name="MagazineIssueInternetArchiveUrlLabel" xml:space="preserve"><value>Enlace de Internet Archive</value></data>
+  <data name="MagazineIssueCoverSectionHeader" xml:space="preserve"><value>Portada</value></data>
+  <data name="MagazineIssueHasCoverMessage" xml:space="preserve"><value>Este número tiene una imagen de portada.</value></data>
+  <data name="MagazineIssueNoCoverMessage" xml:space="preserve"><value>Sin imagen de portada.</value></data>
+  <data name="MagazineIssueSoftwareSectionHeader" xml:space="preserve"><value>Software</value></data>
+  <data name="AddMagazineIssueDialog_Title" xml:space="preserve"><value>Añadir Número</value></data>
+  <data name="EditMagazineIssueDialog_Title" xml:space="preserve"><value>Editar Número</value></data>
+  <data name="FailedToLoadMagazineIssues" xml:space="preserve"><value>Error al cargar los números de la revista.</value></data>
+  <data name="FailedToSaveMagazineIssue" xml:space="preserve"><value>Error al guardar el número de la revista.</value></data>
+  <data name="FailedToDeleteMagazineIssue" xml:space="preserve"><value>Error al eliminar el número de la revista.</value></data>
+  <data name="MagazineIssueCaptionRequired" xml:space="preserve"><value>El título es obligatorio.</value></data>
+  <data name="MagazineIssueCoverUploadedSuccessfully" xml:space="preserve"><value>Portada subida correctamente.</value></data>
+  <data name="MagazineIssueCoverUploadFailed" xml:space="preserve"><value>Error al subir la portada.</value></data>
+  <data name="MagazineIssueCoverDeleted" xml:space="preserve"><value>Portada eliminada.</value></data>
+  <data name="MagazineIssueCoverDeleteFailed" xml:space="preserve"><value>Error al eliminar la portada.</value></data>
 
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
   <data name="AccessDeniedMessage" xml:space="preserve"><value>Necesita privilegios de administrador para acceder a esta página.</value></data>

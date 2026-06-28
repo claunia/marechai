@@ -2301,6 +2301,38 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Zeitschrift konnte nicht gespeichert werden.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Zeitschrift konnte nicht gelöscht werden.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>Titel ist erforderlich.</value></data>
+  <data name="IssuesButton" xml:space="preserve"><value>Ausgaben</value></data>
+  <data name="BackToMagazinesButton" xml:space="preserve"><value>Zurück zu Zeitschriften</value></data>
+  <data name="MagazineIssuesManagementTitle" xml:space="preserve"><value>Zeitschriftenausgaben</value></data>
+  <data name="AddMagazineIssueButton" xml:space="preserve"><value>Ausgabe hinzufügen</value></data>
+  <data name="RefreshMagazineIssuesButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="MagazineIssueNumberColumn" xml:space="preserve"><value>Ausgabennummer</value></data>
+  <data name="MagazineIssueCaptionColumn" xml:space="preserve"><value>Titel</value></data>
+  <data name="MagazineIssueNativeCaptionColumn" xml:space="preserve"><value>Originaltitel</value></data>
+  <data name="MagazineIssueProductCodeColumn" xml:space="preserve"><value>Produktcode</value></data>
+  <data name="MagazineIssuePagesColumn" xml:space="preserve"><value>Seiten</value></data>
+  <data name="EditMagazineIssueButton" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="DeleteMagazineIssueButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="MagazineIssueCaptionLabel" xml:space="preserve"><value>Titel</value></data>
+  <data name="MagazineIssueNativeCaptionLabel" xml:space="preserve"><value>Originaltitel</value></data>
+  <data name="MagazineIssueNumberLabel" xml:space="preserve"><value>Ausgabennummer</value></data>
+  <data name="MagazineIssueProductCodeLabel" xml:space="preserve"><value>Produktcode</value></data>
+  <data name="MagazineIssuePagesLabel" xml:space="preserve"><value>Seiten</value></data>
+  <data name="MagazineIssueInternetArchiveUrlLabel" xml:space="preserve"><value>Internet-Archiv-Link</value></data>
+  <data name="MagazineIssueCoverSectionHeader" xml:space="preserve"><value>Cover</value></data>
+  <data name="MagazineIssueHasCoverMessage" xml:space="preserve"><value>Diese Ausgabe hat ein Coverbild.</value></data>
+  <data name="MagazineIssueNoCoverMessage" xml:space="preserve"><value>Kein Coverbild.</value></data>
+  <data name="MagazineIssueSoftwareSectionHeader" xml:space="preserve"><value>Software</value></data>
+  <data name="AddMagazineIssueDialog_Title" xml:space="preserve"><value>Ausgabe hinzufügen</value></data>
+  <data name="EditMagazineIssueDialog_Title" xml:space="preserve"><value>Ausgabe bearbeiten</value></data>
+  <data name="FailedToLoadMagazineIssues" xml:space="preserve"><value>Fehler beim Laden der Zeitschriftenausgaben.</value></data>
+  <data name="FailedToSaveMagazineIssue" xml:space="preserve"><value>Fehler beim Speichern der Zeitschriftenausgabe.</value></data>
+  <data name="FailedToDeleteMagazineIssue" xml:space="preserve"><value>Fehler beim Löschen der Zeitschriftenausgabe.</value></data>
+  <data name="MagazineIssueCaptionRequired" xml:space="preserve"><value>Titel ist erforderlich.</value></data>
+  <data name="MagazineIssueCoverUploadedSuccessfully" xml:space="preserve"><value>Cover erfolgreich hochgeladen.</value></data>
+  <data name="MagazineIssueCoverUploadFailed" xml:space="preserve"><value>Cover konnte nicht hochgeladen werden.</value></data>
+  <data name="MagazineIssueCoverDeleted" xml:space="preserve"><value>Cover gelöscht.</value></data>
+  <data name="MagazineIssueCoverDeleteFailed" xml:space="preserve"><value>Cover konnte nicht gelöscht werden.</value></data>
 
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
   <data name="AccessDeniedMessage" xml:space="preserve"><value>Sie benötigen Administratorrechte, um auf diese Seite zuzugreifen.</value></data>

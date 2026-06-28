@@ -19,6 +19,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<AdminMagazinesViewModel>   _logger;
     private readonly ITokenService                      _tokenService;
+    private readonly IRegionManager                     _regionManager;
 
     // --- List state ---
     [ObservableProperty] private ObservableCollection<MagazineDto> _magazines = [];
@@ -100,7 +101,8 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
                                    IJwtService                        jwtService,
                                    ITokenService                      tokenService,
                                    ILogger<AdminMagazinesViewModel>   logger,
-                                   IStringLocalizer                   localizer)
+                                   IStringLocalizer                   localizer,
+                                   IRegionManager                     regionManager)
     {
         _apiClient        = apiClient;
         _magazinesService = magazinesService;
@@ -108,10 +110,12 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         _tokenService     = tokenService;
         _logger           = logger;
         _localizer        = localizer;
+        _regionManager     = regionManager;
 
         LoadMagazinesCommand         = new AsyncRelayCommand(LoadMagazinesAsync);
         OpenAddMagazineCommand       = new RelayCommand(OpenAddMagazine);
         OpenEditMagazineCommand      = new RelayCommand<MagazineDto>(OpenEditMagazine);
+        OpenIssuesCommand            = new RelayCommand<MagazineDto>(OpenIssues);
         DeleteMagazineCommand        = new AsyncRelayCommand<MagazineDto>(DeleteMagazineAsync);
         SaveMagazineCommand          = new AsyncRelayCommand(SaveMagazineAsync);
         CancelEditCommand            = new RelayCommand(CancelEdit);
@@ -141,6 +145,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand                LoadMagazinesCommand         { get; }
     public IRelayCommand                     OpenAddMagazineCommand       { get; }
     public IRelayCommand<MagazineDto>        OpenEditMagazineCommand      { get; }
+    public IRelayCommand<MagazineDto>        OpenIssuesCommand            { get; }
     public IAsyncRelayCommand<MagazineDto>   DeleteMagazineCommand        { get; }
     public IAsyncRelayCommand                SaveMagazineCommand          { get; }
     public IRelayCommand                     CancelEditCommand            { get; }
@@ -245,6 +250,21 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
             ErrorMessage = _localizer["FailedToLoadMagazines"];
             HasError = true;
         }
+    }
+
+    // --- Navigate to issues ---
+    private void OpenIssues(MagazineDto? magazine)
+    {
+        if(magazine?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MagazineId, magazine.Id.Value },
+            { NavParamKeys.MagazineTitle, magazine.Title ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(Presentation.Views.Admin.AdminMagazineIssuesPage),
+                                       parameters);
     }
 
     // --- Delete magazine ---

@@ -310,6 +310,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
         containerRegistry.Register<AdminMagazinesViewModel>();
+        containerRegistry.Register<AdminMagazineIssuesViewModel>();
         containerRegistry.Register<SoftwareViewModel>();
         containerRegistry.Register<SoftwareListViewModel>();
         containerRegistry.Register<SoftwareViewViewModel>();
@@ -419,6 +420,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();
         containerRegistry.RegisterForNavigation<AdminMagazinesPage, AdminMagazinesViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMagazineIssuesPage, AdminMagazineIssuesViewModel>();
         containerRegistry.RegisterForNavigation<SoftwarePage, SoftwareViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareListPage, SoftwareListViewModel>();
         containerRegistry.RegisterForNavigation<SoftwareViewPage, SoftwareViewViewModel>();
