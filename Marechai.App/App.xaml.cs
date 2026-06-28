@@ -213,6 +213,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<INativeToastService, NativeToastService>();
         containerRegistry.RegisterSingleton<MessageNotificationStateService>();
         containerRegistry.RegisterSingleton<WwpcImportsService>();
+        containerRegistry.RegisterSingleton<OldDosImportsService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
         containerRegistry.RegisterSingleton<ISmartphonesListFilterContext, SmartphonesListFilterContext>();
@@ -312,6 +313,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
         containerRegistry.Register<AdminWwpcImportsViewModel>();
         containerRegistry.Register<AdminWwpcImportReviewViewModel>();
+        containerRegistry.Register<AdminOldDosImportsViewModel>();
+        containerRegistry.Register<AdminOldDosImportReviewViewModel>();
         containerRegistry.Register<AdminMessageReportsViewModel>();
         containerRegistry.Register<AdminInvitationCodesViewModel>();
         containerRegistry.Register<AdminReviewReportsViewModel>();
@@ -410,6 +413,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
+        containerRegistry.RegisterForNavigation<AdminOldDosImportsPage, AdminOldDosImportsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminOldDosImportReviewPage, AdminOldDosImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<AdminMessageReportsPage, AdminMessageReportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInvitationCodesPage, AdminInvitationCodesViewModel>();
         containerRegistry.RegisterForNavigation<AdminReviewReportsPage, AdminReviewReportsViewModel>();

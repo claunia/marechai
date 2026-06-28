@@ -2762,4 +2762,75 @@
   <data name="MessageReportsPaginationFormat" xml:space="preserve"><value>Affichage de {0}–{1} sur {2}</value></data>
   <data name="MessageReportsPreviousButton" xml:space="preserve"><value>Précédent</value></data>
   <data name="MessageReportsNextButton" xml:space="preserve"><value>Suivant</value></data>
+  <data name="OldDosImportsManagementButton" xml:space="preserve"><value>old-dos.ru imports</value></data>
+  <data name="OldDosImportsTitle" xml:space="preserve"><value>old-dos.ru imports</value></data>
+  <data name="OldDosImportsSubtitle" xml:space="preserve"><value>Review pending software pulled from old-dos.ru after the enrichment passes.</value></data>
+  <data name="OldDosImportsStatusTitle" xml:space="preserve"><value>Queue update</value></data>
+  <data name="OldDosHasErrorLabel" xml:space="preserve"><value>Has enrichment error</value></data>
+  <data name="OldDosDeveloperRawColumn" xml:space="preserve"><value>Developer (raw)</value></data>
+  <data name="OldDosOsColumn" xml:space="preserve"><value>OS</value></data>
+  <data name="OldDosVersionsColumn" xml:space="preserve"><value>Versions</value></data>
+  <data name="OldDosCrawledColumn" xml:space="preserve"><value>Crawled</value></data>
+  <data name="OldDosReviewButton" xml:space="preserve"><value>Review</value></data>
+  <data name="OldDosRejectButton" xml:space="preserve"><value>Reject</value></data>
+  <data name="OldDosOpenSourceButton" xml:space="preserve"><value>Open on old-dos</value></data>
+  <data name="OldDosStatusReadyOrSkipped" xml:space="preserve"><value>Ready or skipped</value></data>
+  <data name="OldDosStatusReadyForReview" xml:space="preserve"><value>Ready for review</value></data>
+  <data name="OldDosStatusSkipped" xml:space="preserve"><value>Skipped</value></data>
+  <data name="OldDosStatusAccepted" xml:space="preserve"><value>Accepted</value></data>
+  <data name="OldDosStatusDiscarded" xml:space="preserve"><value>Discarded</value></data>
+  <data name="OldDosStatusCrawled" xml:space="preserve"><value>Crawled (needs translation)</value></data>
+  <data name="OldDosStatusTranslated" xml:space="preserve"><value>Translated (needs description)</value></data>
+  <data name="OldDosStatusDescribed" xml:space="preserve"><value>Described (needs categorization)</value></data>
+  <data name="OldDosStatusCategorized" xml:space="preserve"><value>Categorized</value></data>
+  <data name="FailedToLoadOldDosImports" xml:space="preserve"><value>Failed to load old-dos imports.</value></data>
+  <data name="RejectedOldDosImportMessage" xml:space="preserve"><value>Rejected '{0}'.</value></data>
+  <data name="FailedToRejectOldDosImport" xml:space="preserve"><value>Failed to reject old-dos import.</value></data>
+  <data name="OldDosReviewTitle" xml:space="preserve"><value>Review old-dos import</value></data>
+  <data name="OldDosReviewStatusTitle" xml:space="preserve"><value>Review update</value></data>
+  <data name="OldDosSkipButton" xml:space="preserve"><value>Skip</value></data>
+  <data name="OldDosAcceptButton" xml:space="preserve"><value>Accept</value></data>
+  <data name="OldDosSourceIdLabel" xml:space="preserve"><value>Source ID</value></data>
+  <data name="OldDosExactMatchTitle" xml:space="preserve"><value>Existing software with the same normalized name found</value></data>
+  <data name="OldDosExactMatchMessage" xml:space="preserve"><value>Review the existing match before creating a new software entry.</value></data>
+  <data name="OldDosRussianDescriptionHeader" xml:space="preserve"><value>Russian original</value></data>
+  <data name="OldDosLiteralEnglishHeader" xml:space="preserve"><value>Literal English translation</value></data>
+  <data name="OldDosMuseumDescriptionLabel" xml:space="preserve"><value>Museum-grade English description</value></data>
+  <data name="OldDosPossibleMatchesTitle" xml:space="preserve"><value>Possible existing matches</value></data>
+  <data name="OldDosYearColumn" xml:space="preserve"><value>Year</value></data>
+  <data name="OldDosReleasesColumn" xml:space="preserve"><value>Releases</value></data>
+  <data name="OldDosJwScoreColumn" xml:space="preserve"><value>JW score</value></data>
+  <data name="OldDosMergeButton" xml:space="preserve"><value>Merge into this</value></data>
+  <data name="OldDosMergeModeTitle" xml:space="preserve"><value>Merge mode</value></data>
+  <data name="OldDosSwitchBackButton" xml:space="preserve"><value>Switch back to create new</value></data>
+  <data name="OldDosDeveloperSectionTitle" xml:space="preserve"><value>Developer company</value></data>
+  <data name="OldDosCompanySearchLabel" xml:space="preserve"><value>Company search</value></data>
+  <data name="OldDosSelectCompanyLabel" xml:space="preserve"><value>Select company</value></data>
+  <data name="OldDosCreateCompanyButton" xml:space="preserve"><value>Create new company</value></data>
+  <data name="OldDosNewCompanyNameLabel" xml:space="preserve"><value>New company name</value></data>
+  <data name="OldDosGenresSectionTitle" xml:space="preserve"><value>Categories</value></data>
+  <data name="OldDosGenreSearchLabel" xml:space="preserve"><value>Category search</value></data>
+  <data name="OldDosSelectGenreLabel" xml:space="preserve"><value>Select category</value></data>
+  <data name="OldDosAddGenreButton" xml:space="preserve"><value>Add category</value></data>
+  <data name="OldDosVersionsSectionTitle" xml:space="preserve"><value>Versions</value></data>
+  <data name="OldDosEnableAllButton" xml:space="preserve"><value>Enable all</value></data>
+  <data name="OldDosDisableAllButton" xml:space="preserve"><value>Disable all</value></data>
+  <data name="OldDosIncludeColumn" xml:space="preserve"><value>Include</value></data>
+  <data name="OldDosVersionColumn" xml:space="preserve"><value>Version</value></data>
+  <data name="OldDosReleaseDateColumn" xml:space="preserve"><value>Release date</value></data>
+  <data name="OldDosDownloadColumn" xml:space="preserve"><value>Download</value></data>
+  <data name="OldDosReleasePrecisionDefault" xml:space="preserve"><value>(default)</value></data>
+  <data name="OldDosReleasePrecisionDay" xml:space="preserve"><value>Day</value></data>
+  <data name="OldDosReleasePrecisionMonth" xml:space="preserve"><value>Month</value></data>
+  <data name="OldDosReleasePrecisionYear" xml:space="preserve"><value>Year</value></data>
+  <data name="OldDosDeveloperRequired" xml:space="preserve"><value>Pick a developer company first.</value></data>
+  <data name="FailedToLoadOldDosImportDetail" xml:space="preserve"><value>Failed to load old-dos import detail.</value></data>
+  <data name="FailedToAcceptOldDosImport" xml:space="preserve"><value>Failed to accept old-dos import.</value></data>
+  <data name="AcceptedOldDosImportMessage" xml:space="preserve"><value>Promoted to software #{0} ({1} versions, {2} releases, {3} descriptions, {4} genres).</value></data>
+  <data name="SkippedOldDosImportMessage" xml:space="preserve"><value>Skipped old-dos import.</value></data>
+  <data name="FailedToSkipOldDosImport" xml:space="preserve"><value>Failed to skip old-dos import.</value></data>
+  <data name="DiscardedOldDosImportMessage" xml:space="preserve"><value>Discarded old-dos import.</value></data>
+  <data name="FailedToDiscardOldDosImport" xml:space="preserve"><value>Failed to discard old-dos import.</value></data>
+  <data name="FailedToCreateOldDosCompany" xml:space="preserve"><value>Failed to create company.</value></data>
+  <data name="CreatedOldDosCompanyMessage" xml:space="preserve"><value>Created company #{0}: {1}</value></data>
 </root>

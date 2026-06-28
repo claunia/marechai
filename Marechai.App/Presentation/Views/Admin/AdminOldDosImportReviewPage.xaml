@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page x:Class="Marechai.App.Presentation.Views.Admin.AdminOldDosImportReviewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:models="using:Marechai.ApiClient.Models"
+      x:Name="PageRoot"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <x:String x:Key="DashValue">-</x:String>
+    </Page.Resources>
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Content="&#xE72B;"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource TextBlockButtonStyle}"
+                    Padding="8,4"
+                    VerticalAlignment="Center"
+                    Margin="0,0,12,0" />
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosReviewTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Detail.Name}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosSkipButton}"
+                        Command="{Binding SkipCommand}" />
+                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosRejectButton}"
+                        Command="{Binding DiscardCommand}"
+                        Foreground="{ThemeResource SystemErrorTextColor}" />
+                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosAcceptButton}"
+                        Command="{Binding AcceptCommand}"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=AccessDeniedTitle}"
+                         Message="{Binding Source={StaticResource Strings}, Path=AccessDeniedMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="480">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=ErrorTitle}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <ScrollViewer Visibility="{Binding IsLoading, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="16" Spacing="16">
+                    <InfoBar IsOpen="True"
+                             Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                             Severity="{Binding StatusIsSuccess, Converter={StaticResource BoolToInfoBarSeverityConverter}}"
+                             Title="{Binding Source={StaticResource Strings}, Path=OldDosReviewStatusTitle}"
+                             Message="{Binding StatusMessage}"
+                             IsClosable="True" />
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="8">
+                            <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=OldDosOpenSourceButton}"
+                                             Click="OpenImportSource_Click"
+                                             HorizontalAlignment="Left" />
+                            <TextBlock TextWrapping="Wrap">
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=OldDosSourceIdLabel}" />
+                                <Run Text=": " />
+                                <Run Text="{Binding Detail.SourceId}" />
+                                <Run Text="   " />
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=OldDosOsColumn}" />
+                                <Run Text=": " />
+                                <Run Text="{Binding Detail.OsName, TargetNullValue={StaticResource DashValue}}" />
+                                <Run Text="   " />
+                                <Run Text="{Binding Source={StaticResource Strings}, Path=OldDosDeveloperRawColumn}" />
+                                <Run Text=": " />
+                                <Run Text="{Binding Detail.DeveloperName, TargetNullValue={StaticResource DashValue}}" />
+                            </TextBlock>
+                            <TextBlock Text="{Binding Detail.RussianCategoryPath}"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding Detail.RussianCategoryPath, Converter={StaticResource StringToVisibilityConverter}}" />
+                        </StackPanel>
+                    </Border>
+
+                    <InfoBar IsOpen="{Binding HasExactMatch}"
+                             Severity="Warning"
+                             Title="{Binding Source={StaticResource Strings}, Path=OldDosExactMatchTitle}"
+                             Message="{Binding Source={StaticResource Strings}, Path=OldDosExactMatchMessage}" />
+
+                    <Expander Header="{Binding Source={StaticResource Strings}, Path=OldDosRussianDescriptionHeader}">
+                        <TextBox Text="{Binding Detail.RussianDescription}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsReadOnly="True"
+                                 MinHeight="120" />
+                    </Expander>
+
+                    <Expander Header="{Binding Source={StaticResource Strings}, Path=OldDosLiteralEnglishHeader}">
+                        <TextBox Text="{Binding Detail.EnglishDescriptionLiteral}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsReadOnly="True"
+                                 MinHeight="120" />
+                    </Expander>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosMuseumDescriptionLabel}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                            <TextBox Text="{Binding MuseumDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     MinHeight="180" />
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         Header="{Binding Source={StaticResource Strings}, Path=NameLabel}"
+                                         Text="{Binding NameOverride, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ComboBox Grid.Column="1"
+                                          Header="{Binding Source={StaticResource Strings}, Path=TypeText}"
+                                          ItemsSource="{Binding KindOptions}"
+                                          SelectedItem="{Binding SelectedKindOption, Mode=TwoWay}"
+                                          DisplayMemberPath="Label" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16"
+                            Visibility="{Binding NameMatches.Count, Converter={StaticResource CountToVisibilityConverter}}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosPossibleMatchesTitle}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                            <controls:DataGrid AutoGenerateColumns="False"
+                                               ItemsSource="{Binding NameMatches}"
+                                               IsReadOnly="True"
+                                               HeadersVisibility="Column"
+                                               GridLinesVisibility="None">
+                                <controls:DataGrid.Columns>
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=NameColumn_Header}" Binding="{Binding Name}" Width="2*" />
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=TypeText}" Binding="{Binding KindLabel}" Width="*" />
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosYearColumn}" Binding="{Binding YearLabel}" Width="Auto" />
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosReleasesColumn}" Binding="{Binding ReleaseCount}" Width="Auto" />
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosJwScoreColumn}" Binding="{Binding ScoreLabel}" Width="Auto" />
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=ActionsColumn}" Width="Auto">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosMergeButton}"
+                                                        Click="Merge_Click"
+                                                        CommandParameter="{Binding}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                </controls:DataGrid.Columns>
+                            </controls:DataGrid>
+                            <InfoBar IsOpen="True"
+                                     Visibility="{Binding MergeTargetId, Converter={StaticResource NullableToVisibilityConverter}}"
+                                     Severity="Informational"
+                                     Title="{Binding Source={StaticResource Strings}, Path=OldDosMergeModeTitle}"
+                                     Message="{Binding MergeTargetName}" />
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosSwitchBackButton}"
+                                    Command="{Binding ExitMergeModeCommand}"
+                                    Visibility="{Binding MergeTargetId, Converter={StaticResource NullableToVisibilityConverter}}"
+                                    HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosDeveloperSectionTitle}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=OldDosCompanySearchLabel}"
+                                     Text="{Binding CompanySearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=OldDosSelectCompanyLabel}"
+                                      ItemsSource="{Binding CompanySuggestions}"
+                                      SelectedItem="{Binding SelectedDeveloper, Mode=TwoWay}"
+                                      DisplayMemberPath="Name" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosCreateCompanyButton}"
+                                        Click="OpenCreateCompany_Click" />
+                                <TextBlock Text="{Binding SelectedDeveloper.Name}"
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding SelectedDeveloper.Name, Converter={StaticResource StringToVisibilityConverter}}" />
+                            </StackPanel>
+
+                            <StackPanel Visibility="{Binding ShowCreateCompany, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Spacing="8">
+                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=OldDosNewCompanyNameLabel}"
+                                         Text="{Binding NewCompanyName, Mode=TwoWay}" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
+                                            Command="{Binding CreateCompanyCommand}"
+                                            Style="{ThemeResource AccentButtonStyle}" />
+                                    <Button Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Click="CancelCreateCompany_Click" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosGenresSectionTitle}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                            <ItemsRepeater ItemsSource="{Binding SelectedGenres}"
+                                           Visibility="{Binding SelectedGenres.Count, Converter={StaticResource CountToVisibilityConverter}}">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Orientation="Horizontal" Spacing="8" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SoftwareGenreDto">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" />
+                                            <Button Content="x"
+                                                    Click="RemoveGenre_Click"
+                                                    CommandParameter="{x:Bind}"
+                                                    Style="{ThemeResource TextBlockButtonStyle}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=OldDosGenreSearchLabel}"
+                                     Text="{Binding GenreSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=OldDosSelectGenreLabel}"
+                                      ItemsSource="{Binding GenreSuggestions}"
+                                      SelectedItem="{Binding SelectedGenreToAdd, Mode=TwoWay}"
+                                      DisplayMemberPath="Name" />
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosAddGenreButton}"
+                                    Click="AddGenre_Click"
+                                    HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <StackPanel Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=OldDosVersionsSectionTitle}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosEnableAllButton}"
+                                        Command="{Binding EnableAllVersionsCommand}" />
+                                <Button Content="{Binding Source={StaticResource Strings}, Path=OldDosDisableAllButton}"
+                                        Command="{Binding DisableAllVersionsCommand}" />
+                            </StackPanel>
+                            <controls:DataGrid AutoGenerateColumns="False"
+                                               ItemsSource="{Binding VersionDecisions}"
+                                               HeadersVisibility="Column"
+                                               GridLinesVisibility="None">
+                                <controls:DataGrid.Columns>
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosIncludeColumn}" Width="Auto">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding Include, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosVersionColumn}" Width="2*">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding OriginalVersionString}" FontWeight="SemiBold" />
+                                                    <TextBox Text="{Binding VersionStringOverride, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosReleaseDateColumn}" Width="2*">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Spacing="4">
+                                                    <CalendarDatePicker Date="{Binding ReleaseDateOverride, Mode=TwoWay}" />
+                                                    <ComboBox ItemsSource="{Binding DataContext.ReleasePrecisionOptions, ElementName=PageRoot}"
+                                                              SelectedItem="{Binding ReleasePrecisionOption, Mode=TwoWay}"
+                                                              DisplayMemberPath="Label" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=PlatformLabel}" Width="2*">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding OsHint}"
+                                                               FontSize="11"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <ComboBox ItemsSource="{Binding DataContext.PlatformSuggestions, ElementName=PageRoot}"
+                                                              SelectedItem="{Binding Platform, Mode=TwoWay}"
+                                                              DisplayMemberPath="Name" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=OldDosDownloadColumn}" Width="Auto">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <HyperlinkButton Content="{Binding FileName}"
+                                                                 Click="OpenDownload_Click"
+                                                                 CommandParameter="{Binding}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                </controls:DataGrid.Columns>
+                            </controls:DataGrid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

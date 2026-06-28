@@ -84,6 +84,7 @@ public partial class MainViewModel : ObservableObject
     public string ExternalSiteManagementButtonText     => _localizer["ExternalSiteManagementButton"];
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string WwpcImportsManagementButtonText     => _localizer["WwpcImportsManagementButton"];
+    public string OldDosImportsManagementButtonText   => _localizer["OldDosImportsManagementButton"];
     public string MessageReportsManagementButtonText  => "Message Reports";
     public string InvitationCodesManagementButtonText => _localizer["InvitationCodesManagementButton"];
     public string ReviewReportsManagementButtonText   => _localizer["ReviewReportsManagementButton"];
@@ -165,6 +166,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminExternalSitesCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminExternalSitesPage)));
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
+        NavigateToAdminOldDosImportsCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminOldDosImportsPage)));
         NavigateToAdminMessageReportsCommand               = new RelayCommand(() => NavigateTo(nameof(AdminMessageReportsPage)));
         NavigateToAdminInvitationCodesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminInvitationCodesPage)));
         NavigateToAdminReviewReportsCommand                = new RelayCommand(() => NavigateTo(nameof(AdminReviewReportsPage)));
@@ -237,6 +239,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminExternalSitesCommand       { get; }
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
+    public ICommand NavigateToAdminOldDosImportsCommand       { get; }
     public ICommand NavigateToAdminMessageReportsCommand      { get; }
     public ICommand NavigateToAdminInvitationCodesCommand     { get; }
     public ICommand NavigateToAdminReviewReportsCommand       { get; }
