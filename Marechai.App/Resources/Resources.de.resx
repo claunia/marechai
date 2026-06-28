@@ -1951,6 +1951,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
+  <data name="ProcessorVideosTitle" xml:space="preserve"><value>Prozessorvideos</value></data>
+  <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Prozessorvideos verknüpfen, prüfen und verwalten</value></data>
+  <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Administratorzugriff erforderlich</value></data>
+  <data name="ProcessorVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Prozessorvideos zu verwalten.</value></data>
+  <data name="ProcessorVideosLinkSectionTitle" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="ProcessorVideosLinkSectionSubtitle" xml:space="preserve"><value>Fügen Sie für diesen Prozessor einen neuen Videolink mit einer YouTube-URL, einer YouTube-Video-ID oder einem benutzerdefinierten Anbieter-/Video-ID-Paar hinzu.</value></data>
+  <data name="ProcessorVideosUrlInputLabel" xml:space="preserve"><value>YouTube-URL oder Video-ID</value></data>
+  <data name="ProcessorVideosDetectedIdLabel" xml:space="preserve"><value>Erkannte Video-ID</value></data>
+  <data name="ProcessorVideosAdvancedSectionTitle" xml:space="preserve"><value>Erweitert</value></data>
+  <data name="ProcessorVideosManualIdLabel" xml:space="preserve"><value>Manuelle Video-ID</value></data>
+  <data name="ProcessorVideosManualIdHelpText" xml:space="preserve"><value>Verwenden Sie dies, wenn die URL nicht analysiert werden kann oder wenn Sie einen Nicht-YouTube-Anbieter verknüpfen.</value></data>
+  <data name="ProcessorVideosLinkButton" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="ProcessorVideosEmptyMessage" xml:space="preserve"><value>Diesem Prozessor sind noch keine Videos zugeordnet.</value></data>
+  <data name="ProcessorVideosLoadFailed" xml:space="preserve"><value>Prozessorvideos konnten nicht geladen werden.</value></data>
+  <data name="ProcessorVideosLinkFailed" xml:space="preserve"><value>Prozessorvideo konnte nicht verknüpft werden.</value></data>
+  <data name="ProcessorVideosUpdateFailed" xml:space="preserve"><value>Prozessorvideo konnte nicht aktualisiert werden.</value></data>
+  <data name="ProcessorVideosDeleteFailed" xml:space="preserve"><value>Prozessorvideo konnte nicht gelöscht werden.</value></data>
+  <data name="ProcessorVideosOpenFailed" xml:space="preserve"><value>Prozessorvideo konnte nicht geöffnet werden.</value></data>
+  <data name="ProcessorVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
+  <data name="ProcessorVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
+  <data name="ProcessorVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um GPU-Fotos zu verwalten.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>

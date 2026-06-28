@@ -170,6 +170,11 @@
                                                             CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}"
                                                             Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=VideosButton}"
+                                                            Command="{Binding DataContext.OpenVideosCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}"
+                                                            Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteProcessorButton}"
                                                             Command="{Binding DataContext.DeleteProcessorCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"

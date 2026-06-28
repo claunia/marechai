@@ -181,6 +181,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         OpenAddProcessorCommand  = new RelayCommand(OpenAddProcessor);
         OpenEditProcessorCommand = new RelayCommand<ProcessorDto>(OpenEditProcessor);
         OpenPhotosCommand        = new RelayCommand<ProcessorDto>(OpenPhotos);
+        OpenVideosCommand        = new RelayCommand<ProcessorDto>(OpenVideos);
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
         SaveProcessorCommand     = new AsyncRelayCommand(SaveProcessorAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
@@ -195,6 +196,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IRelayCommand                    OpenAddProcessorCommand  { get; }
     public IRelayCommand<ProcessorDto>      OpenEditProcessorCommand { get; }
     public IRelayCommand<ProcessorDto>      OpenPhotosCommand        { get; }
+    public IRelayCommand<ProcessorDto>      OpenVideosCommand        { get; }
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
     public IAsyncRelayCommand               SaveProcessorCommand     { get; }
     public IRelayCommand                    CancelEditCommand        { get; }
@@ -294,6 +296,19 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminProcessorPhotosPage), parameters);
+    }
+
+    private void OpenVideos(ProcessorDto? proc)
+    {
+        if(proc?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.ProcessorId, proc.Id.Value },
+            { NavParamKeys.ProcessorName, proc.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminProcessorVideosPage), parameters);
     }
 
     // --- Edit ---

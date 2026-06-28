@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -203,5 +205,109 @@ public class ProcessorsService
 
             return [];
         }
+    }
+
+    /// <summary>
+    ///     Creates a new video link for a processor.
+    /// </summary>
+    public async Task<(ProcessorVideoDto? dto, string? error)> CreateVideoAsync(int processorId, string provider,
+                                                                                 string videoId, string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Creating video link for Processor {ProcessorId}", processorId);
+
+            ProcessorVideoDto? dto = await _apiClient.Processors[processorId]
+                                                     .Videos
+                                                     .PostAsync(new CreateProcessorVideoRequest
+                                                      {
+                                                          Provider = provider,
+                                                          VideoId  = videoId,
+                                                          Title    = title
+                                                      });
+
+            return (dto, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error creating processor video for {ProcessorId}", processorId);
+
+            return (null, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error creating processor video for {ProcessorId}", processorId);
+
+            return (null, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Updates a processor video title.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> UpdateVideoTitleAsync(long id, string? title)
+    {
+        try
+        {
+            _logger.LogInformation("Updating processor video {VideoId}", id);
+
+            await _apiClient.Processors.Videos[id]
+                            .PutAsync(new UpdateProcessorVideoRequest
+                             {
+                                 Title = title
+                             });
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error updating processor video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating processor video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a processor video.
+    /// </summary>
+    public async Task<(bool succeeded, string? error)> DeleteVideoAsync(long id)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting processor video {VideoId}", id);
+
+            await _apiClient.Processors.Videos[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogWarning(ex, "API error deleting processor video {VideoId}", id);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting processor video {VideoId}", id);
+
+            return (false, ex.Message);
+        }
+    }
+
+    static string? ExtractDetail(ApiException exception)
+    {
+        if(exception is ProblemDetails problemDetails)
+        {
+            if(!string.IsNullOrWhiteSpace(problemDetails.Detail)) return problemDetails.Detail;
+            if(!string.IsNullOrWhiteSpace(problemDetails.Title)) return problemDetails.Title;
+        }
+
+        return string.IsNullOrWhiteSpace(exception.Message) ? "Unknown error" : exception.Message;
     }
 }

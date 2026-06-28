@@ -288,6 +288,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminGpuPhotosViewModel>();
         containerRegistry.Register<AdminGpuVideosViewModel>();
         containerRegistry.Register<AdminProcessorPhotosViewModel>();
+        containerRegistry.Register<AdminProcessorVideosViewModel>();
         containerRegistry.Register<AdminProcessorsViewModel>();
         containerRegistry.Register<AdminInstructionSetsViewModel>();
         containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
@@ -392,6 +393,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminGpuPhotosPage, AdminGpuPhotosViewModel>();
         containerRegistry.RegisterForNavigation<AdminGpuVideosPage, AdminGpuVideosViewModel>();
         containerRegistry.RegisterForNavigation<AdminProcessorPhotosPage, AdminProcessorPhotosViewModel>();
+        containerRegistry.RegisterForNavigation<AdminProcessorVideosPage, AdminProcessorVideosViewModel>();
         containerRegistry.RegisterForNavigation<AdminProcessorsPage, AdminProcessorsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetsPage, AdminInstructionSetsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();
