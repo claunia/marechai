@@ -2133,6 +2133,27 @@
   <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
   <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
   <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
+  <data name="MachineVideosTitle" xml:space="preserve"><value>Vídeos de la máquina</value></data>
+  <data name="MachineVideosSubtitle" xml:space="preserve"><value>Enlazar, revisar y gestionar vídeos de la máquina</value></data>
+  <data name="MachineVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="MachineVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar vídeos de máquinas.</value></data>
+  <data name="MachineVideosLinkSectionTitle" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="MachineVideosLinkSectionSubtitle" xml:space="preserve"><value>Añada un nuevo enlace de vídeo para esta máquina mediante una URL de YouTube, un ID de vídeo de YouTube o un par personalizado de proveedor/ID de vídeo.</value></data>
+  <data name="MachineVideosUrlInputLabel" xml:space="preserve"><value>URL de YouTube o ID de vídeo</value></data>
+  <data name="MachineVideosDetectedIdLabel" xml:space="preserve"><value>ID de vídeo detectado</value></data>
+  <data name="MachineVideosAdvancedSectionTitle" xml:space="preserve"><value>Opciones avanzadas</value></data>
+  <data name="MachineVideosManualIdLabel" xml:space="preserve"><value>ID de vídeo manual</value></data>
+  <data name="MachineVideosManualIdHelpText" xml:space="preserve"><value>Úselo cuando no se pueda analizar la URL o cuando quiera enlazar un proveedor distinto de YouTube.</value></data>
+  <data name="MachineVideosLinkButton" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="MachineVideosEmptyMessage" xml:space="preserve"><value>Todavía no hay vídeos vinculados a esta máquina.</value></data>
+  <data name="MachineVideosLoadFailed" xml:space="preserve"><value>No se pudieron cargar los vídeos de la máquina.</value></data>
+  <data name="MachineVideosLinkFailed" xml:space="preserve"><value>No se pudo enlazar el vídeo de la máquina.</value></data>
+  <data name="MachineVideosUpdateFailed" xml:space="preserve"><value>No se pudo actualizar el vídeo de la máquina.</value></data>
+  <data name="MachineVideosDeleteFailed" xml:space="preserve"><value>No se pudo eliminar el vídeo de la máquina.</value></data>
+  <data name="MachineVideosOpenFailed" xml:space="preserve"><value>No se pudo abrir el vídeo de la máquina.</value></data>
+  <data name="MachineVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
+  <data name="MachineVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
+  <data name="MachineVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de GPU.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>

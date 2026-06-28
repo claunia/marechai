@@ -195,6 +195,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<GpusService>();
         containerRegistry.RegisterSingleton<ProcessorsService>();
         containerRegistry.RegisterSingleton<SoundSynthsService>();
+        containerRegistry.RegisterSingleton<MachinesService>();
         containerRegistry.RegisterSingleton<PeopleService>();
         containerRegistry.RegisterSingleton<BooksService>();
         containerRegistry.RegisterSingleton<DocumentsService>();
@@ -301,6 +302,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminMachineFamiliesViewModel>();
         containerRegistry.Register<AdminCompanyLogosViewModel>();
         containerRegistry.Register<AdminMachinePhotosViewModel>();
+        containerRegistry.Register<AdminMachineVideosViewModel>();
         containerRegistry.Register<AdminPeopleViewModel>();
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
@@ -407,6 +409,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminMachineFamiliesPage, AdminMachineFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminCompanyLogosPage, AdminCompanyLogosViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachinePhotosPage, AdminMachinePhotosViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMachineVideosPage, AdminMachineVideosViewModel>();
         containerRegistry.RegisterForNavigation<AdminPeoplePage, AdminPeopleViewModel>();
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();
