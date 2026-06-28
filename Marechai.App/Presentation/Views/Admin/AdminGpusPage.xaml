@@ -169,6 +169,11 @@
                                                             CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}"
                                                             Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=PhotosButton}"
+                                                            Command="{Binding DataContext.OpenPhotosCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}"
+                                                            Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteGpuButton}"
                                                             Command="{Binding DataContext.DeleteGpuCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"

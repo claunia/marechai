@@ -2032,6 +2032,37 @@
   <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>En file d'attente</value></data>
   <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Téléversée avec succès</value></data>
   <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Échec du téléversement</value></data>
+  <data name="GpuPhotosTitle" xml:space="preserve"><value>Photos de GPU</value></data>
+  <data name="GpuPhotosSubtitle" xml:space="preserve"><value>Voir, télécharger et gérer les photos de GPU</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les photos de GPU.</value></data>
+  <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Téléversement par lot</value></data>
+  <data name="GpuPhotosBatchSectionSubtitle" xml:space="preserve"><value>Préparez jusqu'à 25 photos de GPU, attribuez une licence commune au lot et définissez éventuellement une URL source pour chaque photo.</value></data>
+  <data name="GpuPhotosAddImagesButton" xml:space="preserve"><value>Ajouter des images</value></data>
+  <data name="GpuPhotosClearStagedButton" xml:space="preserve"><value>Vider la sélection</value></data>
+  <data name="GpuPhotosSubmitBatchButton" xml:space="preserve"><value>Téléverser les photos</value></data>
+  <data name="GpuPhotosNoImagesStaged" xml:space="preserve"><value>Aucune image n'a encore été préparée. Ajoutez une ou plusieurs photos pour lancer un téléversement par lot.</value></data>
+  <data name="GpuPhotosPreviewUnavailable" xml:space="preserve"><value>Aperçu indisponible</value></data>
+  <data name="GpuPhotosProcessingTitle" xml:space="preserve"><value>Traitement du téléversement</value></data>
+  <data name="GpuPhotosBatchProgressText" xml:space="preserve"><value>{0} photo(s) préparée(s) sur {1} ont été traitée(s).</value></data>
+  <data name="GpuPhotosPickerCanceled" xml:space="preserve"><value>Aucun fichier n'a été sélectionné.</value></data>
+  <data name="GpuPhotosSelectionTrimmed" xml:space="preserve"><value>Seuls les {0} premiers fichiers ont été préparés, car un lot ne peut contenir que {1} photos au maximum.</value></data>
+  <data name="GpuPhotosMaxImagesReached" xml:space="preserve"><value>Vous avez déjà atteint le maximum de {0} photos préparées.</value></data>
+  <data name="GpuPhotosUnsupportedFormat" xml:space="preserve"><value>{0} utilise un format d'image non pris en charge.</value></data>
+  <data name="GpuPhotosFileTooLarge" xml:space="preserve"><value>{0} dépasse la limite de téléversement de 50 Mo.</value></data>
+  <data name="GpuPhotosBatchNotReady" xml:space="preserve"><value>Sélectionnez une licence et attendez que toutes les photos préparées aient terminé leur téléversement avant d'envoyer le lot.</value></data>
+  <data name="GpuPhotosCommitFailed" xml:space="preserve"><value>Impossible d'envoyer le lot préparé.</value></data>
+  <data name="GpuPhotosPollingFailed" xml:space="preserve"><value>Impossible de récupérer la progression du téléversement pour le lot préparé.</value></data>
+  <data name="GpuPhotosBatchFinished" xml:space="preserve"><value>Lot terminé. {0} photo(s) ont réussi et {1} ont échoué.</value></data>
+  <data name="GpuPhotosFailedToRemoveStaged" xml:space="preserve"><value>Impossible de retirer la photo préparée.</value></data>
+  <data name="GpuPhotosUploadingCardStatus" xml:space="preserve"><value>Téléversement vers la zone de préparation...</value></data>
+  <data name="GpuPhotosReadyCardStatus" xml:space="preserve"><value>Prête à être envoyée</value></data>
+  <data name="GpuPhotosFileRejectedStatus" xml:space="preserve"><value>Préparation échouée</value></data>
+  <data name="GpuPhotosCommittingCardStatus" xml:space="preserve"><value>Envoi du lot...</value></data>
+  <data name="GpuPhotosProcessingCardStatus" xml:space="preserve"><value>Traitement sur le serveur...</value></data>
+  <data name="GpuPhotosQueuedCardStatus" xml:space="preserve"><value>En file d'attente</value></data>
+  <data name="GpuPhotosSucceededCardStatus" xml:space="preserve"><value>Téléversée avec succès</value></data>
+  <data name="GpuPhotosFailedCardStatus" xml:space="preserve"><value>Échec du téléversement</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Sélectionner une licence...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Veuillez sélectionner une licence avant de télécharger.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>URL source (optionnel)</value></data>

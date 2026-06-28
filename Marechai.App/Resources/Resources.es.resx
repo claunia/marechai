@@ -2068,6 +2068,37 @@
   <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
   <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
   <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Error en la subida</value></data>
+  <data name="GpuPhotosTitle" xml:space="preserve"><value>Fotos de GPU</value></data>
+  <data name="GpuPhotosSubtitle" xml:space="preserve"><value>Ver, subir y gestionar fotos de GPU</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de GPU.</value></data>
+  <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Carga por lotes</value></data>
+  <data name="GpuPhotosBatchSectionSubtitle" xml:space="preserve"><value>Prepare hasta 25 fotos de GPU, asigne una licencia compartida al lote y, si lo desea, indique una URL de origen para cada foto.</value></data>
+  <data name="GpuPhotosAddImagesButton" xml:space="preserve"><value>Añadir imágenes</value></data>
+  <data name="GpuPhotosClearStagedButton" xml:space="preserve"><value>Limpiar preparación</value></data>
+  <data name="GpuPhotosSubmitBatchButton" xml:space="preserve"><value>Subir fotos</value></data>
+  <data name="GpuPhotosNoImagesStaged" xml:space="preserve"><value>Aún no hay imágenes preparadas. Añada una o más fotos para iniciar una carga por lotes.</value></data>
+  <data name="GpuPhotosPreviewUnavailable" xml:space="preserve"><value>Vista previa no disponible</value></data>
+  <data name="GpuPhotosProcessingTitle" xml:space="preserve"><value>Procesando la carga</value></data>
+  <data name="GpuPhotosBatchProgressText" xml:space="preserve"><value>Se han procesado {0} de {1} fotos preparadas.</value></data>
+  <data name="GpuPhotosPickerCanceled" xml:space="preserve"><value>No se seleccionó ningún archivo.</value></data>
+  <data name="GpuPhotosSelectionTrimmed" xml:space="preserve"><value>Solo se prepararon los primeros {0} archivos porque un lote puede contener como máximo {1} fotos.</value></data>
+  <data name="GpuPhotosMaxImagesReached" xml:space="preserve"><value>Ya ha alcanzado el máximo de {0} fotos preparadas.</value></data>
+  <data name="GpuPhotosUnsupportedFormat" xml:space="preserve"><value>{0} utiliza un formato de imagen no compatible.</value></data>
+  <data name="GpuPhotosFileTooLarge" xml:space="preserve"><value>{0} supera el límite de carga de 50 MB.</value></data>
+  <data name="GpuPhotosBatchNotReady" xml:space="preserve"><value>Seleccione una licencia y espere a que todas las fotos preparadas terminen de cargarse antes de enviar el lote.</value></data>
+  <data name="GpuPhotosCommitFailed" xml:space="preserve"><value>No se pudo enviar el lote preparado.</value></data>
+  <data name="GpuPhotosPollingFailed" xml:space="preserve"><value>No se pudo recuperar el progreso de carga del lote preparado.</value></data>
+  <data name="GpuPhotosBatchFinished" xml:space="preserve"><value>Lote finalizado. {0} foto(s) se subieron correctamente y {1} fallaron.</value></data>
+  <data name="GpuPhotosFailedToRemoveStaged" xml:space="preserve"><value>No se pudo quitar la foto preparada.</value></data>
+  <data name="GpuPhotosUploadingCardStatus" xml:space="preserve"><value>Subiendo al área temporal...</value></data>
+  <data name="GpuPhotosReadyCardStatus" xml:space="preserve"><value>Lista para enviar</value></data>
+  <data name="GpuPhotosFileRejectedStatus" xml:space="preserve"><value>Preparación fallida</value></data>
+  <data name="GpuPhotosCommittingCardStatus" xml:space="preserve"><value>Enviando lote...</value></data>
+  <data name="GpuPhotosProcessingCardStatus" xml:space="preserve"><value>Procesando en el servidor...</value></data>
+  <data name="GpuPhotosQueuedCardStatus" xml:space="preserve"><value>En cola para procesar</value></data>
+  <data name="GpuPhotosSucceededCardStatus" xml:space="preserve"><value>Subida correctamente</value></data>
+  <data name="GpuPhotosFailedCardStatus" xml:space="preserve"><value>Error en la subida</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Seleccione una licencia...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Seleccione una licencia antes de subir.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>URL de origen (opcional)</value></data>

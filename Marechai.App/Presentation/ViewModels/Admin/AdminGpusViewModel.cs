@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -15,6 +17,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                  _jwtService;
     private readonly IStringLocalizer             _localizer;
     private readonly ILogger<AdminGpusViewModel>  _logger;
+    private readonly IRegionManager                _regionManager;
     private readonly ITokenService                _tokenService;
 
     // --- List state ---
@@ -115,17 +118,20 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
                               IJwtService                  jwtService,
                               ITokenService                tokenService,
                               ILogger<AdminGpusViewModel>  logger,
-                              IStringLocalizer             localizer)
+                              IStringLocalizer             localizer,
+                              IRegionManager               regionManager)
     {
         _apiClient    = apiClient;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _regionManager = regionManager;
 
         LoadGpusCommand       = new AsyncRelayCommand(LoadGpusAsync);
         OpenAddGpuCommand     = new RelayCommand(OpenAddGpu);
         OpenEditGpuCommand    = new RelayCommand<GpuDto>(OpenEditGpu);
+        OpenPhotosCommand     = new RelayCommand<GpuDto>(OpenPhotos);
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
         SaveGpuCommand        = new AsyncRelayCommand(SaveGpuAsync);
         CancelEditCommand     = new RelayCommand(CancelEdit);
@@ -140,6 +146,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand          LoadGpusCommand    { get; }
     public IRelayCommand               OpenAddGpuCommand  { get; }
     public IRelayCommand<GpuDto>       OpenEditGpuCommand { get; }
+    public IRelayCommand<GpuDto>       OpenPhotosCommand { get; }
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
     public IAsyncRelayCommand          SaveGpuCommand     { get; }
     public IRelayCommand               CancelEditCommand  { get; }
@@ -227,6 +234,19 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         EditPanelTitle = _localizer["AddGpuDialog_Title"];
         ClearForm();
         IsEditing = true;
+    }
+
+    private void OpenPhotos(GpuDto? gpu)
+    {
+        if(gpu?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.GpuId, gpu.Id.Value },
+            { NavParamKeys.GpuName, gpu.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminGpuPhotosPage), parameters);
     }
 
     // --- Edit GPU ---

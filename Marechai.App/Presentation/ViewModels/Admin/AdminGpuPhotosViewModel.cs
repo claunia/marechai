@@ -8,15 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BatchJobState = Marechai.Data.Dtos.BatchJobState;
-using AdminMachinePhotoBatchCommitItemDto = Marechai.ApiClient.Models.AdminMachinePhotoBatchCommitItemDto;
-using AdminMachinePhotoBatchCommitRequestDto = Marechai.ApiClient.Models.AdminMachinePhotoBatchCommitRequestDto;
-using AdminMachinePhotoBatchJobItemResultDto = Marechai.ApiClient.Models.AdminMachinePhotoBatchJobItemResultDto;
-using AdminMachinePhotoBatchJobStatusDto = Marechai.ApiClient.Models.AdminMachinePhotoBatchJobStatusDto;
-using AdminPendingMachinePhotoUploadDto = Marechai.ApiClient.Models.AdminPendingMachinePhotoUploadDto;
+using AdminGpuPhotoBatchCommitItemDto = Marechai.ApiClient.Models.AdminGpuPhotoBatchCommitItemDto;
+using AdminGpuPhotoBatchCommitRequestDto = Marechai.ApiClient.Models.AdminGpuPhotoBatchCommitRequestDto;
+using AdminGpuPhotoBatchJobItemResultDto = Marechai.ApiClient.Models.AdminGpuPhotoBatchJobItemResultDto;
+using AdminGpuPhotoBatchJobStatusDto = Marechai.ApiClient.Models.AdminGpuPhotoBatchJobStatusDto;
+using AdminPendingGpuPhotoUploadDto = Marechai.ApiClient.Models.AdminPendingGpuPhotoUploadDto;
 using LicenseDto = Marechai.ApiClient.Models.LicenseDto;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -25,7 +26,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
-public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAware
+public partial class AdminGpuPhotosViewModel : ObservableObject, IRegionAware
 {
     const int  MaxImages        = 25;
     const long MaxFileSizeBytes = 50 * 1024 * 1024;
@@ -35,20 +36,20 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         ".jpg", ".jpeg", ".png", ".webp", ".avif", ".bmp", ".tif", ".tiff"
     ];
 
-    readonly MachinePhotosService                 _photosService;
-    readonly LicensesService                      _licensesService;
-    readonly MachinePhotoCache                    _photoCache;
-    readonly ImageSourceFactory                   _imageSourceFactory;
-    readonly IJwtService                          _jwtService;
-    readonly ITokenService                        _tokenService;
-    readonly IStringLocalizer                     _localizer;
-    readonly ILogger<AdminMachinePhotosViewModel> _logger;
-    readonly IRegionManager                       _regionManager;
+    readonly GpuPhotosService                    _photosService;
+    readonly LicensesService                     _licensesService;
+    readonly GpuPhotoCache                       _photoCache;
+    readonly ImageSourceFactory                  _imageSourceFactory;
+    readonly IJwtService                         _jwtService;
+    readonly ITokenService                       _tokenService;
+    readonly IStringLocalizer                    _localizer;
+    readonly ILogger<AdminGpuPhotosViewModel>    _logger;
+    readonly IRegionManager                      _regionManager;
 
-    int _machineId;
+    int _gpuId;
 
     [ObservableProperty]
-    private string _machineName = string.Empty;
+    private string _gpuName = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<MachinePhotoDisplayItem> _photos = [];
@@ -107,15 +108,15 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
     [ObservableProperty]
     private bool _showBatchSummary;
 
-    public AdminMachinePhotosViewModel(MachinePhotosService                 photosService,
-                                       LicensesService                      licensesService,
-                                       MachinePhotoCache                    photoCache,
-                                       ImageSourceFactory                   imageSourceFactory,
-                                       IJwtService                          jwtService,
-                                       ITokenService                        tokenService,
-                                       IStringLocalizer                     localizer,
-                                       ILogger<AdminMachinePhotosViewModel> logger,
-                                       IRegionManager                       regionManager)
+    public AdminGpuPhotosViewModel(GpuPhotosService                 photosService,
+                                   LicensesService                  licensesService,
+                                   GpuPhotoCache                    photoCache,
+                                   ImageSourceFactory               imageSourceFactory,
+                                   IJwtService                      jwtService,
+                                   ITokenService                    tokenService,
+                                   IStringLocalizer                 localizer,
+                                   ILogger<AdminGpuPhotosViewModel> logger,
+                                   IRegionManager                   regionManager)
     {
         _photosService      = photosService;
         _licensesService    = licensesService;
@@ -159,15 +160,15 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
     {
         CheckAdminRole();
 
-        int previousMachineId = _machineId;
+        int previousGpuId = _gpuId;
 
-        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.MachineId, out int machineId))
-            _machineId = machineId;
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.GpuId, out int gpuId))
+            _gpuId = gpuId;
 
-        if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.MachineName, out string? name))
-            MachineName = name ?? string.Empty;
+        if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.GpuName, out string? name))
+            GpuName = name ?? string.Empty;
 
-        if(previousMachineId != _machineId)
+        if(previousGpuId != _gpuId)
             _ = ClearStagedPhotosAsync();
 
         if(IsAdmin)
@@ -177,24 +178,24 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
     }
 
-    public bool HasStagedPhotos   => StagedPhotos.Count > 0;
-    public bool CanAddMorePhotos  => !IsUploading && StagedPhotos.Count < MaxImages;
-    public bool CanSubmitBatch    => SelectedLicense is not null &&
-                                     StagedPhotos.Count > 0 &&
-                                     !IsUploading &&
-                                     !IsBatchCommitting &&
-                                     StagedPhotos.All(s => s.IsReady);
-    public bool CanClearStaged    => HasStagedPhotos && !IsBatchCommitting && !IsUploading;
+    public bool HasStagedPhotos => StagedPhotos.Count > 0;
+    public bool CanAddMorePhotos => !IsUploading && StagedPhotos.Count < MaxImages;
+    public bool CanSubmitBatch => SelectedLicense is not null &&
+                                  StagedPhotos.Count > 0 &&
+                                  !IsUploading &&
+                                  !IsBatchCommitting &&
+                                  StagedPhotos.All(s => s.IsReady);
+    public bool CanClearStaged => HasStagedPhotos && !IsBatchCommitting && !IsUploading;
     public bool HasBatchProgressText => ShowBatchProgress && BatchTotal > 0;
     public double BatchProgressPercent => BatchTotal <= 0 ? 0 : Math.Min(100, BatchProcessed * 100.0 / BatchTotal);
-    public string BatchProgressText => string.Format(_localizer["MachinePhotosBatchProgressText"], BatchProcessed, BatchTotal);
+    public string BatchProgressText => string.Format(_localizer["GpuPhotosBatchProgressText"], BatchProcessed, BatchTotal);
 
     partial void OnSelectedLicenseChanged(LicenseDto? value) => NotifyUploadStateChanged();
-    partial void OnIsUploadingChanged(bool value)            => NotifyUploadStateChanged();
-    partial void OnIsBatchCommittingChanged(bool value)      => NotifyUploadStateChanged();
-    partial void OnBatchProcessedChanged(int value)          => NotifyBatchProgressChanged();
-    partial void OnBatchTotalChanged(int value)              => NotifyBatchProgressChanged();
-    partial void OnShowBatchProgressChanged(bool value)      => OnPropertyChanged(nameof(HasBatchProgressText));
+    partial void OnIsUploadingChanged(bool value) => NotifyUploadStateChanged();
+    partial void OnIsBatchCommittingChanged(bool value) => NotifyUploadStateChanged();
+    partial void OnBatchProcessedChanged(int value) => NotifyBatchProgressChanged();
+    partial void OnBatchTotalChanged(int value) => NotifyBatchProgressChanged();
+    partial void OnShowBatchProgressChanged(bool value) => OnPropertyChanged(nameof(HasBatchProgressText));
 
     void CheckAdminRole()
     {
@@ -246,7 +247,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
             ErrorMessage = string.Empty;
             Photos.Clear();
 
-            List<Guid> photoIds = await _photosService.GetPhotoIdsAsync(_machineId);
+            List<Guid> photoIds = await _photosService.GetPhotoIdsAsync(_gpuId);
 
             foreach(Guid photoId in photoIds)
             {
@@ -255,7 +256,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
                     PhotoId = photoId
                 };
 
-                MachinePhotoDto? details = await _photosService.GetPhotoDetailsAsync(photoId);
+                GpuPhotoDto? details = await _photosService.GetPhotoDetailsAsync(photoId);
 
                 if(details != null)
                 {
@@ -275,7 +276,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error loading photos for machine {MachineId}", _machineId);
+            _logger.LogError(ex, "Error loading photos for GPU {GpuId}", _gpuId);
             ErrorMessage = _localizer["FailedToLoadPhotos"];
             HasError     = true;
         }
@@ -294,7 +295,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error loading photo thumbnail {PhotoId}", item.PhotoId);
+            _logger.LogError(ex, "Error loading GPU photo thumbnail {PhotoId}", item.PhotoId);
         }
     }
 
@@ -306,7 +307,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
             if(StagedPhotos.Count >= MaxImages)
             {
-                SetStatusMessage(string.Format(_localizer["MachinePhotosMaxImagesReached"], MaxImages),
+                SetStatusMessage(string.Format(_localizer["GpuPhotosMaxImagesReached"], MaxImages),
                                  InfoBarSeverity.Warning);
 
                 return;
@@ -331,7 +332,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
             if(files == null || files.Count == 0)
             {
-                SetStatusMessage(_localizer["MachinePhotosPickerCanceled"], InfoBarSeverity.Informational);
+                SetStatusMessage(_localizer["GpuPhotosPickerCanceled"], InfoBarSeverity.Informational);
 
                 return;
             }
@@ -340,7 +341,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
             if(files.Count > availableSlots)
             {
-                SetStatusMessage(string.Format(_localizer["MachinePhotosSelectionTrimmed"], availableSlots, MaxImages),
+                SetStatusMessage(string.Format(_localizer["GpuPhotosSelectionTrimmed"], availableSlots, MaxImages),
                                  InfoBarSeverity.Warning);
             }
 
@@ -349,7 +350,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error selecting machine photos");
+            _logger.LogError(ex, "Error selecting GPU photos");
             SetStatusMessage(_localizer["FailedToUploadPhoto"], InfoBarSeverity.Error);
         }
     }
@@ -360,7 +361,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
         if(!_allowedExtensions.Contains(extension))
         {
-            SetStatusMessage(string.Format(_localizer["MachinePhotosUnsupportedFormat"], file.Name),
+            SetStatusMessage(string.Format(_localizer["GpuPhotosUnsupportedFormat"], file.Name),
                              InfoBarSeverity.Warning);
 
             return;
@@ -368,12 +369,12 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
         var item = new AdminMachinePhotoStagedItem
         {
-            FileName     = file.Name,
-            FileSizeText = string.Empty,
-            DimensionsText = string.Empty,
-            Status       = AdminMachinePhotoStageStatus.Uploading,
-            StatusText   = _localizer["MachinePhotosUploadingCardStatus"],
-            UploadPercent = 0
+            FileName        = file.Name,
+            FileSizeText    = string.Empty,
+            DimensionsText  = string.Empty,
+            Status          = AdminMachinePhotoStageStatus.Uploading,
+            StatusText      = _localizer["GpuPhotosUploadingCardStatus"],
+            UploadPercent   = 0
         };
 
         AddStagedPhoto(item);
@@ -386,8 +387,8 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
             {
                 item.FileSizeText  = FormatBytes((long)properties.Size);
                 item.Status        = AdminMachinePhotoStageStatus.Error;
-                item.StatusText    = _localizer["MachinePhotosFileRejectedStatus"];
-                item.ErrorText     = string.Format(_localizer["MachinePhotosFileTooLarge"], file.Name);
+                item.StatusText    = _localizer["GpuPhotosFileRejectedStatus"];
+                item.ErrorText     = string.Format(_localizer["GpuPhotosFileTooLarge"], file.Name);
                 item.UploadPercent = 0;
 
                 return;
@@ -402,33 +403,33 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
             item.UploadPercent = 35;
 
-            (AdminPendingMachinePhotoUploadDto? result, string? error) =
-                await _photosService.StageAdminPendingPhotoAsync(_machineId, fileBytes, file.Name, file.ContentType);
+            (AdminPendingGpuPhotoUploadDto? result, string? error) =
+                await _photosService.StageAdminPendingPhotoAsync(_gpuId, fileBytes, file.Name, file.ContentType);
 
             if(result == null)
             {
                 item.Status        = AdminMachinePhotoStageStatus.Error;
-                item.StatusText    = _localizer["MachinePhotosFileRejectedStatus"];
+                item.StatusText    = _localizer["GpuPhotosFileRejectedStatus"];
                 item.ErrorText     = string.IsNullOrWhiteSpace(error) ? _localizer["FailedToUploadPhoto"] : error;
                 item.UploadPercent = 0;
 
                 return;
             }
 
-            item.PendingId       = result.Id;
-            item.FileSizeText    = FormatBytes(result.SizeBytes is > 0 ? result.SizeBytes.Value : (long)properties.Size);
-            item.DimensionsText  = result.Width is > 0 && result.Height is > 0 ? $"{result.Width} x {result.Height}" : string.Empty;
+            item.PendingId            = result.Id;
+            item.FileSizeText         = FormatBytes(result.SizeBytes is > 0 ? result.SizeBytes.Value : (long)properties.Size);
+            item.DimensionsText       = result.Width is > 0 && result.Height is > 0 ? $"{result.Width} x {result.Height}" : string.Empty;
             item.ThumbnailImageSource = await CreateImageSourceFromDataUrlAsync(result.ThumbnailBase64);
-            item.Status          = AdminMachinePhotoStageStatus.Ready;
-            item.StatusText      = _localizer["MachinePhotosReadyCardStatus"];
-            item.UploadPercent   = 100;
-            item.ErrorText       = string.Empty;
+            item.Status               = AdminMachinePhotoStageStatus.Ready;
+            item.StatusText           = _localizer["GpuPhotosReadyCardStatus"];
+            item.UploadPercent        = 100;
+            item.ErrorText            = string.Empty;
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error staging machine photo {FileName}", file.Name);
+            _logger.LogError(ex, "Error staging GPU photo {FileName}", file.Name);
             item.Status        = AdminMachinePhotoStageStatus.Error;
-            item.StatusText    = _localizer["MachinePhotosFileRejectedStatus"];
+            item.StatusText    = _localizer["GpuPhotosFileRejectedStatus"];
             item.ErrorText     = _localizer["FailedToUploadPhoto"];
             item.UploadPercent = 0;
         }
@@ -447,7 +448,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
         if(!CanSubmitBatch)
         {
-            SetStatusMessage(_localizer["MachinePhotosBatchNotReady"], InfoBarSeverity.Warning);
+            SetStatusMessage(_localizer["GpuPhotosBatchNotReady"], InfoBarSeverity.Warning);
 
             return;
         }
@@ -456,7 +457,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
         if(readyItems.Count == 0)
         {
-            SetStatusMessage(_localizer["MachinePhotosBatchNotReady"], InfoBarSeverity.Warning);
+            SetStatusMessage(_localizer["GpuPhotosBatchNotReady"], InfoBarSeverity.Warning);
 
             return;
         }
@@ -474,35 +475,35 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
             foreach(AdminMachinePhotoStagedItem item in readyItems)
             {
                 item.Status        = AdminMachinePhotoStageStatus.Committing;
-                item.StatusText    = _localizer["MachinePhotosCommittingCardStatus"];
+                item.StatusText    = _localizer["GpuPhotosCommittingCardStatus"];
                 item.UploadPercent = 0;
                 item.ErrorText     = string.Empty;
             }
 
-            var request = new AdminMachinePhotoBatchCommitRequestDto
+            var request = new AdminGpuPhotoBatchCommitRequestDto
             {
-                MachineId = _machineId,
+                GpuId     = _gpuId,
                 LicenseId = SelectedLicense.Id ?? 0,
-                Items = readyItems.Select(item => new AdminMachinePhotoBatchCommitItemDto
+                Items = readyItems.Select(item => new AdminGpuPhotoBatchCommitItemDto
                 {
                     PendingId = item.PendingId ?? Guid.Empty,
                     Source    = string.IsNullOrWhiteSpace(item.SourceUrl) ? null : item.SourceUrl
                 }).ToList()
             };
 
-            (AdminMachinePhotoBatchJobStatusDto? result, string? error) = await _photosService.CommitAdminBatchAsync(request);
+            (AdminGpuPhotoBatchJobStatusDto? result, string? error) = await _photosService.CommitAdminBatchAsync(request);
 
             if(result == null)
             {
                 foreach(AdminMachinePhotoStagedItem item in readyItems)
                 {
-                    item.Status      = AdminMachinePhotoStageStatus.Ready;
-                    item.StatusText  = _localizer["MachinePhotosReadyCardStatus"];
-                    item.ErrorText   = string.Empty;
+                    item.Status        = AdminMachinePhotoStageStatus.Ready;
+                    item.StatusText    = _localizer["GpuPhotosReadyCardStatus"];
+                    item.ErrorText     = string.Empty;
                     item.UploadPercent = 100;
                 }
 
-                SetStatusMessage(string.IsNullOrWhiteSpace(error) ? _localizer["MachinePhotosCommitFailed"] : error,
+                SetStatusMessage(string.IsNullOrWhiteSpace(error) ? _localizer["GpuPhotosCommitFailed"] : error,
                                  InfoBarSeverity.Error);
 
                 ShowBatchProgress = false;
@@ -510,23 +511,23 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
                 return;
             }
 
-            AdminMachinePhotoBatchJobStatusDto? finalStatus =
+            AdminGpuPhotoBatchJobStatusDto? finalStatus =
                 result.JobId.HasValue ? await PollBatchUntilCompleteAsync(result.JobId.Value) : null;
 
             if(finalStatus == null)
             {
-                SetStatusMessage(_localizer["MachinePhotosPollingFailed"], InfoBarSeverity.Error);
+                SetStatusMessage(_localizer["GpuPhotosPollingFailed"], InfoBarSeverity.Error);
 
                 return;
             }
 
             ApplyBatchStatus(finalStatus);
 
-            List<AdminMachinePhotoBatchJobItemResultDto> finalResults = finalStatus.Results ?? [];
+            List<AdminGpuPhotoBatchJobItemResultDto> finalResults = finalStatus.Results ?? [];
             int succeeded = finalResults.Count(r => r.Succeeded ?? false);
             int failed    = finalResults.Count(r => !(r.Succeeded ?? false));
 
-            SetStatusMessage(string.Format(_localizer["MachinePhotosBatchFinished"], succeeded, failed),
+            SetStatusMessage(string.Format(_localizer["GpuPhotosBatchFinished"], succeeded, failed),
                              failed == 0 ? InfoBarSeverity.Success : InfoBarSeverity.Warning);
 
             ShowBatchSummary = true;
@@ -540,8 +541,8 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error committing machine photo batch");
-            SetStatusMessage(_localizer["MachinePhotosCommitFailed"], InfoBarSeverity.Error);
+            _logger.LogError(ex, "Error committing GPU photo batch");
+            SetStatusMessage(_localizer["GpuPhotosCommitFailed"], InfoBarSeverity.Error);
         }
         finally
         {
@@ -553,11 +554,11 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
     }
 
-    async Task<AdminMachinePhotoBatchJobStatusDto?> PollBatchUntilCompleteAsync(Guid jobId)
+    async Task<AdminGpuPhotoBatchJobStatusDto?> PollBatchUntilCompleteAsync(Guid jobId)
     {
         while(true)
         {
-            AdminMachinePhotoBatchJobStatusDto? status = await _photosService.GetAdminBatchStatusAsync(jobId);
+            AdminGpuPhotoBatchJobStatusDto? status = await _photosService.GetAdminBatchStatusAsync(jobId);
 
             if(status == null)
                 return null;
@@ -573,49 +574,49 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
     }
 
-    void ApplyBatchStatus(AdminMachinePhotoBatchJobStatusDto status)
+    void ApplyBatchStatus(AdminGpuPhotoBatchJobStatusDto status)
     {
         BatchProcessed   = status.Processed ?? 0;
         BatchTotal       = status.Total ?? 0;
         CurrentPendingId = status.CurrentPendingId;
 
-        Dictionary<Guid, AdminMachinePhotoBatchJobItemResultDto> resultMap = (status.Results ?? [])
-                                                                             .Where(r => r.PendingId.HasValue &&
-                                                                                         r.PendingId.Value != Guid.Empty)
-                                                                             .ToDictionary(r => r.PendingId!.Value, r => r);
+        Dictionary<Guid, AdminGpuPhotoBatchJobItemResultDto> resultMap = (status.Results ?? [])
+                                                                         .Where(r => r.PendingId.HasValue &&
+                                                                                     r.PendingId.Value != Guid.Empty)
+                                                                         .ToDictionary(r => r.PendingId!.Value, r => r);
 
         foreach(AdminMachinePhotoStagedItem item in StagedPhotos)
         {
             if(item.PendingId is not Guid pendingId)
                 continue;
 
-            if(resultMap.TryGetValue(pendingId, out AdminMachinePhotoBatchJobItemResultDto? result))
+            if(resultMap.TryGetValue(pendingId, out AdminGpuPhotoBatchJobItemResultDto? result))
             {
                 if(result.Succeeded ?? false)
                 {
                     item.Status        = AdminMachinePhotoStageStatus.Succeeded;
-                    item.StatusText    = _localizer["MachinePhotosSucceededCardStatus"];
+                    item.StatusText    = _localizer["GpuPhotosSucceededCardStatus"];
                     item.ErrorText     = string.Empty;
                     item.UploadPercent = 100;
                 }
                 else
                 {
                     item.Status        = AdminMachinePhotoStageStatus.Failed;
-                    item.StatusText    = _localizer["MachinePhotosFailedCardStatus"];
-                    item.ErrorText     = string.IsNullOrWhiteSpace(result.Error) ? _localizer["MachinePhotosCommitFailed"] : result.Error;
+                    item.StatusText    = _localizer["GpuPhotosFailedCardStatus"];
+                    item.ErrorText     = string.IsNullOrWhiteSpace(result.Error) ? _localizer["GpuPhotosCommitFailed"] : result.Error;
                     item.UploadPercent = 100;
                 }
             }
             else if(status.CurrentPendingId.HasValue && status.CurrentPendingId.Value == pendingId)
             {
                 item.Status        = AdminMachinePhotoStageStatus.Committing;
-                item.StatusText    = _localizer["MachinePhotosProcessingCardStatus"];
+                item.StatusText    = _localizer["GpuPhotosProcessingCardStatus"];
                 item.UploadPercent = 50;
                 item.ErrorText     = string.Empty;
             }
             else if(item.Status == AdminMachinePhotoStageStatus.Committing)
             {
-                item.StatusText = _localizer["MachinePhotosQueuedCardStatus"];
+                item.StatusText = _localizer["GpuPhotosQueuedCardStatus"];
             }
         }
     }
@@ -633,7 +634,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
 
                 if(!deleted)
                 {
-                    SetStatusMessage(_localizer["MachinePhotosFailedToRemoveStaged"], InfoBarSeverity.Warning);
+                    SetStatusMessage(_localizer["GpuPhotosFailedToRemoveStaged"], InfoBarSeverity.Warning);
 
                     return;
                 }
@@ -643,8 +644,8 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error removing staged machine photo {ClientId}", item.ClientId);
-            SetStatusMessage(_localizer["MachinePhotosFailedToRemoveStaged"], InfoBarSeverity.Warning);
+            _logger.LogError(ex, "Error removing staged GPU photo {ClientId}", item.ClientId);
+            SetStatusMessage(_localizer["GpuPhotosFailedToRemoveStaged"], InfoBarSeverity.Warning);
         }
     }
 
@@ -662,7 +663,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogDebug(ex, "Best-effort cleanup failed for staged machine photo {PendingId}",
+                    _logger.LogDebug(ex, "Best-effort cleanup failed for staged GPU photo {PendingId}",
                                      item.PendingId.Value);
                 }
             }
@@ -698,7 +699,7 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Error deleting photo {PhotoId}", item.PhotoId);
+            _logger.LogError(ex, "Error deleting GPU photo {PhotoId}", item.PhotoId);
             SetStatusMessage(_localizer["FailedToDeletePhoto"], InfoBarSeverity.Error);
         }
     }
@@ -712,10 +713,10 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
             { NavParamKeys.PhotoId, item.PhotoId }
         };
 
-        _regionManager.RequestNavigate(RegionNames.Content, "PhotoDetailPage", parameters);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuPhotoDetailPage), parameters);
     }
 
-    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminMachinesPage));
+    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminGpusPage));
 
     async Task<Microsoft.UI.Xaml.Media.ImageSource?> CreateImageSourceFromDataUrlAsync(string? dataUrl)
     {

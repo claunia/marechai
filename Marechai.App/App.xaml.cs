@@ -186,6 +186,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<MachineFamiliesService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
         containerRegistry.RegisterSingleton<MachinePhotosService>();
+        containerRegistry.RegisterSingleton<GpuPhotosService>();
         containerRegistry.RegisterSingleton<MachinePromoArtService>();
         containerRegistry.RegisterSingleton<SoftwarePromoArtService>();
         containerRegistry.RegisterSingleton<LicensesService>();
@@ -282,6 +283,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<UsersViewModel>();
         containerRegistry.Register<AdminCompaniesViewModel>();
         containerRegistry.Register<AdminGpusViewModel>();
+        containerRegistry.Register<AdminGpuPhotosViewModel>();
         containerRegistry.Register<AdminProcessorsViewModel>();
         containerRegistry.Register<AdminInstructionSetsViewModel>();
         containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
@@ -382,6 +384,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<UsersPage, UsersViewModel>();
         containerRegistry.RegisterForNavigation<AdminCompaniesPage, AdminCompaniesViewModel>();
         containerRegistry.RegisterForNavigation<AdminGpusPage, AdminGpusViewModel>();
+        containerRegistry.RegisterForNavigation<AdminGpuPhotosPage, AdminGpuPhotosViewModel>();
         containerRegistry.RegisterForNavigation<AdminProcessorsPage, AdminProcessorsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetsPage, AdminInstructionSetsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();

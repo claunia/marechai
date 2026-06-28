@@ -1928,6 +1928,37 @@
   <data name="MachinePhotosQueuedCardStatus" xml:space="preserve"><value>Zur Verarbeitung in der Warteschlange</value></data>
   <data name="MachinePhotosSucceededCardStatus" xml:space="preserve"><value>Erfolgreich hochgeladen</value></data>
   <data name="MachinePhotosFailedCardStatus" xml:space="preserve"><value>Upload fehlgeschlagen</value></data>
+  <data name="GpuPhotosTitle" xml:space="preserve"><value>GPU-Fotos</value></data>
+  <data name="GpuPhotosSubtitle" xml:space="preserve"><value>GPU-Fotos ansehen, hochladen und verwalten</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um GPU-Fotos zu verwalten.</value></data>
+  <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Stapel-Upload</value></data>
+  <data name="GpuPhotosBatchSectionSubtitle" xml:space="preserve"><value>Bereiten Sie bis zu 25 GPU-Fotos vor, weisen Sie dem Stapel eine gemeinsame Lizenz zu und hinterlegen Sie bei Bedarf für jedes Foto eine Quell-URL.</value></data>
+  <data name="GpuPhotosAddImagesButton" xml:space="preserve"><value>Bilder hinzufügen</value></data>
+  <data name="GpuPhotosClearStagedButton" xml:space="preserve"><value>Vorbereitung leeren</value></data>
+  <data name="GpuPhotosSubmitBatchButton" xml:space="preserve"><value>Fotos hochladen</value></data>
+  <data name="GpuPhotosNoImagesStaged" xml:space="preserve"><value>Noch keine Bilder vorbereitet. Fügen Sie ein oder mehrere Fotos hinzu, um einen Stapel-Upload zu starten.</value></data>
+  <data name="GpuPhotosPreviewUnavailable" xml:space="preserve"><value>Vorschau nicht verfügbar</value></data>
+  <data name="GpuPhotosProcessingTitle" xml:space="preserve"><value>Upload wird verarbeitet</value></data>
+  <data name="GpuPhotosBatchProgressText" xml:space="preserve"><value>{0} von {1} vorbereiteten Fotos wurden verarbeitet.</value></data>
+  <data name="GpuPhotosPickerCanceled" xml:space="preserve"><value>Es wurden keine Dateien ausgewählt.</value></data>
+  <data name="GpuPhotosSelectionTrimmed" xml:space="preserve"><value>Nur die ersten {0} Dateien wurden vorbereitet, da ein Stapel höchstens {1} Fotos enthalten kann.</value></data>
+  <data name="GpuPhotosMaxImagesReached" xml:space="preserve"><value>Sie haben bereits das Maximum von {0} vorbereiteten Fotos erreicht.</value></data>
+  <data name="GpuPhotosUnsupportedFormat" xml:space="preserve"><value>{0} verwendet ein nicht unterstütztes Bildformat.</value></data>
+  <data name="GpuPhotosFileTooLarge" xml:space="preserve"><value>{0} überschreitet das Upload-Limit von 50 MB.</value></data>
+  <data name="GpuPhotosBatchNotReady" xml:space="preserve"><value>Wählen Sie eine Lizenz aus und warten Sie, bis alle vorbereiteten Fotos vollständig hochgeladen sind, bevor Sie den Stapel senden.</value></data>
+  <data name="GpuPhotosCommitFailed" xml:space="preserve"><value>Der vorbereitete Stapel konnte nicht gesendet werden.</value></data>
+  <data name="GpuPhotosPollingFailed" xml:space="preserve"><value>Der Upload-Fortschritt für den vorbereiteten Stapel konnte nicht abgerufen werden.</value></data>
+  <data name="GpuPhotosBatchFinished" xml:space="preserve"><value>Stapel abgeschlossen. {0} Foto(s) erfolgreich, {1} fehlgeschlagen.</value></data>
+  <data name="GpuPhotosFailedToRemoveStaged" xml:space="preserve"><value>Das vorbereitete Foto konnte nicht entfernt werden.</value></data>
+  <data name="GpuPhotosUploadingCardStatus" xml:space="preserve"><value>Upload in den Vorbereitungsbereich...</value></data>
+  <data name="GpuPhotosReadyCardStatus" xml:space="preserve"><value>Bereit zum Senden</value></data>
+  <data name="GpuPhotosFileRejectedStatus" xml:space="preserve"><value>Vorbereitung fehlgeschlagen</value></data>
+  <data name="GpuPhotosCommittingCardStatus" xml:space="preserve"><value>Stapel wird gesendet...</value></data>
+  <data name="GpuPhotosProcessingCardStatus" xml:space="preserve"><value>Wird auf dem Server verarbeitet...</value></data>
+  <data name="GpuPhotosQueuedCardStatus" xml:space="preserve"><value>Zur Verarbeitung in der Warteschlange</value></data>
+  <data name="GpuPhotosSucceededCardStatus" xml:space="preserve"><value>Erfolgreich hochgeladen</value></data>
+  <data name="GpuPhotosFailedCardStatus" xml:space="preserve"><value>Upload fehlgeschlagen</value></data>
   <data name="SelectLicenseLabel" xml:space="preserve"><value>Lizenz auswählen...</value></data>
   <data name="SelectLicenseRequired" xml:space="preserve"><value>Bitte wählen Sie eine Lizenz vor dem Hochladen.</value></data>
   <data name="PhotoSourceLabel" xml:space="preserve"><value>Quell-URL (optional)</value></data>
