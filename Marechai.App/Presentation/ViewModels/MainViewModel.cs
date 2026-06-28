@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -23,6 +24,8 @@ public partial class MainViewModel : ObservableObject
     private readonly SearchService          _searchService;
     private readonly IRegionManager         _regionManager;
     private readonly ITokenService          _tokenService;
+    private readonly MessageNotificationStateService _messageNotificationStateService;
+    private readonly ToastActivationService _toastActivationService;
     [ObservableProperty]
     private bool _isAdminSidebarActive;
     [ObservableProperty]
@@ -57,6 +60,7 @@ public partial class MainViewModel : ObservableObject
     public string ProcessorsButtonText           => _localizer["ProcessorsButton"];
     public string SoftwareButtonText             => _localizer["SoftwareButton"];
     public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton"];
+    public string MessagesButtonText             => "Messages";
     public string UserManagementButtonText       => _localizer["UserManagementButton"];
     public string CompanyManagementButtonText    => _localizer["CompanyManagementButton"];
     public string GpuManagementButtonText         => _localizer["GpuManagementButton"];
@@ -79,6 +83,7 @@ public partial class MainViewModel : ObservableObject
     public string ExternalSiteManagementButtonText     => _localizer["ExternalSiteManagementButton"];
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string WwpcImportsManagementButtonText     => _localizer["WwpcImportsManagementButton"];
+    public string MessageReportsManagementButtonText  => "Message Reports";
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AboutButtonText                => _localizer["AboutButton"];
     public string ContactButtonText              => _localizer["ContactButton"];
@@ -92,10 +97,16 @@ public partial class MainViewModel : ObservableObject
     private NewsViewModel _newsViewModel;
     [ObservableProperty]
     private bool _sidebarContentVisible = true;
+    [ObservableProperty]
+    private bool _isAuthenticatedUser;
+    [ObservableProperty]
+    private int _unreadMessagesCount;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, IRegionManager regionManager,
                          NewsViewModel newsViewModel, SearchService searchService,
-                         IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
+                         IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService,
+                         MessageNotificationStateService messageNotificationStateService,
+                         ToastActivationService toastActivationService)
     {
         _regionManager = regionManager;
         _localizer     = localizer;
@@ -103,6 +114,8 @@ public partial class MainViewModel : ObservableObject
         _jwtService    = jwtService;
         _tokenService  = tokenService;
         _searchService = searchService;
+        _messageNotificationStateService = messageNotificationStateService;
+        _toastActivationService          = toastActivationService;
         NewsViewModel  = newsViewModel;
         Title          = localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
@@ -124,6 +137,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToProcessorsCommand               = new RelayCommand(() => NavigateTo(nameof(ProcessorListPage)));
         NavigateToSoftwareCommand                 = new RelayCommand(() => NavigateTo(nameof(SoftwarePage)));
         NavigateToSoundSynthesizersCommand        = new RelayCommand(() => NavigateTo(nameof(SoundSynthListPage)));
+        NavigateToMessagesCommand                 = new RelayCommand(() => NavigateTo(nameof(MessagesPage)));
         NavigateToUsersCommand                    = new RelayCommand(() => NavigateTo(nameof(UsersPage)));
         NavigateToAdminCompaniesCommand            = new RelayCommand(() => NavigateTo(nameof(AdminCompaniesPage)));
         NavigateToAdminGpusCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminGpusPage)));
@@ -146,6 +160,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminExternalSitesCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminExternalSitesPage)));
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
+        NavigateToAdminMessageReportsCommand               = new RelayCommand(() => NavigateTo(nameof(AdminMessageReportsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         NavigateToAboutCommand                    = new RelayCommand(() => NavigateTo(nameof(AboutPage)));
         NavigateToContactCommand                  = new RelayCommand(() => NavigateTo(nameof(ContactPage)));
@@ -163,8 +178,13 @@ public partial class MainViewModel : ObservableObject
         if(_authService is AuthService concreteAuthService)
             concreteAuthService.LoggedIn += OnLoggedIn;
 
+        _messageNotificationStateService.UnreadCountChanged += OnUnreadCountChanged;
+        _toastActivationService.ConversationActivated       += OnConversationActivated;
+        TryOpenPendingConversation();
+
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();
+        UpdateAuthenticatedStatus();
     }
 
     public string Title { get; }
@@ -185,6 +205,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToProcessorsCommand               { get; }
     public ICommand NavigateToSoftwareCommand                 { get; }
     public ICommand NavigateToSoundSynthesizersCommand        { get; }
+    public ICommand NavigateToMessagesCommand                 { get; }
     public ICommand NavigateToUsersCommand                    { get; }
     public ICommand NavigateToAdminCompaniesCommand           { get; }
     public ICommand NavigateToAdminGpusCommand                { get; }
@@ -207,6 +228,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminExternalSitesCommand       { get; }
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
+    public ICommand NavigateToAdminMessageReportsCommand      { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand NavigateToAboutCommand                    { get; }
     public ICommand NavigateToContactCommand                  { get; }
@@ -222,6 +244,7 @@ public partial class MainViewModel : ObservableObject
     {
         bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
         LoginLogoutButtonText = isAuthenticated ? _localizer["Logout"] : _localizer["Login"];
+        IsAuthenticatedUser   = isAuthenticated;
     }
 
     private void UpdateAdminStatus()
@@ -254,12 +277,15 @@ public partial class MainViewModel : ObservableObject
     {
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();
+        UpdateAuthenticatedStatus();
     }
 
     private void OnLoggedIn(object sender, EventArgs e)
     {
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();
+        UpdateAuthenticatedStatus();
+        _ = _messageNotificationStateService.RefreshAsync(seedBaseline: true);
     }
 
     public void RefreshAuthenticationState()
@@ -267,6 +293,7 @@ public partial class MainViewModel : ObservableObject
         // Public method to refresh authentication state (called after login)
         UpdateLoginLogoutButtonText();
         UpdateAdminStatus();
+        UpdateAuthenticatedStatus();
     }
 
     private async void HandleLoginLogout()
@@ -290,6 +317,30 @@ public partial class MainViewModel : ObservableObject
     private void NavigateTo(string viewName)
     {
         _regionManager.RequestNavigate(RegionNames.Content, viewName);
+    }
+
+    void OnUnreadCountChanged(object? sender, int count) => UnreadMessagesCount = count;
+
+    void OnConversationActivated(object? sender, long conversationId)
+    {
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.ConversationId, conversationId }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MessageThreadPage), parameters);
+        _toastActivationService.ClearPendingConversation();
+    }
+
+    void TryOpenPendingConversation()
+    {
+        if(_toastActivationService.TryConsumePendingConversation(out long conversationId))
+            OnConversationActivated(this, conversationId);
+    }
+
+    private async void UpdateAuthenticatedStatus()
+    {
+        IsAuthenticatedUser = await _authService.IsAuthenticated(CancellationToken.None);
     }
 
     partial void OnGlobalSearchQueryChanged(string value)
@@ -329,4 +380,6 @@ public partial class MainViewModel : ObservableObject
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdvancedSearchPage), parameters);
         GlobalSearchQuery = string.Empty;
     }
+
+    public Task InitializeMessagingAsync() => _messageNotificationStateService.InitializeAsync();
 }

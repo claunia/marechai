@@ -23,6 +23,7 @@ public sealed partial class MainPage : Page
         if(DataContext is not MainViewModel viewModel) return;
 
         SidebarWrapper.Width = viewModel.IsSidebarOpen ? 280 : 60;
+        _ = viewModel.InitializeMessagingAsync();
 
         if(_sidebarPropertyChangedHandler != null) return;
 

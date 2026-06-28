@@ -35,4 +35,6 @@ public static class NavParamKeys
     public const string MachineFamilyId     = "MachineFamilyId";
     public const string Year                = "Year";
     public const string ProfileUsername     = "ProfileUsername";
+    public const string ConversationId      = "ConversationId";
+    public const string MessageFolder       = "MessageFolder";
 }

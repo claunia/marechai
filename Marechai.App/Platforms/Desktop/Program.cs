@@ -1,4 +1,5 @@
 using System;
+using Marechai.App.Services;
 using Uno.UI.Hosting;
 
 namespace Marechai.App;
@@ -8,6 +9,8 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        ToastActivationService.ProcessLaunchArguments(args);
+
         var host = UnoPlatformHostBuilder.Create()
         .App(() => new App())
         .UseX11()

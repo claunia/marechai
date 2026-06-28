@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.ComposeMessagePage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Marechai.App.Presentation.Views"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Back"
+                    Command="{Binding GoBackCommand}" />
+
+            <TextBlock Grid.Column="1"
+                       Text="New Message"
+                       Margin="12,0,0,0"
+                       VerticalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="SemiBold" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Padding="16"
+                        Spacing="12"
+                        MaxWidth="860">
+                <InfoBar IsOpen="{Binding HasError}"
+                         Severity="Error"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+
+                <AutoSuggestBox x:Name="RecipientBox"
+                                Header="Recipient"
+                                PlaceholderText="Search users..."
+                                ItemsSource="{Binding RecipientSuggestions}"
+                                TextChanged="RecipientBox_OnTextChanged"
+                                SuggestionChosen="RecipientBox_OnSuggestionChosen">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+
+                <TextBlock Text="{Binding SelectedRecipient.DisplayName}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                <TextBox Header="Subject"
+                         Text="{Binding Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TabView SelectedIndex="{Binding SelectedEditorTabIndex, Mode=TwoWay}">
+                    <TabViewItem Header="Write">
+                        <TextBox AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="260"
+                                 Text="{Binding Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </TabViewItem>
+                    <TabViewItem Header="Preview">
+                        <ScrollViewer>
+                            <local:MessageMarkdownView Markdown="{Binding Body, Mode=OneWay}" />
+                        </ScrollViewer>
+                    </TabViewItem>
+                </TabView>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="12">
+                    <TextBlock Text="{Binding BodyLength}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="/ 5000"
+                               VerticalAlignment="Center" />
+                    <Button Content="Send"
+                            Click="SendButton_OnClick"
+                            IsEnabled="{Binding CanSend}"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

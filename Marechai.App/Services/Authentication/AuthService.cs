@@ -427,6 +427,37 @@ public sealed class AuthService
         }
     }
 
+    public async Task<NotificationPreferencesDto?> GetNotificationPreferencesAsync()
+    {
+        try
+        {
+            return await client.Auth.Me.NotificationPreferences.GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, string? ErrorMessage)> UpdateNotificationPreferencesAsync(
+        UpdateNotificationPreferencesRequest request)
+    {
+        try
+        {
+            await client.Auth.Me.NotificationPreferences.PutAsync(request);
+
+            return (true, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            return (false, ex.Detail ?? ex.Title ?? "Update failed.");
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     /// <inheritdoc />
     public ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = null) =>
         IsAuthenticated(cancellationToken);

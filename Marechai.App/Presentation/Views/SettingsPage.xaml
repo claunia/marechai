@@ -209,6 +209,28 @@
                     </Border>
                 </StackPanel>
 
+                <StackPanel Spacing="12"
+                            Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Notifications"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                    <CheckBox Content="Notify me by email when I receive a new message"
+                              IsChecked="{Binding NotifyOnNewMessage, Mode=TwoWay}" />
+                    <Border Background="#FFF4E6"
+                            BorderBrush="#FFB84D"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="8"
+                            Visibility="{Binding HasNotificationPreferencesMessage, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="{Binding NotificationPreferencesMessage}"
+                                   TextWrapping="Wrap" />
+                    </Border>
+                    <Button Content="Save notification preferences"
+                            Command="{Binding SaveNotificationPreferencesCommand}"
+                            IsEnabled="{Binding IsNotificationPreferencesBusy, Converter={StaticResource InvertBoolConverter}}"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            HorizontalAlignment="Left" />
+                </StackPanel>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

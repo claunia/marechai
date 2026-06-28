@@ -205,6 +205,10 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareCompilationsService>();
         containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
         containerRegistry.RegisterSingleton<ProfileService>();
+        containerRegistry.RegisterSingleton<MessagingService>();
+        containerRegistry.RegisterSingleton<ToastActivationService>();
+        containerRegistry.RegisterSingleton<INativeToastService, NativeToastService>();
+        containerRegistry.RegisterSingleton<MessageNotificationStateService>();
         containerRegistry.RegisterSingleton<WwpcImportsService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
@@ -268,6 +272,9 @@ public partial class App : PrismApplication
         containerRegistry.Register<SoundSynthDetailViewModel>();
         containerRegistry.Register<SoundSynthPhotoDetailViewModel>();
         containerRegistry.Register<SettingsViewModel>();
+        containerRegistry.Register<MessagesViewModel>();
+        containerRegistry.Register<MessageThreadViewModel>();
+        containerRegistry.Register<ComposeMessageViewModel>();
         containerRegistry.Register<UsersViewModel>();
         containerRegistry.Register<AdminCompaniesViewModel>();
         containerRegistry.Register<AdminGpusViewModel>();
@@ -300,6 +307,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
         containerRegistry.Register<AdminWwpcImportsViewModel>();
         containerRegistry.Register<AdminWwpcImportReviewViewModel>();
+        containerRegistry.Register<AdminMessageReportsViewModel>();
         containerRegistry.Register<ScreenshotDetailViewModel>();
         containerRegistry.Register<CoverDetailViewModel>();
 
@@ -355,6 +363,9 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<SoundSynthDetailPage, SoundSynthDetailViewModel>();
         containerRegistry.RegisterForNavigation<SoundSynthPhotoDetailPage, SoundSynthPhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
+        containerRegistry.RegisterForNavigation<MessagesPage, MessagesViewModel>();
+        containerRegistry.RegisterForNavigation<MessageThreadPage, MessageThreadViewModel>();
+        containerRegistry.RegisterForNavigation<ComposeMessagePage, ComposeMessageViewModel>();
         containerRegistry.RegisterForNavigation<UsersPage, UsersViewModel>();
         containerRegistry.RegisterForNavigation<AdminCompaniesPage, AdminCompaniesViewModel>();
         containerRegistry.RegisterForNavigation<AdminGpusPage, AdminGpusViewModel>();
@@ -387,6 +398,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMessageReportsPage, AdminMessageReportsViewModel>();
         containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
         containerRegistry.RegisterForNavigation<CoverDetailPage, CoverDetailViewModel>();
         containerRegistry.RegisterForNavigation<SoftwarePromoArtDetailPage, SoftwarePromoArtDetailViewModel>();

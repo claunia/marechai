@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -14,6 +15,7 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    private readonly AuthService? _authService;
     private readonly IColorThemeService _colorThemeService;
     private readonly IStringLocalizer   _localizer;
     private readonly TwoFactorService?  _twoFactorService;
@@ -57,15 +59,23 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private List<string> _displayedRecoveryCodes = new();
     public bool ShowRecoveryCodes => DisplayedRecoveryCodes.Count > 0;
 
+    // Messaging notification preferences
+    [ObservableProperty] private bool _notifyOnNewMessage = true;
+    [ObservableProperty] private string _notificationPreferencesMessage = string.Empty;
+    [ObservableProperty] private bool _isNotificationPreferencesBusy;
+    public bool HasNotificationPreferencesMessage => !string.IsNullOrWhiteSpace(NotificationPreferencesMessage);
+
     public SettingsViewModel(IStringLocalizer   localizer,
                              IColorThemeService colorThemeService,
                              TwoFactorService?  twoFactorService = null,
-                             ITokenService?     tokenService     = null)
+                             ITokenService?     tokenService     = null,
+                             AuthService?       authService      = null)
     {
         _localizer         = localizer;
         _colorThemeService = colorThemeService;
         _twoFactorService  = twoFactorService;
         _tokenService      = tokenService;
+        _authService       = authService;
         Title              = _localizer["Settings"];
 
         IsAuthenticated = !string.IsNullOrWhiteSpace(_tokenService?.GetToken());
@@ -77,6 +87,7 @@ public partial class SettingsViewModel : ObservableObject
         _ = InitializeThemeServiceAsync();
 
         if(IsAuthenticated) _ = RefreshTwoFactorStatusAsync();
+        if(IsAuthenticated) _ = LoadNotificationPreferencesAsync();
     }
 
     public string Title { get; }
@@ -413,4 +424,34 @@ public partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void DismissRecoveryCodes() => DisplayedRecoveryCodes = new List<string>();
+
+    [RelayCommand]
+    private async Task SaveNotificationPreferencesAsync()
+    {
+        if(_authService is null) return;
+
+        IsNotificationPreferencesBusy = true;
+        NotificationPreferencesMessage = string.Empty;
+
+        var (succeeded, errorMessage) = await _authService.UpdateNotificationPreferencesAsync(
+            new UpdateNotificationPreferencesRequest
+            {
+                NotifyOnNewMessage = NotifyOnNewMessage
+            });
+
+        IsNotificationPreferencesBusy = false;
+        NotificationPreferencesMessage = succeeded
+            ? "Notification preferences updated successfully."
+            : errorMessage ?? "Failed to update notification preferences.";
+        OnPropertyChanged(nameof(HasNotificationPreferencesMessage));
+    }
+
+    async Task LoadNotificationPreferencesAsync()
+    {
+        if(_authService is null) return;
+
+        NotificationPreferencesDto? preferences = await _authService.GetNotificationPreferencesAsync();
+        if(preferences is not null)
+            NotifyOnNewMessage = preferences.NotifyOnNewMessage ?? true;
+    }
 }

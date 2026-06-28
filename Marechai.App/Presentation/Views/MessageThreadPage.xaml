@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.MessageThreadPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Marechai.App.Presentation.Views"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Back"
+                    Command="{Binding GoBackCommand}" />
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0">
+                <TextBlock Text="{Binding Subject}"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding ParticipantsText}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <Button Grid.Column="2"
+                    Content="Delete"
+                    Click="DeleteConversationButton_OnClick" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64" />
+                <TextBlock Text="Loading conversation..." />
+            </StackPanel>
+
+            <ScrollViewer Visibility="{Binding IsDataLoaded}"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="16"
+                            Spacing="12">
+                    <InfoBar IsOpen="{Binding HasError}"
+                             Severity="Error"
+                             Message="{Binding ErrorMessage}"
+                             IsClosable="False" />
+                    <InfoBar IsOpen="True"
+                             Visibility="{Binding InfoMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                             Severity="Success"
+                             Message="{Binding InfoMessage}"
+                             IsClosable="False" />
+
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,12">
+                                    <StackPanel Spacing="8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <TextBlock Text="{Binding SenderDisplayName}"
+                                                           FontWeight="SemiBold" />
+                                                <TextBlock Text="System"
+                                                           Visibility="{Binding IsSystemAuthored}" />
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding TimestampText}"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        </Grid>
+
+                                        <local:MessageMarkdownView Markdown="{Binding Body}" />
+
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Right"
+                                                    Spacing="8">
+                                            <Button Content="Report"
+                                                    Visibility="{Binding CanReport}"
+                                                    Click="ReportButton_OnClick" />
+                                            <Button Content="Delete"
+                                                    Click="DeleteMessageButton_OnClick" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Reply"
+                           FontWeight="SemiBold" />
+                <TabView SelectedIndex="{Binding SelectedEditorTabIndex, Mode=TwoWay}">
+                    <TabViewItem Header="Write">
+                        <TextBox AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="180"
+                                 Text="{Binding ReplyBody, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </TabViewItem>
+                    <TabViewItem Header="Preview">
+                        <ScrollViewer>
+                            <local:MessageMarkdownView Markdown="{Binding ReplyBody, Mode=OneWay}" />
+                        </ScrollViewer>
+                    </TabViewItem>
+                </TabView>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="12">
+                    <TextBlock Text="{Binding ReplyLength}" />
+                    <TextBlock Text="/ 5000" />
+                    <Button Content="Send"
+                            Click="SendReplyButton_OnClick"
+                            IsEnabled="{Binding CanSendReply}"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

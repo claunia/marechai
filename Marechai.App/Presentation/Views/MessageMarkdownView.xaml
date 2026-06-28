@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl x:Class="Marechai.App.Presentation.Views.MessageMarkdownView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls">
+
+    <controls:MarkdownTextBlock x:Name="MarkdownBlock"
+                                Margin="0"
+                                IsTextSelectionEnabled="True"
+                                ImageMaxWidth="720"
+                                ImageMaxHeight="480"
+                                LinkClicked="MarkdownBlock_OnLinkClicked" />
+</UserControl>

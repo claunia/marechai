@@ -268,6 +268,19 @@
                         Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- Messages -->
+                <Button Content="{Binding MessagesButtonText}"
+                        Command="{Binding NavigateToMessagesCommand}"
+                        Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 

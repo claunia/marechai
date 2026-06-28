@@ -58,8 +58,15 @@
                                Text="{Binding Title}"
                                VerticalAlignment="Center" />
 
-                    <AutoSuggestBox x:Name="GlobalSearchBox"
-                                    Grid.Column="1"
+                    <Grid Grid.Column="1"
+                          ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <AutoSuggestBox x:Name="GlobalSearchBox"
+                                    Grid.Column="0"
                                     VerticalAlignment="Center"
                                     PlaceholderText="{Binding Source={StaticResource Strings}, Path=GlobalSearchBox_Placeholder}"
                                     Text="{Binding GlobalSearchQuery, Mode=TwoWay}"
@@ -76,7 +83,30 @@
                                 </StackPanel>
                             </DataTemplate>
                         </AutoSuggestBox.ItemTemplate>
-                    </AutoSuggestBox>
+                        </AutoSuggestBox>
+
+                        <Grid Grid.Column="1"
+                              VerticalAlignment="Center"
+                              Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Button Command="{Binding NavigateToMessagesCommand}"
+                                    Padding="8"
+                                    MinWidth="44"
+                                    MinHeight="44"
+                                    ToolTipService.ToolTip="Messages">
+                                <FontIcon Glyph="&#xE715;" />
+                            </Button>
+                            <Border Background="{ThemeResource SystemAccentColor}"
+                                    CornerRadius="10"
+                                    Padding="5,1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Visibility="{Binding UnreadMessagesCount, Converter={StaticResource ZeroToVisibilityConverter}}">
+                                <TextBlock Text="{Binding UnreadMessagesCount}"
+                                           Foreground="White"
+                                           FontSize="11" />
+                            </Border>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </utu:NavigationBar.Content>
         </utu:NavigationBar>
