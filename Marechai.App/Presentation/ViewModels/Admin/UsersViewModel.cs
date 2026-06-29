@@ -151,6 +151,8 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
 
     private async Task LoadUsersAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;

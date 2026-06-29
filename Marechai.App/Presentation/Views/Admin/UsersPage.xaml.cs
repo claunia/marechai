@@ -34,23 +34,10 @@ public sealed partial class UsersPage : Page
         {
             _currentViewModel      =  vm;
             vm.ShowDialogRequested += OnShowDialogRequested;
-
-            if(vm.IsUberadmin)
-            {
-                // Load data when DataContext is set and user is Uberadmin
-                vm.LoadUsersCommand.Execute(null);
-            }
         }
     }
 
-    private void UsersPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        if(DataContext is UsersViewModel vm && vm.IsUberadmin)
-        {
-            // Load data when page is loaded (fallback)
-            vm.LoadUsersCommand.Execute(null);
-        }
-    }
+    private void UsersPage_Loaded(object sender, RoutedEventArgs e) { }
 
     private async void OnShowDialogRequested(object sender, string dialogType)
     {
