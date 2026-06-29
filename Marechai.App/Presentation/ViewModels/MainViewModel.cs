@@ -84,6 +84,7 @@ public partial class MainViewModel : ObservableObject
     public string ExternalSiteManagementButtonText     => _localizer["ExternalSiteManagementButton"];
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string SoftwareDuplicatesManagementButtonText => _localizer["SoftwareDuplicatesManagementButton"];
+    public string SoftwareOrphanAddonsManagementButtonText => _localizer["SoftwareOrphanAddonsManagementButton"];
     public string WwpcImportsManagementButtonText     => _localizer["WwpcImportsManagementButton"];
     public string OldDosImportsManagementButtonText   => _localizer["OldDosImportsManagementButton"];
     public string MessageReportsManagementButtonText  => "Message Reports";
@@ -167,6 +168,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminExternalSitesCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminExternalSitesPage)));
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToAdminSoftwareDuplicatesCommand            = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareDuplicatesPage)));
+        NavigateToAdminSoftwareOrphanAddonsCommand          = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareOrphanAddonsPage)));
         NavigateToAdminWwpcImportsCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminWwpcImportsPage)));
         NavigateToAdminOldDosImportsCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminOldDosImportsPage)));
         NavigateToAdminMessageReportsCommand               = new RelayCommand(() => NavigateTo(nameof(AdminMessageReportsPage)));
@@ -241,6 +243,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminExternalSitesCommand       { get; }
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToAdminSoftwareDuplicatesCommand  { get; }
+    public ICommand NavigateToAdminSoftwareOrphanAddonsCommand { get; }
     public ICommand NavigateToAdminWwpcImportsCommand         { get; }
     public ICommand NavigateToAdminOldDosImportsCommand       { get; }
     public ICommand NavigateToAdminMessageReportsCommand      { get; }

@@ -1,0 +1,333 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.Admin.AdminSoftwareOrphanAddonsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="using:Marechai.App.Presentation.ViewModels.Admin"
+      x:Name="PageRoot"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsPageTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsPageSubtitle}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Access Denied -->
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=CompanyMgmtAccessDeniedTitle}"
+                         Message="{Binding Source={StaticResource Strings}, Path=CompanyMgmtAccessDeniedMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <!-- Content (admin only) -->
+            <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
+                  Canvas.ZIndex="0">
+
+                <!-- Loading -->
+                <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="64"
+                                  Width="64"
+                                  Foreground="{ThemeResource SystemAccentColor}" />
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="24"
+                            Spacing="16"
+                            MaxWidth="400"
+                            Canvas.ZIndex="100">
+                    <InfoBar IsOpen="True"
+                             Severity="Error"
+                             Title="{Binding Source={StaticResource Strings}, Path=ErrorTitle}"
+                             Message="{Binding ErrorMessage}"
+                             IsClosable="False" />
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                            Command="{Binding LoadOrphanAddonsCommand}"
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+
+                <!-- List View -->
+                <Grid Visibility="{Binding IsDataLoaded, Converter={StaticResource BoolToVisibilityConverter}}"
+                      Canvas.ZIndex="1">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Orphan add-ons list -->
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Success message -->
+                            <InfoBar Grid.Row="0"
+                                     IsOpen="{Binding SuccessMessage, Converter={StaticResource StringNotEmptyToBoolConverter}}"
+                                     Severity="Success"
+                                     Message="{Binding SuccessMessage}"
+                                     Margin="16,12,16,0" />
+
+                            <!-- Toolbar -->
+                            <Grid Grid.Row="1"
+                                  Padding="16,12"
+                                  ColumnSpacing="12"
+                                  BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                  BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="240" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0"
+                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsSearchPlaceholder}"
+                                         Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                         x:Name="SearchBox"
+                                         KeyDown="SearchBox_KeyDown"
+                                         LostFocus="SearchBox_LostFocus" />
+
+                                <CheckBox Grid.Column="1"
+                                          Content="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsOnlyOrphansLabel}"
+                                          IsChecked="{Binding OnlyOrphans, Mode=TwoWay}"
+                                          VerticalAlignment="Center" />
+
+                                <Button Grid.Column="3"
+                                        Content="{Binding BulkLinkButtonText}"
+                                        Command="{Binding OpenBulkLinkDialogCommand}"
+                                        IsEnabled="{Binding HasSelection}"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        VerticalAlignment="Center" />
+
+                                <Button Grid.Column="4"
+                                        Content="{Binding Source={StaticResource Strings}, Path=RefreshCompaniesButton}"
+                                        Command="{Binding LoadOrphanAddonsCommand}"
+                                        VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Rows -->
+                            <ListView Grid.Row="2"
+                                      Padding="16"
+                                      SelectionMode="None"
+                                      IsItemClickEnabled="False"
+                                      ItemsSource="{Binding OrphanAddons}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:OrphanAddonRow">
+                                        <Grid Padding="8"
+                                              ColumnSpacing="8"
+                                              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                              BorderThickness="0,0,0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Grid.Column="0"
+                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                      Checked="RowCheckBox_Toggled"
+                                                      Unchecked="RowCheckBox_Toggled" />
+
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Item.Name}"
+                                                           FontWeight="SemiBold" />
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="6"
+                                                            Margin="0,2,0,0">
+                                                    <TextBlock Text="{Binding KindLabel}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsDlcGenreBadge}"
+                                                               Visibility="{Binding HasDlcGenreBadge, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                               FontSize="11"
+                                                               Foreground="{ThemeResource SystemAccentColor}" />
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding Item.BaseSoftwareName}"
+                                                       VerticalAlignment="Center"
+                                                       MaxWidth="220"
+                                                       TextTrimming="CharacterEllipsis" />
+
+                                            <Border Grid.Column="3"
+                                                    Background="{ThemeResource SystemAccentColor}"
+                                                    CornerRadius="10"
+                                                    Padding="8,2"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding ReasonLabel}"
+                                                           Foreground="White"
+                                                           FontSize="12" />
+                                            </Border>
+
+                                            <StackPanel Grid.Column="4"
+                                                        Orientation="Horizontal"
+                                                        Spacing="4">
+                                                <Button Click="LinkRow_Click"
+                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsLinkTooltip}">
+                                                    <FontIcon Glyph="&#xE71B;" />
+                                                </Button>
+                                                <Button Click="OpenInNewWindow_Click"
+                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
+                                                    <FontIcon Glyph="&#xE8A7;" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <!-- Pager -->
+                            <Grid Grid.Row="3"
+                                  Padding="16,12"
+                                  ColumnSpacing="12"
+                                  BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                  BorderThickness="0,1,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0"
+                                        Content="{Binding Source={StaticResource Strings}, Path=PreviousPageButton}"
+                                        Command="{Binding PreviousPageCommand}"
+                                        IsEnabled="{Binding CanGoPrevious}" />
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding PageInfoText}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+
+                                <Button Grid.Column="2"
+                                        Content="{Binding Source={StaticResource Strings}, Path=NextPageButton}"
+                                        Command="{Binding NextPageCommand}"
+                                        IsEnabled="{Binding CanGoNext}" />
+                            </Grid>
+                        </Grid>
+
+                        <!-- Link Panel -->
+                        <Border Grid.Column="1"
+                                Visibility="{Binding IsLinking, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="420"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Link header -->
+                                <Grid Grid.Row="0"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding LinkPanelTitle}"
+                                               FontSize="18"
+                                               FontWeight="SemiBold" />
+                                </Grid>
+
+                                <!-- Link body -->
+                                <ScrollViewer Grid.Row="1"
+                                              Padding="16"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Spacing="12">
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsLinkTargetLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareSearchBox_Placeholder}"
+                                                        Text="{Binding LinkSearchText, Mode=TwoWay}"
+                                                        QueryIcon="Find"
+                                                        x:Name="LinkTargetFilterBox"
+                                                        TextChanged="LinkTargetFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding LinkCandidates}"
+                                                  SelectedItem="{Binding SelectedLinkCandidate, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name"
+                                                  HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsLinkTargetLabel}" />
+                                    </StackPanel>
+                                </ScrollViewer>
+
+                                <!-- Link footer -->
+                                <Grid Grid.Row="2"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,1,0,0"
+                                      ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Command="{Binding CancelLinkCommand}"
+                                            HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1"
+                                            Content="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsLinkConfirmButton}"
+                                            IsEnabled="{Binding HasSelectedLinkCandidate}"
+                                            Command="{Binding ConfirmLinkCommand}"
+                                            HorizontalAlignment="Stretch"
+                                            Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

@@ -3705,6 +3705,32 @@
   <data name="MergeReleaseTitleLabel" xml:space="preserve"><value>Release title</value></data>
   <data name="SoftwareDuplicatesPageInfo" xml:space="preserve"><value>Page {0} of {1}</value></data>
   <data name="FailedToLoadDuplicateGroups" xml:space="preserve"><value>Failed to load duplicate groups.</value></data>
+  <data name="SoftwareOrphanAddonsManagementButton" xml:space="preserve"><value>Software Orphan Add-ons</value></data>
+  <data name="SoftwareOrphanAddonsPageTitle" xml:space="preserve"><value>Software Orphan Add-ons</value></data>
+  <data name="SoftwareOrphanAddonsPageSubtitle" xml:space="preserve"><value>Link DLCs to their base game and fix misclassified add-ons.</value></data>
+  <data name="SoftwareOrphanAddonsSearchPlaceholder" xml:space="preserve"><value>Search by name...</value></data>
+  <data name="SoftwareOrphanAddonsOnlyOrphansLabel" xml:space="preserve"><value>Show only orphans</value></data>
+  <data name="SoftwareOrphanAddonsDlcGenreBadge" xml:space="preserve"><value>DLC genre</value></data>
+  <data name="SoftwareOrphanAddonsLinkTooltip" xml:space="preserve"><value>Link to base software</value></data>
+  <data name="SoftwareOrphanAddonsLinkTargetLabel" xml:space="preserve"><value>Base software</value></data>
+  <data name="SoftwareOrphanAddonsLinkConfirmButton" xml:space="preserve"><value>Link</value></data>
+  <data name="SoftwareOrphanAddonsPageInfo" xml:space="preserve"><value>Page {0} of {1}</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkButton" xml:space="preserve"><value>Link selected to base software ({0})</value></data>
+  <data name="SoftwareOrphanAddonsLinkSingleTitle" xml:space="preserve"><value>Link to base software</value></data>
+  <data name="SoftwareOrphanAddonsLinkBulkTitle" xml:space="preserve"><value>Link {0} rows to base software</value></data>
+  <data name="SoftwareOrphanAddonsLoadFailed" xml:space="preserve"><value>Failed to load orphan add-ons.</value></data>
+  <data name="SoftwareOrphanReasonLinked" xml:space="preserve"><value>Linked</value></data>
+  <data name="SoftwareOrphanReasonNoBase" xml:space="preserve"><value>No base</value></data>
+  <data name="SoftwareOrphanReasonSelfReference" xml:space="preserve"><value>Self reference</value></data>
+  <data name="SoftwareOrphanReasonDanglingFk" xml:space="preserve"><value>Dangling base</value></data>
+  <data name="SoftwareOrphanReasonChainedDlc" xml:space="preserve"><value>Chained DLC</value></data>
+  <data name="SoftwareOrphanReasonNameMismatch" xml:space="preserve"><value>Name mismatch</value></data>
+  <data name="SoftwareOrphanReasonMisclassifiedAsGame" xml:space="preserve"><value>Misclassified as Game</value></data>
+  <data name="SoftwareOrphanReasonUnknown" xml:space="preserve"><value>—</value></data>
+  <data name="SoftwareOrphanAddonsLinkSuccess" xml:space="preserve"><value>Add-on linked successfully.</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkSuccess" xml:space="preserve"><value>{0} add-ons linked successfully.</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkPartial" xml:space="preserve"><value>{0} add-ons linked, {1} failed.</value></data>
+  <data name="SoftwareOrphanAddonsLinkFailed" xml:space="preserve"><value>Failed to link add-on(s) to base software.</value></data>
   <data name="FailedToMergeSoftware" xml:space="preserve"><value>Failed to merge software.</value></data>
   <data name="SoftwareSearchBox_Placeholder" xml:space="preserve"><value>Search software...</value></data>
   <data name="PreviousPageButton" xml:space="preserve"><value>Previous</value></data>

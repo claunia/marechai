@@ -3300,6 +3300,32 @@
   <data name="MergeReleaseTitleLabel" xml:space="preserve"><value>Titre de l'édition</value></data>
   <data name="SoftwareDuplicatesPageInfo" xml:space="preserve"><value>Page {0} sur {1}</value></data>
   <data name="FailedToLoadDuplicateGroups" xml:space="preserve"><value>Impossible de charger les groupes de doublons.</value></data>
+  <data name="SoftwareOrphanAddonsManagementButton" xml:space="preserve"><value>Extensions logicielles orphelines</value></data>
+  <data name="SoftwareOrphanAddonsPageTitle" xml:space="preserve"><value>Extensions logicielles orphelines</value></data>
+  <data name="SoftwareOrphanAddonsPageSubtitle" xml:space="preserve"><value>Lier les DLC à leur jeu de base et corriger les extensions mal classées.</value></data>
+  <data name="SoftwareOrphanAddonsSearchPlaceholder" xml:space="preserve"><value>Rechercher par nom...</value></data>
+  <data name="SoftwareOrphanAddonsOnlyOrphansLabel" xml:space="preserve"><value>Afficher uniquement les orphelins</value></data>
+  <data name="SoftwareOrphanAddonsDlcGenreBadge" xml:space="preserve"><value>Genre DLC</value></data>
+  <data name="SoftwareOrphanAddonsLinkTooltip" xml:space="preserve"><value>Lier au logiciel de base</value></data>
+  <data name="SoftwareOrphanAddonsLinkTargetLabel" xml:space="preserve"><value>Logiciel de base</value></data>
+  <data name="SoftwareOrphanAddonsLinkConfirmButton" xml:space="preserve"><value>Lier</value></data>
+  <data name="SoftwareOrphanAddonsPageInfo" xml:space="preserve"><value>Page {0} sur {1}</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkButton" xml:space="preserve"><value>Lier la sélection au logiciel de base ({0})</value></data>
+  <data name="SoftwareOrphanAddonsLinkSingleTitle" xml:space="preserve"><value>Lier au logiciel de base</value></data>
+  <data name="SoftwareOrphanAddonsLinkBulkTitle" xml:space="preserve"><value>Lier {0} lignes au logiciel de base</value></data>
+  <data name="SoftwareOrphanAddonsLoadFailed" xml:space="preserve"><value>Impossible de charger les extensions orphelines.</value></data>
+  <data name="SoftwareOrphanReasonLinked" xml:space="preserve"><value>Liée</value></data>
+  <data name="SoftwareOrphanReasonNoBase" xml:space="preserve"><value>Aucune base</value></data>
+  <data name="SoftwareOrphanReasonSelfReference" xml:space="preserve"><value>Auto-référence</value></data>
+  <data name="SoftwareOrphanReasonDanglingFk" xml:space="preserve"><value>Base invalide</value></data>
+  <data name="SoftwareOrphanReasonChainedDlc" xml:space="preserve"><value>DLC chaîné</value></data>
+  <data name="SoftwareOrphanReasonNameMismatch" xml:space="preserve"><value>Nom non correspondant</value></data>
+  <data name="SoftwareOrphanReasonMisclassifiedAsGame" xml:space="preserve"><value>Mal classé comme jeu</value></data>
+  <data name="SoftwareOrphanReasonUnknown" xml:space="preserve"><value>—</value></data>
+  <data name="SoftwareOrphanAddonsLinkSuccess" xml:space="preserve"><value>Extension liée avec succès.</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkSuccess" xml:space="preserve"><value>{0} extensions liées avec succès.</value></data>
+  <data name="SoftwareOrphanAddonsBulkLinkPartial" xml:space="preserve"><value>{0} extensions liées, {1} échecs.</value></data>
+  <data name="SoftwareOrphanAddonsLinkFailed" xml:space="preserve"><value>Impossible de lier les extensions au logiciel de base.</value></data>
   <data name="FailedToMergeSoftware" xml:space="preserve"><value>Impossible de fusionner le logiciel.</value></data>
   <data name="SoftwareSearchBox_Placeholder" xml:space="preserve"><value>Rechercher un logiciel...</value></data>
   <data name="PreviousPageButton" xml:space="preserve"><value>Précédent</value></data>

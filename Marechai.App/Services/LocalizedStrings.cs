@@ -97,6 +97,14 @@ public class LocalizedStrings
     public string MergeReleaseTitleLabel => _l["MergeReleaseTitleLabel"];
     public string SoftwareDuplicatesPageTitle => _l["SoftwareDuplicatesPageTitle"];
     public string SoftwareDuplicatesPageSubtitle => _l["SoftwareDuplicatesPageSubtitle"];
+    public string SoftwareOrphanAddonsPageTitle => _l["SoftwareOrphanAddonsPageTitle"];
+    public string SoftwareOrphanAddonsPageSubtitle => _l["SoftwareOrphanAddonsPageSubtitle"];
+    public string SoftwareOrphanAddonsSearchPlaceholder => _l["SoftwareOrphanAddonsSearchPlaceholder"];
+    public string SoftwareOrphanAddonsOnlyOrphansLabel => _l["SoftwareOrphanAddonsOnlyOrphansLabel"];
+    public string SoftwareOrphanAddonsDlcGenreBadge => _l["SoftwareOrphanAddonsDlcGenreBadge"];
+    public string SoftwareOrphanAddonsLinkTooltip => _l["SoftwareOrphanAddonsLinkTooltip"];
+    public string SoftwareOrphanAddonsLinkTargetLabel => _l["SoftwareOrphanAddonsLinkTargetLabel"];
+    public string SoftwareOrphanAddonsLinkConfirmButton => _l["SoftwareOrphanAddonsLinkConfirmButton"];
     public string KindFilterLabel => _l["KindFilterLabel"];
     public string ExcludeDlcLabel => _l["ExcludeDlcLabel"];
     public string MasterColumnHeader => _l["MasterColumnHeader"];
