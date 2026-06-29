@@ -2263,6 +2263,9 @@
   <data name="LanguageLabel" xml:space="preserve"><value>Idioma</value></data>
   <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Traduções existentes</value></data>
   <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Falha ao excluir a tradução.</value></data>
+  <data name="MarkdownSourceLabel" xml:space="preserve"><value>Markdown</value></data>
+  <data name="MarkdownPreviewLabel" xml:space="preserve"><value>Pré-visualização</value></data>
+  <data name="DescriptionMarkdownPlaceholder" xml:space="preserve"><value>Digite a descrição em Markdown...</value></data>
   <data name="DescriptionSectionTitle" xml:space="preserve"><value>Descrição</value></data>
   <data name="BookManagementTitle" xml:space="preserve"><value>Gerenciamento de livros</value></data>
   <data name="BookManagementSubtitle" xml:space="preserve"><value>Gerenciar livros no banco de dados</value></data>

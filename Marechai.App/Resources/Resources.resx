@@ -2703,6 +2703,9 @@
   <data name="LanguageLabel" xml:space="preserve"><value>Language</value></data>
   <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Existing translations</value></data>
   <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Failed to delete translation.</value></data>
+  <data name="MarkdownSourceLabel" xml:space="preserve"><value>Markdown</value></data>
+  <data name="MarkdownPreviewLabel" xml:space="preserve"><value>Preview</value></data>
+  <data name="DescriptionMarkdownPlaceholder" xml:space="preserve"><value>Enter description in Markdown...</value></data>
   <data name="DescriptionSectionTitle" xml:space="preserve"><value>Description</value></data>
   <data name="BookManagementTitle" xml:space="preserve"><value>Book Management</value></data>
   <data name="BookManagementSubtitle" xml:space="preserve"><value>Manage books in the database</value></data>

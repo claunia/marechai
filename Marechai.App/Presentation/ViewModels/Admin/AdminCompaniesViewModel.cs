@@ -143,6 +143,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ObservableCollection<CompanyDescriptionDto> _existingTranslations = [];
 
+    public bool CanSaveDescription =>
+        DescriptionCompanyId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
+
     // --- Picker data ---
     [ObservableProperty]
     private ObservableCollection<Iso31661NumericDto> _countries = [];
@@ -514,31 +519,15 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
         try
         {
+            HasError            = false;
+            ErrorMessage        = string.Empty;
             DescriptionCompanyId = company.Id;
             DescriptionMarkdown  = string.Empty;
             IsEditing            = false;
+            IsMerging            = false;
             ExistingTranslations.Clear();
-
-            // Load all existing translations
-            List<CompanyDescriptionDto>? translations =
-                await _apiClient.Companies[company.Id.Value].Descriptions.GetAsync();
-
-            if(translations != null)
-                foreach(CompanyDescriptionDto t in translations)
-                    ExistingTranslations.Add(t);
-
-            // Default to English or first untranslated language
-            SelectedLanguage = AvailableLanguages.FirstOrDefault(l =>
-                                   ExistingTranslations.All(t => t.LanguageCode != l.Code)) ??
-                               AvailableLanguages[0];
-
-            // If selected language already has content, load it
-            CompanyDescriptionDto? existing =
-                ExistingTranslations.FirstOrDefault(t => t.LanguageCode == SelectedLanguage.Code);
-
-            if(existing != null)
-                DescriptionMarkdown = existing.Markdown ?? string.Empty;
-
+            await ReloadDescriptionTranslationsAsync(company.Id.Value);
+            SelectedLanguage = GetDefaultDescriptionLanguage();
             IsEditingDescription = true;
         }
         catch(Exception ex)
@@ -554,17 +543,56 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         if(value == null || ExistingTranslations.Count == 0)
         {
             DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
 
             return;
         }
 
         CompanyDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
         DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionCompanyIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    async Task ReloadDescriptionTranslationsAsync(int companyId)
+    {
+        ExistingTranslations.Clear();
+
+        List<CompanyDescriptionDto>? translations =
+            await _apiClient.Companies[companyId].Descriptions.GetAsync();
+
+        if(translations == null) return;
+
+        foreach(CompanyDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
     }
 
     private async Task SaveDescriptionAsync()
     {
-        if(DescriptionCompanyId == null || SelectedLanguage == null) return;
+        if(!CanSaveDescription || DescriptionCompanyId == null || SelectedLanguage == null) return;
 
         try
         {
@@ -576,16 +604,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
             };
 
             await _apiClient.Companies[DescriptionCompanyId.Value].Description.PostAsync(dto);
-
-            // Refresh translations list
-            ExistingTranslations.Clear();
-
-            List<CompanyDescriptionDto>? translations =
-                await _apiClient.Companies[DescriptionCompanyId.Value].Descriptions.GetAsync();
-
-            if(translations != null)
-                foreach(CompanyDescriptionDto t in translations)
-                    ExistingTranslations.Add(t);
+            await ReloadDescriptionTranslationsAsync(DescriptionCompanyId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
         }
         catch(Exception ex)
         {
@@ -610,9 +631,21 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         try
         {
             await _apiClient.Companies[DescriptionCompanyId.Value].Description[translation.LanguageCode].DeleteAsync();
+            await ReloadDescriptionTranslationsAsync(DescriptionCompanyId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
 
-            ExistingTranslations.Remove(translation);
-            DescriptionMarkdown = string.Empty;
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
         }
         catch(Exception ex)
         {
@@ -628,6 +661,10 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         DescriptionCompanyId = null;
         DescriptionMarkdown  = string.Empty;
         ExistingTranslations.Clear();
+        SelectedLanguage     = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                               AvailableLanguages.FirstOrDefault();
+        HasError             = false;
+        ErrorMessage         = string.Empty;
     }
 
     // --- Logos navigation ---
