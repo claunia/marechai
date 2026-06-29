@@ -70,6 +70,9 @@
                                 <AppBarButton Icon="Add"
                                               Label="{Binding Source={StaticResource Strings}, Path=AddSoftwarePlatformButton}"
                                               Command="{Binding OpenAddCommand}" />
+                                <AppBarButton Icon="Switch"
+                                              Label="{Binding Source={StaticResource Strings}, Path=MergePlatformsButton}"
+                                              Command="{Binding OpenMergeCommand}" />
                                 <AppBarButton Icon="Refresh"
                                               Label="{Binding Source={StaticResource Strings}, Path=RefreshButton}"
                                               Command="{Binding LoadCommand}" />
@@ -168,6 +171,92 @@
                                     <Button Grid.Column="1"
                                             Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
                                             Command="{Binding SaveCommand}" HorizontalAlignment="Stretch"
+                                            Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                Visibility="{Binding IsMerging, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="420"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergePlatformsPanelTitle}"
+                                                   FontSize="18" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding SelectedMergeTargetPlatform.Name}"
+                                                   FontSize="13"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Spacing="12">
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=MergePlatformsTargetLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwarePlatformSearchPlaceholder}"
+                                                        Text="{Binding MergeTargetSearchText, Mode=TwoWay}"
+                                                        QueryIcon="Find"
+                                                        x:Name="MergeTargetFilterBox"
+                                                        TextChanged="MergeTargetFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding MergeTargetSuggestions}"
+                                                  SelectedItem="{Binding SelectedMergeTargetPlatform, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name"
+                                                  HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=MergePlatformsTargetLabel}" />
+
+                                        <InfoBar IsOpen="True"
+                                                 Visibility="{Binding SelectedMergeTargetPlatform, Converter={StaticResource NullToVisibilityConverter}}"
+                                                 Severity="Warning"
+                                                 Title="{Binding Source={StaticResource Strings}, Path=MergeWarningTitle}"
+                                                 Message="{Binding Source={StaticResource Strings}, Path=MergePlatformsHelpText}"
+                                                 IsClosable="False" />
+
+                                        <StackPanel Visibility="{Binding SelectedMergeTargetPlatform, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    Spacing="8">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergePlatformsSourcesLabel}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding MergeSourceCandidates}">
+                                                <ItemsRepeater.Layout>
+                                                    <StackLayout Spacing="4" />
+                                                </ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox Content="{Binding Platform.Name}"
+                                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+
+                                <Grid Grid.Row="2" Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0"
+                                      ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Command="{Binding CancelMergeCommand}" HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1"
+                                            Content="{Binding Source={StaticResource Strings}, Path=MergeButton}"
+                                            IsEnabled="{Binding CanConfirmMerge}"
+                                            Click="MergeButton_Click"
+                                            HorizontalAlignment="Stretch"
                                             Style="{ThemeResource AccentButtonStyle}" />
                                 </Grid>
                             </Grid>

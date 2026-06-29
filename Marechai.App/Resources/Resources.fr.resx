@@ -914,8 +914,26 @@
   <data name="MergeConfirmDialogMessage" xml:space="preserve">
     <value>Cette action est irréversible. L'entreprise source sera supprimée et toutes ses données seront déplacées vers l'entreprise cible. Continuer ?</value>
   </data>
+  <data name="MergePlatformsButton" xml:space="preserve">
+    <value>Fusionner les plateformes</value>
+  </data>
+  <data name="MergePlatformsPanelTitle" xml:space="preserve">
+    <value>Fusionner les plateformes logicielles</value>
+  </data>
+  <data name="MergePlatformsTargetLabel" xml:space="preserve">
+    <value>Plateforme cible</value>
+  </data>
+  <data name="MergePlatformsSourcesLabel" xml:space="preserve">
+    <value>Plateformes à fusionner</value>
+  </data>
+  <data name="MergePlatformsHelpText" xml:space="preserve">
+    <value>Sélectionnez une ou plusieurs plateformes source à fusionner dans la plateforme cible. Les plateformes source sélectionnées seront supprimées après le déplacement de leurs références.</value>
+  </data>
   <data name="FailedToLoadMergePreview" xml:space="preserve">
     <value>Impossible de charger l'aperçu de la fusion</value>
+  </data>
+  <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
+    <value>Impossible de fusionner les plateformes logicielles</value>
   </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Impossible de fusionner les entreprises</value>

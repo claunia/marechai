@@ -1013,8 +1013,26 @@
   <data name="MergeConfirmDialogMessage" xml:space="preserve">
     <value>This action cannot be undone. The source company will be permanently deleted and all its data moved to the target company. Continue?</value>
   </data>
+  <data name="MergePlatformsButton" xml:space="preserve">
+    <value>Merge Platforms</value>
+  </data>
+  <data name="MergePlatformsPanelTitle" xml:space="preserve">
+    <value>Merge Software Platforms</value>
+  </data>
+  <data name="MergePlatformsTargetLabel" xml:space="preserve">
+    <value>Target platform</value>
+  </data>
+  <data name="MergePlatformsSourcesLabel" xml:space="preserve">
+    <value>Platforms to merge</value>
+  </data>
+  <data name="MergePlatformsHelpText" xml:space="preserve">
+    <value>Select one or more source platforms to merge into the target. The selected source platforms will be deleted after their references are moved.</value>
+  </data>
   <data name="FailedToLoadMergePreview" xml:space="preserve">
     <value>Failed to load merge preview</value>
+  </data>
+  <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
+    <value>Failed to merge software platforms</value>
   </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Failed to merge companies</value>

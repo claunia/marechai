@@ -914,8 +914,26 @@
   <data name="MergeConfirmDialogMessage" xml:space="preserve">
     <value>Esta acción no se puede deshacer. La empresa de origen se eliminará y todos sus datos se moverán a la empresa de destino. ¿Continuar?</value>
   </data>
+  <data name="MergePlatformsButton" xml:space="preserve">
+    <value>Fusionar plataformas</value>
+  </data>
+  <data name="MergePlatformsPanelTitle" xml:space="preserve">
+    <value>Fusionar plataformas de software</value>
+  </data>
+  <data name="MergePlatformsTargetLabel" xml:space="preserve">
+    <value>Plataforma de destino</value>
+  </data>
+  <data name="MergePlatformsSourcesLabel" xml:space="preserve">
+    <value>Plataformas a fusionar</value>
+  </data>
+  <data name="MergePlatformsHelpText" xml:space="preserve">
+    <value>Seleccione una o más plataformas de origen para fusionarlas en la plataforma de destino. Las plataformas de origen seleccionadas se eliminarán después de mover sus referencias.</value>
+  </data>
   <data name="FailedToLoadMergePreview" xml:space="preserve">
     <value>No se pudo cargar la vista previa de la fusión</value>
+  </data>
+  <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
+    <value>No se pudieron fusionar las plataformas de software</value>
   </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>No se pudieron fusionar las empresas</value>

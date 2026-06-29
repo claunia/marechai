@@ -914,8 +914,26 @@
   <data name="MergeConfirmDialogMessage" xml:space="preserve">
     <value>Esta ação não pode ser desfeita. A empresa de origem será excluída e todos os seus dados serão movidos para a empresa de destino. Continuar?</value>
   </data>
+  <data name="MergePlatformsButton" xml:space="preserve">
+    <value>Mesclar plataformas</value>
+  </data>
+  <data name="MergePlatformsPanelTitle" xml:space="preserve">
+    <value>Mesclar plataformas de software</value>
+  </data>
+  <data name="MergePlatformsTargetLabel" xml:space="preserve">
+    <value>Plataforma de destino</value>
+  </data>
+  <data name="MergePlatformsSourcesLabel" xml:space="preserve">
+    <value>Plataformas para mesclar</value>
+  </data>
+  <data name="MergePlatformsHelpText" xml:space="preserve">
+    <value>Selecione uma ou mais plataformas de origem para mesclar na plataforma de destino. As plataformas de origem selecionadas serão excluídas após a movimentação de suas referências.</value>
+  </data>
   <data name="FailedToLoadMergePreview" xml:space="preserve">
     <value>Falha ao carregar a pré-visualização da mesclagem</value>
+  </data>
+  <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
+    <value>Falha ao mesclar plataformas de software</value>
   </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Falha ao mesclar empresas</value>

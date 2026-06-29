@@ -36,9 +36,17 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     [ObservableProperty] private string                                   _platformName = string.Empty;
     [ObservableProperty] private Guid?                                    _logoId;
     [ObservableProperty] private bool                                      _isUploadingLogo;
+    [ObservableProperty] private bool                                      _isMerging;
+    [ObservableProperty] private SoftwarePlatformDto?                     _selectedMergeTargetPlatform;
+    [ObservableProperty] private ObservableCollection<SoftwarePlatformDto> _mergeTargetSuggestions = [];
+    [ObservableProperty] private ObservableCollection<SoftwarePlatformSelectionItem> _mergeSourceCandidates = [];
+    [ObservableProperty] private string                                   _mergeTargetSearchText = string.Empty;
 
     private int?                       _editingId;
     private List<SoftwarePlatformDto>? _allPlatforms;
+
+    public bool CanConfirmMerge =>
+        SelectedMergeTargetPlatform?.Id is not null && MergeSourceCandidates.Any(candidate => candidate.IsSelected);
 
     public string? LogoThumbnailUrl => LogoId.HasValue
                                             ? $"{_configuration.GetSection("ApiClient:Url").Value}/assets/photos/platform-logos/thumbs/webp/4k/{LogoId}.webp"
@@ -66,6 +74,9 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
         CancelEditCommand = new RelayCommand(CancelEdit);
         UploadLogoCommand = new AsyncRelayCommand(UploadLogoAsync);
         RemoveLogoCommand = new AsyncRelayCommand(RemoveLogoAsync);
+        OpenMergeCommand = new RelayCommand(OpenMerge);
+        ConfirmMergeCommand = new AsyncRelayCommand(ConfirmMergeAsync);
+        CancelMergeCommand = new RelayCommand(CancelMerge);
 
         CheckAdminRole();
     }
@@ -78,8 +89,21 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     public IRelayCommand                            CancelEditCommand { get; }
     public IAsyncRelayCommand                       UploadLogoCommand { get; }
     public IAsyncRelayCommand                       RemoveLogoCommand { get; }
+    public IRelayCommand                            OpenMergeCommand  { get; }
+    public IAsyncRelayCommand                       ConfirmMergeCommand { get; }
+    public IRelayCommand                            CancelMergeCommand { get; }
 
     partial void OnLogoIdChanged(Guid? value) => OnPropertyChanged(nameof(LogoThumbnailUrl));
+    partial void OnSelectedMergeTargetPlatformChanged(SoftwarePlatformDto? value)
+    {
+        BuildMergeSourceCandidates(value);
+        OnPropertyChanged(nameof(CanConfirmMerge));
+    }
+
+    public string MergeConfirmDialogTitle   => _localizer["MergeConfirmDialogTitle"];
+    public string MergeConfirmDialogMessage => _localizer["MergeConfirmDialogMessage"];
+    public string MergeButtonText           => _localizer["MergeButton"];
+    public string CancelButtonText          => _localizer["CancelButton"];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -135,6 +159,7 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
 
     private void OpenAdd()
     {
+        CancelMerge();
         _editingId     = null;
         EditPanelTitle = _localizer["AddSoftwarePlatformDialog_Title"];
         ClearForm();
@@ -145,6 +170,7 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
     {
         if(item == null) return;
 
+        CancelMerge();
         _editingId     = item.Id;
         EditPanelTitle = _localizer["EditSoftwarePlatformDialog_Title"];
         PlatformName   = item.Name ?? string.Empty;
@@ -211,6 +237,117 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
         ClearForm();
         HasError     = false;
         ErrorMessage = string.Empty;
+    }
+
+    private void OpenMerge()
+    {
+        CancelEdit();
+        HasError       = false;
+        ErrorMessage   = string.Empty;
+        IsMerging      = true;
+        MergeTargetSearchText = string.Empty;
+        BuildMergeTargetSuggestions(string.Empty);
+        SelectedMergeTargetPlatform = null;
+        BuildMergeSourceCandidates(null);
+    }
+
+    public void UpdateMergeTargetSuggestions(string query)
+    {
+        MergeTargetSearchText = query;
+        BuildMergeTargetSuggestions(query);
+    }
+
+    private void BuildMergeTargetSuggestions(string query)
+    {
+        MergeTargetSuggestions.Clear();
+
+        if(_allPlatforms == null) return;
+
+        IEnumerable<SoftwarePlatformDto> source = _allPlatforms;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(platform => platform.Name != null &&
+                                              platform.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        foreach(SoftwarePlatformDto match in source)
+            MergeTargetSuggestions.Add(match);
+    }
+
+    private void BuildMergeSourceCandidates(SoftwarePlatformDto? target)
+    {
+        foreach(SoftwarePlatformSelectionItem candidate in MergeSourceCandidates)
+            candidate.SelectionChanged -= OnMergeSourceSelectionChanged;
+
+        MergeSourceCandidates.Clear();
+
+        if(target?.Id == null || _allPlatforms == null) return;
+
+        foreach(SoftwarePlatformDto platform in _allPlatforms.Where(platform => platform.Id != target.Id))
+        {
+            var candidate = new SoftwarePlatformSelectionItem
+            {
+                Platform = platform
+            };
+
+            candidate.SelectionChanged += OnMergeSourceSelectionChanged;
+            MergeSourceCandidates.Add(candidate);
+        }
+    }
+
+    private void OnMergeSourceSelectionChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(CanConfirmMerge));
+
+    private async Task ConfirmMergeAsync()
+    {
+        if(SelectedMergeTargetPlatform?.Id is not int targetId) return;
+
+        List<int> sourceIds = MergeSourceCandidates
+                              .Where(candidate => candidate.IsSelected && candidate.Platform.Id is not null)
+                              .Select(candidate => candidate.Platform.Id!.Value)
+                              .ToList();
+
+        if(sourceIds.Count == 0)
+        {
+            OnPropertyChanged(nameof(CanConfirmMerge));
+
+            return;
+        }
+
+        try
+        {
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            bool succeeded = await _service.MergeAsync(targetId, sourceIds);
+
+            if(!succeeded)
+            {
+                ErrorMessage = _localizer["FailedToMergeSoftwarePlatforms"];
+                HasError     = true;
+
+                return;
+            }
+
+            CancelMerge();
+            await LoadAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error merging software platforms into {TargetId}", targetId);
+            ErrorMessage = _localizer["FailedToMergeSoftwarePlatforms"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelMerge()
+    {
+        IsMerging = false;
+        MergeTargetSearchText = string.Empty;
+        SelectedMergeTargetPlatform = null;
+        BuildMergeTargetSuggestions(string.Empty);
+        BuildMergeSourceCandidates(null);
+        HasError     = false;
+        ErrorMessage = string.Empty;
+        OnPropertyChanged(nameof(CanConfirmMerge));
     }
 
     public void ApplyFilter()
@@ -320,4 +457,14 @@ public partial class AdminSoftwarePlatformsViewModel : ObservableObject, IRegion
             IsUploadingLogo = false;
         }
     }
+}
+
+public partial class SoftwarePlatformSelectionItem : ObservableObject
+{
+    [ObservableProperty] private SoftwarePlatformDto _platform = null!;
+    [ObservableProperty] private bool _isSelected;
+
+    public event EventHandler? SelectionChanged;
+
+    partial void OnIsSelectedChanged(bool value) => SelectionChanged?.Invoke(this, EventArgs.Empty);
 }

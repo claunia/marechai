@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
@@ -93,6 +94,28 @@ public class SoftwarePlatformsService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error deleting software platform {Id}", id);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> MergeAsync(int targetId, IReadOnlyList<int> sourceIds)
+    {
+        try
+        {
+            var request = new MergePlatformsRequest
+            {
+                TargetId  = targetId,
+                SourceIds = sourceIds.Select(id => (int?)id).ToList()
+            };
+
+            await _apiClient.Software.Platforms[targetId].Merge.PostAsync(request);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error merging software platforms {SourceIds} into {TargetId}", sourceIds, targetId);
 
             return false;
         }

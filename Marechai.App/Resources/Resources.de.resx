@@ -914,8 +914,26 @@
   <data name="MergeConfirmDialogMessage" xml:space="preserve">
     <value>Diese Aktion kann nicht widerrufen werden. Das Quellunternehmen wird gelöscht und alle seine Daten werden auf das Zielunternehmen übertragen. Fortfahren?</value>
   </data>
+  <data name="MergePlatformsButton" xml:space="preserve">
+    <value>Plattformen zusammenführen</value>
+  </data>
+  <data name="MergePlatformsPanelTitle" xml:space="preserve">
+    <value>Softwareplattformen zusammenführen</value>
+  </data>
+  <data name="MergePlatformsTargetLabel" xml:space="preserve">
+    <value>Zielplattform</value>
+  </data>
+  <data name="MergePlatformsSourcesLabel" xml:space="preserve">
+    <value>Zusammenzuführende Plattformen</value>
+  </data>
+  <data name="MergePlatformsHelpText" xml:space="preserve">
+    <value>Wählen Sie eine oder mehrere Quellplattformen aus, die in die Zielplattform zusammengeführt werden sollen. Die ausgewählten Quellplattformen werden gelöscht, nachdem ihre Verweise verschoben wurden.</value>
+  </data>
   <data name="FailedToLoadMergePreview" xml:space="preserve">
     <value>Vorschau der Zusammenführung konnte nicht geladen werden</value>
+  </data>
+  <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
+    <value>Softwareplattformen konnten nicht zusammengeführt werden</value>
   </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Unternehmen konnten nicht zusammengeführt werden</value>
