@@ -489,7 +489,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 {
                     Gpus.Add(new GpuDisplayItem
                     {
-                        DisplayName     = gpu.Name    ?? string.Empty,
+                        DisplayName     = LocalizeSpecialGpuName(gpu.Name),
                         Manufacturer    = gpu.Company ?? string.Empty,
                         HasManufacturer = !string.IsNullOrEmpty(gpu.Company)
                     });
@@ -508,7 +508,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
                     SoundSynthesizers.Add(new SoundSynthesizerDisplayItem
                     {
-                        DisplayName = synth.Name ?? string.Empty,
+                        DisplayName = LocalizeSpecialSoundSynthName(synth.Name),
                         HasDetails  = details.Count > 0,
                         DetailsText = string.Join(", ", details)
                     });
@@ -741,4 +741,18 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             _    => "eng"
         };
     }
+
+    string LocalizeSpecialGpuName(string? name) => name switch
+    {
+        "DB_FRAMEBUFFER" => _localizer["Framebuffer"],
+        "DB_SOFTWARE"    => _localizer["Software"],
+        "DB_NONE"        => _localizer["None_female"],
+        _                => name ?? string.Empty
+    };
+
+    string LocalizeSpecialSoundSynthName(string? name) => name switch
+    {
+        "DB_SOFTWARE" => _localizer["Software"],
+        _             => name ?? string.Empty
+    };
 }
