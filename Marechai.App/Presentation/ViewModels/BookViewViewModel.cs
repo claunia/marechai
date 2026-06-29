@@ -316,7 +316,7 @@ public partial class BookViewViewModel : ObservableObject, IRegionAware
             Edition     = book.Edition;
 
             if(book.Published.HasValue)
-                PublishedDisplay = (book.PublishedPrecision ?? 0) == 2 ? $"{book.Published.Value.Year}" : (book.PublishedPrecision ?? 0) == 1 ? book.Published.Value.ToString("MMMM yyyy") : book.Published.Value.DateTime.ToString("MMMM d, yyyy");
+                PublishedDisplay = DatePrecisionFormatter.Format(book.Published, book.PublishedPrecision);
 
             // Load cover image
             HasCover = book.CoverGuid.HasValue;

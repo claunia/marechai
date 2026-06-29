@@ -605,7 +605,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             foreach(SoftwareReleaseDto release in releases)
             {
-                string dateDisplay = release.ReleaseDate.HasValue ? ((release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy")) : string.Empty;
+                string dateDisplay = DatePrecisionFormatter.Format(release.ReleaseDate, release.ReleaseDatePrecision);
 
                 var releaseItem = new ReleaseDisplayItem
                 {

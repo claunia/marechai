@@ -358,16 +358,7 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
 
     private static string? FormatReleaseDate(SoftwareReleaseDto release)
     {
-        if(!release.ReleaseDate.HasValue) return null;
-
-        int precision = release.ReleaseDatePrecision ?? 0;
-
-        return precision switch
-        {
-            2 => $"{release.ReleaseDate.Value.Year}",
-            1 => release.ReleaseDate.Value.ToString("MMMM yyyy"),
-            _ => release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy")
-        };
+        return DatePrecisionFormatter.Format(release.ReleaseDate, release.ReleaseDatePrecision, null);
     }
 }
 

@@ -176,10 +176,11 @@ public partial class CompaniesViewModel : ObservableObject
 
                 CompaniesList.Add(new CompanyListItem
                 {
-                    Id              = companyId,
-                    Name            = company.Name ?? string.Empty,
-                    FoundationDate  = foundedDate,
-                    LogoImageSource = logoSource
+                    Id                  = companyId,
+                    Name                = company.Name ?? string.Empty,
+                    FoundationDate      = foundedDate,
+                    FoundationPrecision = company.FoundedPrecision,
+                    LogoImageSource     = logoSource
                 });
             }
 

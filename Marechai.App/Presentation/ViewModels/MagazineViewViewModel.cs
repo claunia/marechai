@@ -191,7 +191,8 @@ public partial class MagazineViewViewModel : ObservableObject, IRegionAware
             Issn          = magazine.Issn;
 
             if(magazine.FirstPublication.HasValue)
-                FirstPublicationDisplay = (magazine.FirstPublicationPrecision ?? 0) == 2 ? $"{magazine.FirstPublication.Value.Year}" : (magazine.FirstPublicationPrecision ?? 0) == 1 ? magazine.FirstPublication.Value.ToString("MMMM yyyy") : magazine.FirstPublication.Value.DateTime.ToString("MMMM d, yyyy");
+                FirstPublicationDisplay = DatePrecisionFormatter.Format(magazine.FirstPublication,
+                                                                        magazine.FirstPublicationPrecision);
 
             // Load synopsis
             DocumentSynopsisDto? synopsis = await _magazinesService.GetMagazineSynopsisAsync(magazineId);

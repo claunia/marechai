@@ -257,15 +257,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     /// </summary>
     public string GetFoundedDateDisplay(CompanyDto company)
     {
-        if(company.Founded is null) return string.Empty;
-
-        DateTime date = company.Founded.Value.DateTime;
-
-        if((company.FoundedPrecision ?? 0) == 2) return $"{date.Year}.";
-
-        if((company.FoundedPrecision ?? 0) == 1) return $"{date:Y}.";
-
-        return $"{date:D}.";
+        return DatePrecisionFormatter.FormatWithTrailingPeriod(company.Founded, company.FoundedPrecision);
     }
 
     /// <summary>
@@ -275,13 +267,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     {
         if(company?.Sold is null) return _localizer["unknown date"].Value;
 
-        DateTime date = company.Sold.Value.DateTime;
-
-        if((company.SoldPrecision ?? 0) == 2) return $"{date.Year}";
-
-        if((company.SoldPrecision ?? 0) == 1) return $"{date:Y}";
-
-        return $"{date:D}";
+        return DatePrecisionFormatter.Format(company.Sold, company.SoldPrecision);
     }
 
     /// <summary>

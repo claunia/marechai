@@ -431,7 +431,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
             // Set introduction date if available and not a prototype
             if(machine.Introduced.HasValue && !IsPrototype)
-                IntroductionDateDisplay = (machine.IntroducedPrecision ?? 0) == 2 ? $"{machine.Introduced.Value.Year}" : (machine.IntroducedPrecision ?? 0) == 1 ? machine.Introduced.Value.ToString("MMMM yyyy") : machine.Introduced.Value.DateTime.ToString("MMMM d, yyyy");
+                IntroductionDateDisplay = DatePrecisionFormatter.Format(machine.Introduced, machine.IntroducedPrecision);
 
             // Populate processors
             if(machine.Processors != null)

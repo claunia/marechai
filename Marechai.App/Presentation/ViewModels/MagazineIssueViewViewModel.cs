@@ -264,7 +264,7 @@ public partial class MagazineIssueViewViewModel : ObservableObject, IRegionAware
             InternetArchiveUrl  = issue.InternetArchiveUrl;
 
             if(issue.Published.HasValue)
-                PublishedDisplay = (issue.PublishedPrecision ?? 0) == 2 ? $"{issue.Published.Value.Year}" : (issue.PublishedPrecision ?? 0) == 1 ? issue.Published.Value.ToString("MMMM yyyy") : issue.Published.Value.DateTime.ToString("MMMM d, yyyy");
+                PublishedDisplay = DatePrecisionFormatter.Format(issue.Published, issue.PublishedPrecision);
 
             // Load cover image
             HasCover = issue.CoverGuid.HasValue;

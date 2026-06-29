@@ -197,10 +197,10 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
             Facebook    = person.Facebook;
 
             if(person.Birthdate.HasValue && person.Birthdate.Value.Year > 1)
-                BirthDateDisplay = person.Birthdate.Value.DateTime.ToString("MMMM d, yyyy");
+                BirthDateDisplay = DatePrecisionFormatter.Format(person.Birthdate, person.BirthdatePrecision);
 
             if(person.DeathDate.HasValue)
-                DeathDateDisplay = person.DeathDate.Value.DateTime.ToString("MMMM d, yyyy");
+                DeathDateDisplay = DatePrecisionFormatter.Format(person.DeathDate, person.DeathDatePrecision);
 
             // Load related entities in parallel
             Task<List<PersonByCompanyDto>>  companiesTask  = _peopleService.GetCompaniesByPersonAsync(personId);

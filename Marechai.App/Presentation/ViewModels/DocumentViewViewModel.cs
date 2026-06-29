@@ -203,7 +203,7 @@ public partial class DocumentViewViewModel : ObservableObject, IRegionAware
             Country       = document.Country;
 
             if(document.Published.HasValue)
-                PublishedDisplay = (document.PublishedPrecision ?? 0) == 2 ? $"{document.Published.Value.Year}" : (document.PublishedPrecision ?? 0) == 1 ? document.Published.Value.ToString("MMMM yyyy") : document.Published.Value.DateTime.ToString("MMMM d, yyyy");
+                PublishedDisplay = DatePrecisionFormatter.Format(document.Published, document.PublishedPrecision);
 
             // Load synopsis
             DocumentSynopsisDto? synopsis = await _documentsService.GetDocumentSynopsisAsync(documentId);

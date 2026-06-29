@@ -10,7 +10,13 @@ public class FoundationDateConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if(value is DateTime dateTime) return dateTime.ToString("MMMM d, yyyy");
+        int? precision = parameter is int precisionValue ? precisionValue : null;
+
+        if(parameter is string precisionText && int.TryParse(precisionText, out int parsedPrecision))
+            precision = parsedPrecision;
+
+        if(value is DateTime dateTime) return DatePrecisionFormatter.Format(dateTime, precision);
+        if(value is DateTimeOffset dateTimeOffset) return DatePrecisionFormatter.Format(dateTimeOffset, precision);
 
         return string.Empty;
     }

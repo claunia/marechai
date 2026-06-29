@@ -149,7 +149,7 @@ public partial class MagazineIssuesByYearViewModel : ObservableObject, IRegionAw
                     Id               = issue.Id ?? 0,
                     Caption          = issue.Caption ?? string.Empty,
                     IssueNumber      = issue.IssueNumber,
-                    PublishedDisplay = FormatPublished(issue.Published, issue.PublishedPrecision),
+                    PublishedDisplay = DatePrecisionFormatter.Format(issue.Published, issue.PublishedPrecision, null),
                     CoverGuid        = issue.CoverGuid
                 };
 
@@ -177,17 +177,6 @@ public partial class MagazineIssuesByYearViewModel : ObservableObject, IRegionAw
         {
             IsLoading = false;
         }
-    }
-
-    private static string? FormatPublished(DateTimeOffset? published, int? precision)
-    {
-        if(!published.HasValue) return null;
-
-        return (precision ?? 0) == 2
-                   ? $"{published.Value.Year}"
-                   : (precision ?? 0) == 1
-                       ? published.Value.ToString("MMMM yyyy")
-                       : published.Value.DateTime.ToString("MMMM d, yyyy");
     }
 
     private async Task LoadCoverThumbnailAsync(MagazineIssueListItem item, Guid coverGuid)
