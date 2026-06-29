@@ -323,6 +323,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<ProfileViewModel>();
         containerRegistry.Register<AdminSoftwareViewModel>();
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
+        containerRegistry.Register<AdminSoftwareCompilationsViewModel>();
         containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
         containerRegistry.Register<AdminSoftwareAttributesViewModel>();
         containerRegistry.Register<AdminExternalSitesViewModel>();
@@ -438,6 +439,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<ProfilePage, ProfileViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareCompilationsPage, AdminSoftwareCompilationsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareAttributesPage, AdminSoftwareAttributesViewModel>();
         containerRegistry.RegisterForNavigation<AdminExternalSitesPage, AdminExternalSitesViewModel>();

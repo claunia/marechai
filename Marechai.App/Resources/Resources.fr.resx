@@ -3393,4 +3393,26 @@
   <data name="AddSoftwareAttributeDialog_Title" xml:space="preserve"><value>Add Attribute</value></data>
   <data name="EditSoftwareAttributeDialog_Title" xml:space="preserve"><value>Edit Attribute</value></data>
   <data name="SuccessTitle" xml:space="preserve"><value>Success</value></data>
+  <data name="SoftwareCompilationManagementButton" xml:space="preserve"><value>Gestion des compilations de logiciels</value></data>
+  <data name="SoftwareCompilationManagementTitle" xml:space="preserve"><value>Gestion des compilations de logiciels</value></data>
+  <data name="SoftwareCompilationManagementSubtitle" xml:space="preserve"><value>Gérer les compilations, leur regroupement, leurs prédécesseurs et leur contenu.</value></data>
+  <data name="SoftwareColumn_Header" xml:space="preserve"><value>Logiciel</value></data>
+  <data name="MachineColumn_Header" xml:space="preserve"><value>Machine</value></data>
+  <data name="MachineLabel" xml:space="preserve"><value>Machine</value></data>
+  <data name="PredecessorLabel" xml:space="preserve"><value>Prédécesseur</value></data>
+  <data name="RelationshipTypeLabel" xml:space="preserve"><value>Type de relation</value></data>
+  <data name="RelationshipTypeSequel" xml:space="preserve"><value>Suite</value></data>
+  <data name="RelationshipTypeFork" xml:space="preserve"><value>Fork</value></data>
+  <data name="RelationshipTypeRemake" xml:space="preserve"><value>Remake</value></data>
+  <data name="RelationshipTypeRemaster" xml:space="preserve"><value>Remaster</value></data>
+  <data name="RelationshipTypePort" xml:space="preserve"><value>Portage</value></data>
+  <data name="IncludedSoftwareHeader" xml:space="preserve"><value>Logiciels inclus</value></data>
+  <data name="IncludedVersionsHeader" xml:space="preserve"><value>Versions incluses</value></data>
+  <data name="IncludedCompilationsHeader" xml:space="preserve"><value>Sous-compilations incluses</value></data>
+  <data name="AddSoftwareCompilationDialog_Title" xml:space="preserve"><value>Ajouter une compilation</value></data>
+  <data name="EditSoftwareCompilationDialog_Title" xml:space="preserve"><value>Modifier la compilation</value></data>
+  <data name="FailedToLoadSoftwareCompilations" xml:space="preserve"><value>Impossible de charger les compilations de logiciels.</value></data>
+  <data name="FailedToSaveSoftwareCompilation" xml:space="preserve"><value>Impossible d&apos;enregistrer la compilation de logiciels.</value></data>
+  <data name="FailedToDeleteSoftwareCompilation" xml:space="preserve"><value>Impossible de supprimer la compilation de logiciels.</value></data>
+  <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Page {0} sur {1}</value></data>
 </root>

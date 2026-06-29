@@ -3798,4 +3798,26 @@
   <data name="AddSoftwareAttributeDialog_Title" xml:space="preserve"><value>Add Attribute</value></data>
   <data name="EditSoftwareAttributeDialog_Title" xml:space="preserve"><value>Edit Attribute</value></data>
   <data name="SuccessTitle" xml:space="preserve"><value>Success</value></data>
+  <data name="SoftwareCompilationManagementButton" xml:space="preserve"><value>Software Compilations Management</value></data>
+  <data name="SoftwareCompilationManagementTitle" xml:space="preserve"><value>Software Compilations Management</value></data>
+  <data name="SoftwareCompilationManagementSubtitle" xml:space="preserve"><value>Manage compilations, their bundling, predecessors, and contents.</value></data>
+  <data name="SoftwareColumn_Header" xml:space="preserve"><value>Software</value></data>
+  <data name="MachineColumn_Header" xml:space="preserve"><value>Machine</value></data>
+  <data name="MachineLabel" xml:space="preserve"><value>Machine</value></data>
+  <data name="PredecessorLabel" xml:space="preserve"><value>Predecessor</value></data>
+  <data name="RelationshipTypeLabel" xml:space="preserve"><value>Relationship Type</value></data>
+  <data name="RelationshipTypeSequel" xml:space="preserve"><value>Sequel</value></data>
+  <data name="RelationshipTypeFork" xml:space="preserve"><value>Fork</value></data>
+  <data name="RelationshipTypeRemake" xml:space="preserve"><value>Remake</value></data>
+  <data name="RelationshipTypeRemaster" xml:space="preserve"><value>Remaster</value></data>
+  <data name="RelationshipTypePort" xml:space="preserve"><value>Port</value></data>
+  <data name="IncludedSoftwareHeader" xml:space="preserve"><value>Included Software</value></data>
+  <data name="IncludedVersionsHeader" xml:space="preserve"><value>Included Versions</value></data>
+  <data name="IncludedCompilationsHeader" xml:space="preserve"><value>Included Sub-Compilations</value></data>
+  <data name="AddSoftwareCompilationDialog_Title" xml:space="preserve"><value>Add Compilation</value></data>
+  <data name="EditSoftwareCompilationDialog_Title" xml:space="preserve"><value>Edit Compilation</value></data>
+  <data name="FailedToLoadSoftwareCompilations" xml:space="preserve"><value>Failed to load software compilations.</value></data>
+  <data name="FailedToSaveSoftwareCompilation" xml:space="preserve"><value>Failed to save software compilation.</value></data>
+  <data name="FailedToDeleteSoftwareCompilation" xml:space="preserve"><value>Failed to delete software compilation.</value></data>
+  <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Page {0} of {1}</value></data>
 </root>

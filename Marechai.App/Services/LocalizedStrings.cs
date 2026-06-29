@@ -828,6 +828,16 @@ public class LocalizedStrings
     public string AddSoftwarePlatformButton => _l["AddSoftwarePlatformButton"];
     public string SoftwareFamilyManagementTitle => _l["SoftwareFamilyManagementTitle"];
     public string SoftwareFamilyManagementSubtitle => _l["SoftwareFamilyManagementSubtitle"];
+    public string SoftwareCompilationManagementTitle => _l["SoftwareCompilationManagementTitle"];
+    public string SoftwareCompilationManagementSubtitle => _l["SoftwareCompilationManagementSubtitle"];
+    public string SoftwareColumn_Header => _l["SoftwareColumn_Header"];
+    public string MachineColumn_Header => _l["MachineColumn_Header"];
+    public string MachineLabel => _l["MachineLabel"];
+    public string PredecessorLabel => _l["PredecessorLabel"];
+    public string RelationshipTypeLabel => _l["RelationshipTypeLabel"];
+    public string IncludedSoftwareHeader => _l["IncludedSoftwareHeader"];
+    public string IncludedVersionsHeader => _l["IncludedVersionsHeader"];
+    public string IncludedCompilationsHeader => _l["IncludedCompilationsHeader"];
     public string SoftwareManagementTitle => _l["SoftwareManagementTitle"];
     public string SoftwareManagementSubtitle => _l["SoftwareManagementSubtitle"];
     public string SoftwareAttributesManagementTitle => _l["SoftwareAttributesManagementTitle"];
