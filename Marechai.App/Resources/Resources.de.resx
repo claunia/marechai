@@ -605,6 +605,12 @@
   <data name="Updated magazine in database" xml:space="preserve">
     <value>Aktualisierte Zeitschrift in der Datenbank</value>
   </data>
+  <data name="New magazine issue in database" xml:space="preserve">
+    <value>Neue Zeitschriftenausgabe in der Datenbank</value>
+  </data>
+  <data name="Updated magazine issue in database" xml:space="preserve">
+    <value>Aktualisierte Zeitschriftenausgabe in der Datenbank</value>
+  </data>
   <data name="New person in database" xml:space="preserve">
     <value>Neue Person in der Datenbank</value>
   </data>
@@ -646,6 +652,18 @@
   </data>
   <data name="Updated processor in database" xml:space="preserve">
     <value>Aktualisierter Prozessor in der Datenbank</value>
+  </data>
+  <data name="New smartphone in database" xml:space="preserve">
+    <value>Neues Smartphone in der Datenbank</value>
+  </data>
+  <data name="Updated smartphone in database" xml:space="preserve">
+    <value>Aktualisiertes Smartphone in der Datenbank</value>
+  </data>
+  <data name="New smartphone in collection" xml:space="preserve">
+    <value>Neues Smartphone in der Sammlung</value>
+  </data>
+  <data name="Updated smartphone in collection" xml:space="preserve">
+    <value>Aktualisiertes Smartphone in der Sammlung</value>
   </data>
   <data name="No news available" xml:space="preserve">
     <value>Keine Nachrichten verfügbar</value>
