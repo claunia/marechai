@@ -112,36 +112,34 @@ public class ColorThemeService : IColorThemeService
         // Re-add the existing dictionaries
         foreach(ResourceDictionary dict in existingDictionaries) app.Resources.MergedDictionaries.Add(dict);
 
-        // Add the new color theme if not default
-        if(themeName != DEFAULT_THEME)
+        // Add the requested palette dictionary, including the default dark theme
+        ResourceDictionary newDictionary = null;
+
+        try
         {
-            ResourceDictionary newDictionary = null;
-
-            try
-            {
-                newDictionary = themeName switch
-                                {
-                                    "windows311"     => new Marechai.App.Styles.Win311ColorPalette(),
-                                    "windows95"      => new Marechai.App.Styles.Windows95ColorPalette(),
-                                    "macos9"         => new Marechai.App.Styles.MacOS9ColorPalette(),
-                                    "dos"            => new Marechai.App.Styles.DOSColorPalette(),
-                                    "amigaos"        => new Marechai.App.Styles.AmigaColorPalette(),
-                                    "cde"            => new Marechai.App.Styles.CDEColorPalette(),
-                                    "cde-solaris"    => new Marechai.App.Styles.CDESolarisColorPalette(),
-                                    "cyberpunk"      => new Marechai.App.Styles.CyberpunkColorPalette(),
-                                    "phosphor"       => new Marechai.App.Styles.PhosphorColorPalette(),
-                                    "phosphor-amber" => new Marechai.App.Styles.PhosphorAmberColorPalette(),
-                                    _                => null
-                                };
-            }
-            catch
-            {
-                // Palette class might not exist
-            }
-
-            if(newDictionary != null)
-                app.Resources.MergedDictionaries.Add(newDictionary);
+            newDictionary = themeName switch
+                            {
+                                DEFAULT_THEME    => new Marechai.App.Styles.DefaultDarkColorPalette(),
+                                "windows311"     => new Marechai.App.Styles.Win311ColorPalette(),
+                                "windows95"      => new Marechai.App.Styles.Windows95ColorPalette(),
+                                "macos9"         => new Marechai.App.Styles.MacOS9ColorPalette(),
+                                "dos"            => new Marechai.App.Styles.DOSColorPalette(),
+                                "amigaos"        => new Marechai.App.Styles.AmigaColorPalette(),
+                                "cde"            => new Marechai.App.Styles.CDEColorPalette(),
+                                "cde-solaris"    => new Marechai.App.Styles.CDESolarisColorPalette(),
+                                "cyberpunk"      => new Marechai.App.Styles.CyberpunkColorPalette(),
+                                "phosphor"       => new Marechai.App.Styles.PhosphorColorPalette(),
+                                "phosphor-amber" => new Marechai.App.Styles.PhosphorAmberColorPalette(),
+                                _                => null
+                            };
         }
+        catch
+        {
+            // Palette class might not exist
+        }
+
+        if(newDictionary != null)
+            app.Resources.MergedDictionaries.Add(newDictionary);
 
         // Force UI refresh by toggling the theme temporarily
         ForceThemeRefresh();
