@@ -22,6 +22,7 @@ public class ColorThemeService : IColorThemeService
 {
     private const string        COLOR_THEME_KEY = "ColorTheme";
     private const string        DEFAULT_THEME   = "default";
+    private const string        STYLES_NAMESPACE = "Marechai.App.Styles";
     private       IThemeService _themeService;
 
     // Legacy PascalCase IDs persisted by older builds; mapped to the
@@ -99,9 +100,10 @@ public class ColorThemeService : IColorThemeService
 
         if(app?.Resources == null) return;
 
-        // Store the existing merged dictionaries (except color overrides)
+        // Palette dictionaries are added as typed ResourceDictionary instances,
+        // so Source is often null. Filter by dictionary type instead.
         var existingDictionaries = app.Resources.MergedDictionaries
-                                      .Where(d => d.Source?.OriginalString?.Contains("ColorPalette") != true)
+                                      .Where(d => !IsColorPaletteDictionary(d))
                                       .ToList();
 
         // Clear all merged dictionaries
@@ -143,6 +145,14 @@ public class ColorThemeService : IColorThemeService
 
         // Force UI refresh by toggling the theme temporarily
         ForceThemeRefresh();
+    }
+
+    private static bool IsColorPaletteDictionary(ResourceDictionary dictionary)
+    {
+        Type dictionaryType = dictionary.GetType();
+
+        return dictionaryType.Namespace == STYLES_NAMESPACE &&
+               dictionaryType.Name.EndsWith("ColorPalette", StringComparison.Ordinal);
     }
 
     private void LoadSavedTheme()
