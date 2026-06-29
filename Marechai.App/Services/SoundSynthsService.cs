@@ -177,6 +177,87 @@ public class SoundSynthsService
     }
 
     /// <summary>
+    ///     Fetches all stored description translations for a sound synthesizer.
+    /// </summary>
+    public async Task<List<SoundSynthDescriptionDto>> GetDescriptionsAsync(int soundSynthId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching descriptions for sound synth {SoundSynthId}", soundSynthId);
+
+            List<SoundSynthDescriptionDto>? descriptions =
+                await _apiClient.SoundSynths[soundSynthId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching descriptions for sound synth {SoundSynthId}", soundSynthId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Creates or updates a sound synthesizer description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> CreateOrUpdateDescriptionAsync(int soundSynthId,
+        SoundSynthDescriptionDto dto)
+    {
+        try
+        {
+            await _apiClient.SoundSynths[soundSynthId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error saving description for sound synth {SoundSynthId} in {LanguageCode}",
+                             soundSynthId,
+                             dto.LanguageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description for sound synth {SoundSynthId} in {LanguageCode}",
+                             soundSynthId,
+                             dto.LanguageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a sound synthesizer description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> DeleteDescriptionAsync(int soundSynthId, string languageCode)
+    {
+        try
+        {
+            await _apiClient.SoundSynths[soundSynthId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error deleting description for sound synth {SoundSynthId} in {LanguageCode}",
+                             soundSynthId,
+                             languageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting description for sound synth {SoundSynthId} in {LanguageCode}",
+                             soundSynthId,
+                             languageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
     ///     Fetches public videos for a sound synthesizer
     /// </summary>
     public async Task<List<SoundSynthVideoDto>> GetVideosBySoundSynthAsync(int soundSynthId)

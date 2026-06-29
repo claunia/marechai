@@ -6,8 +6,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
+using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
 
@@ -15,12 +17,13 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
 {
-    private readonly Client                            _apiClient;
-    private readonly IJwtService                          _jwtService;
-    private readonly IStringLocalizer                     _localizer;
-    private readonly ILogger<AdminSoundSynthsViewModel>   _logger;
-    private readonly IRegionManager                       _regionManager;
-    private readonly ITokenService                        _tokenService;
+    private readonly Client                         _apiClient;
+    private readonly IJwtService                    _jwtService;
+    private readonly IStringLocalizer               _localizer;
+    private readonly ILogger<AdminSoundSynthsViewModel> _logger;
+    private readonly IRegionManager                 _regionManager;
+    private readonly SoundSynthsService             _soundSynthsService;
+    private readonly ITokenService                  _tokenService;
 
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynths = [];
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _filteredSoundSynths = [];
@@ -34,8 +37,21 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _errorMessage = string.Empty;
     [ObservableProperty] private bool _isAdmin;
     [ObservableProperty] private bool _isEditing;
+    [ObservableProperty] private bool _isEditingDescription;
     [ObservableProperty] private string _editPanelTitle = string.Empty;
     private int? _editingId;
+
+    // --- Description panel state ---
+    [ObservableProperty] private string _descriptionMarkdown = string.Empty;
+    [ObservableProperty] private int? _descriptionSoundSynthId;
+    [ObservableProperty] private ObservableCollection<LanguageItem> _availableLanguages = [];
+    [ObservableProperty] private LanguageItem? _selectedLanguage;
+    [ObservableProperty] private ObservableCollection<SoundSynthDescriptionDto> _existingTranslations = [];
+
+    public bool CanSaveDescription =>
+        DescriptionSoundSynthId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
     // --- Form fields ---
     [ObservableProperty] private string _synthName = string.Empty;
@@ -67,40 +83,53 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private ObservableCollection<CompanyDto> _companySuggestions = [];
     private List<CompanyDto>? _allCompanies;
 
-    public AdminSoundSynthsViewModel(Client                            apiClient,
-                                     IJwtService                          jwtService,
-                                     ITokenService                        tokenService,
-                                     ILogger<AdminSoundSynthsViewModel>   logger,
-                                     IStringLocalizer                     localizer,
-                                     IRegionManager                       regionManager)
+    public AdminSoundSynthsViewModel(Client                         apiClient,
+                                     IJwtService                    jwtService,
+                                     ITokenService                  tokenService,
+                                     ILogger<AdminSoundSynthsViewModel> logger,
+                                     IStringLocalizer               localizer,
+                                     IRegionManager                 regionManager,
+                                     SoundSynthsService             soundSynthsService)
     {
-        _apiClient    = apiClient;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        _logger       = logger;
-        _localizer    = localizer;
-        _regionManager = regionManager;
+        _apiClient          = apiClient;
+        _jwtService         = jwtService;
+        _tokenService       = tokenService;
+        _logger             = logger;
+        _localizer          = localizer;
+        _regionManager      = regionManager;
+        _soundSynthsService = soundSynthsService;
 
-        LoadItemsCommand   = new AsyncRelayCommand(LoadItemsAsync);
-        OpenAddCommand     = new RelayCommand(OpenAdd);
-        OpenEditCommand    = new RelayCommand<SoundSynthDto>(OpenEdit);
-        OpenPhotosCommand  = new RelayCommand<SoundSynthDto>(OpenPhotos);
-        OpenVideosCommand  = new RelayCommand<SoundSynthDto>(OpenVideos);
-        DeleteCommand      = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
-        SaveCommand        = new AsyncRelayCommand(SaveAsync);
-        CancelEditCommand  = new RelayCommand(CancelEdit);
+        LoadItemsCommand         = new AsyncRelayCommand(LoadItemsAsync);
+        OpenAddCommand           = new RelayCommand(OpenAdd);
+        OpenEditCommand          = new RelayCommand<SoundSynthDto>(OpenEdit);
+        OpenDescriptionCommand   = new AsyncRelayCommand<SoundSynthDto>(OpenDescriptionAsync);
+        OpenPhotosCommand        = new RelayCommand<SoundSynthDto>(OpenPhotos);
+        OpenVideosCommand        = new RelayCommand<SoundSynthDto>(OpenVideos);
+        DeleteCommand            = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
+        SaveCommand              = new AsyncRelayCommand(SaveAsync);
+        CancelEditCommand        = new RelayCommand(CancelEdit);
+        SaveDescriptionCommand   = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand = new AsyncRelayCommand<SoundSynthDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand   = new RelayCommand<SoundSynthDescriptionDto>(EditTranslation);
 
+        InitializeLanguages();
         CheckAdminRole();
     }
 
-    public IAsyncRelayCommand                LoadItemsCommand  { get; }
-    public IRelayCommand                     OpenAddCommand    { get; }
-    public IRelayCommand<SoundSynthDto>       OpenEditCommand   { get; }
-    public IRelayCommand<SoundSynthDto>       OpenPhotosCommand { get; }
-    public IRelayCommand<SoundSynthDto>       OpenVideosCommand { get; }
-    public IAsyncRelayCommand<SoundSynthDto>  DeleteCommand     { get; }
-    public IAsyncRelayCommand                SaveCommand       { get; }
-    public IRelayCommand                     CancelEditCommand { get; }
+    public IAsyncRelayCommand LoadItemsCommand { get; }
+    public IRelayCommand OpenAddCommand { get; }
+    public IRelayCommand<SoundSynthDto> OpenEditCommand { get; }
+    public IAsyncRelayCommand<SoundSynthDto> OpenDescriptionCommand { get; }
+    public IRelayCommand<SoundSynthDto> OpenPhotosCommand { get; }
+    public IRelayCommand<SoundSynthDto> OpenVideosCommand { get; }
+    public IAsyncRelayCommand<SoundSynthDto> DeleteCommand { get; }
+    public IAsyncRelayCommand SaveCommand { get; }
+    public IRelayCommand CancelEditCommand { get; }
+    public IAsyncRelayCommand SaveDescriptionCommand { get; }
+    public IRelayCommand CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<SoundSynthDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<SoundSynthDescriptionDto> EditTranslationCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -167,6 +196,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         _editingId     = null;
         EditPanelTitle = _localizer["AddSoundSynthDialog_Title"];
         ClearForm();
+        IsEditingDescription = false;
         IsEditing = true;
     }
 
@@ -182,6 +212,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
 
             _editingId     = item.Id;
             EditPanelTitle = _localizer["EditSoundSynthDialog_Title"];
+            IsEditingDescription = false;
             PopulateForm(full);
             IsEditing = true;
         }
@@ -291,6 +322,40 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         ErrorMessage = string.Empty;
     }
 
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0];
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
+
+            return;
+        }
+
+        SoundSynthDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionSoundSynthIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
     public void ApplyFilter()
     {
         FilteredSoundSynths.Clear();
@@ -329,6 +394,157 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     {
         try { _allCompanies = await _apiClient.Companies.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
+    }
+
+    private async Task OpenDescriptionAsync(SoundSynthDto? item)
+    {
+        if(item?.Id == null) return;
+
+        try
+        {
+            HasError                = false;
+            ErrorMessage            = string.Empty;
+            DescriptionSoundSynthId = item.Id;
+            DescriptionMarkdown     = string.Empty;
+            IsEditing               = false;
+            ExistingTranslations.Clear();
+            await ReloadDescriptionTranslationsAsync(item.Id.Value);
+            SelectedLanguage       = GetDefaultDescriptionLanguage();
+            IsEditingDescription   = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading descriptions for sound synth {Id}", item.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task ReloadDescriptionTranslationsAsync(int soundSynthId)
+    {
+        ExistingTranslations.Clear();
+
+        List<SoundSynthDescriptionDto> translations = await _soundSynthsService.GetDescriptionsAsync(soundSynthId);
+
+        foreach(SoundSynthDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    private LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    private string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(!CanSaveDescription || DescriptionSoundSynthId == null || SelectedLanguage == null) return;
+
+        try
+        {
+            var dto = new SoundSynthDescriptionDto
+            {
+                SoundSynthId = DescriptionSoundSynthId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
+            };
+
+            (bool succeeded, string? error) =
+                await _soundSynthsService.CreateOrUpdateDescriptionAsync(DescriptionSoundSynthId.Value, dto);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToSaveDescription"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionSoundSynthId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving sound synth description");
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void EditTranslation(SoundSynthDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(SoundSynthDescriptionDto? translation)
+    {
+        if(DescriptionSoundSynthId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            (bool succeeded, string? error) =
+                await _soundSynthsService.DeleteDescriptionAsync(DescriptionSoundSynthId.Value, translation.LanguageCode);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToDeleteTranslation"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionSoundSynthId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting sound synth description");
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription   = false;
+        DescriptionSoundSynthId = null;
+        DescriptionMarkdown    = string.Empty;
+        ExistingTranslations.Clear();
+        SelectedLanguage       = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                                 AvailableLanguages.FirstOrDefault();
+        HasError               = false;
+        ErrorMessage           = string.Empty;
     }
 
     private void ClearForm()
