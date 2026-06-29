@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
 using Marechai.App.Navigation;
+using Marechai.App.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
@@ -38,6 +39,19 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private bool _isEditingExisting;
     [ObservableProperty] private string _editPanelTitle = string.Empty;
     private int? _editingId;
+
+    // --- Description panel state ---
+    [ObservableProperty] private bool _isEditingDescription;
+    [ObservableProperty] private string _descriptionMarkdown = string.Empty;
+    [ObservableProperty] private int? _descriptionMachineId;
+    [ObservableProperty] private ObservableCollection<LanguageItem> _availableLanguages = [];
+    [ObservableProperty] private LanguageItem? _selectedLanguage;
+    [ObservableProperty] private ObservableCollection<MachineDescriptionDto> _existingTranslations = [];
+
+    public bool CanSaveDescription =>
+        DescriptionMachineId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
     // --- Base form fields ---
     [ObservableProperty] private string _machineName = string.Empty;
@@ -161,10 +175,16 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         RemoveStorageCommand   = new AsyncRelayCommand<string>(RemoveStorageByDisplayAsync);
         AddSoftwarePlatformCommand    = new AsyncRelayCommand(AddSoftwarePlatformAsync);
         RemoveSoftwarePlatformCommand = new AsyncRelayCommand<string>(RemoveSoftwarePlatformByDisplayAsync);
+        OpenDescriptionCommand = new AsyncRelayCommand<MachineDto>(OpenDescriptionAsync);
+        SaveDescriptionCommand = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand = new AsyncRelayCommand<MachineDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand = new RelayCommand<MachineDescriptionDto>(EditTranslation);
         OpenPhotosCommand      = new RelayCommand<MachineDto>(OpenPhotos);
         OpenVideosCommand      = new RelayCommand<MachineDto>(OpenVideos);
         OpenPromoArtCommand    = new RelayCommand<MachineDto>(OpenPromoArt);
 
+        InitializeLanguages();
         CheckAdminRole();
     }
 
@@ -190,6 +210,11 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveStorageCommand { get; }
     public IAsyncRelayCommand AddSoftwarePlatformCommand { get; }
     public IAsyncRelayCommand<string> RemoveSoftwarePlatformCommand { get; }
+    public IAsyncRelayCommand<MachineDto> OpenDescriptionCommand { get; }
+    public IAsyncRelayCommand SaveDescriptionCommand { get; }
+    public IRelayCommand CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<MachineDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<MachineDescriptionDto> EditTranslationCommand { get; }
     public IRelayCommand<MachineDto> OpenPhotosCommand { get; }
     public IRelayCommand<MachineDto> OpenVideosCommand { get; }
     public IRelayCommand<MachineDto> OpenPromoArtCommand { get; }
@@ -245,6 +270,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     {
         _editingId = null;
         EditPanelTitle = _localizer["AddMachineDialog_Title"];
+        IsEditingDescription = false;
         ClearForm();
         IsEditingExisting = false;
         IsEditing = true;
@@ -259,6 +285,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             if(full == null) return;
             _editingId = item.Id;
             EditPanelTitle = _localizer["EditMachineDialog_Title"];
+            IsEditingDescription = false;
             PopulateForm(full);
             await LoadAllJunctionsAsync(item.Id.Value);
             IsEditingExisting = true;
@@ -342,6 +369,174 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         IsEditingExisting = false;
         ClearForm();
         HasError = false; ErrorMessage = string.Empty;
+    }
+
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0];
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
+
+            return;
+        }
+
+        MachineDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionMachineIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    private async Task OpenDescriptionAsync(MachineDto? machine)
+    {
+        if(machine?.Id == null) return;
+
+        try
+        {
+            HasError             = false;
+            ErrorMessage         = string.Empty;
+            DescriptionMachineId = machine.Id;
+            DescriptionMarkdown  = string.Empty;
+            IsEditing            = false;
+            ExistingTranslations.Clear();
+            await ReloadDescriptionTranslationsAsync(machine.Id.Value);
+            SelectedLanguage     = GetDefaultDescriptionLanguage();
+            IsEditingDescription = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading descriptions for machine {Id}", machine.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task ReloadDescriptionTranslationsAsync(int machineId)
+    {
+        ExistingTranslations.Clear();
+
+        List<MachineDescriptionDto>? translations =
+            await _apiClient.Machines[machineId].Descriptions.GetAsync();
+
+        if(translations == null) return;
+
+        foreach(MachineDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    private LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    private string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(!CanSaveDescription || DescriptionMachineId == null || SelectedLanguage == null) return;
+
+        try
+        {
+            var dto = new MachineDescriptionDto
+            {
+                MachineId    = DescriptionMachineId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
+            };
+
+            await _apiClient.Machines[DescriptionMachineId.Value].Description.PostAsync(dto);
+            await ReloadDescriptionTranslationsAsync(DescriptionMachineId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving machine description");
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void EditTranslation(MachineDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(MachineDescriptionDto? translation)
+    {
+        if(DescriptionMachineId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            await _apiClient.Machines[DescriptionMachineId.Value].Description[translation.LanguageCode].DeleteAsync();
+            await ReloadDescriptionTranslationsAsync(DescriptionMachineId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting machine description");
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription = false;
+        DescriptionMachineId = null;
+        DescriptionMarkdown  = string.Empty;
+        ExistingTranslations.Clear();
+        SelectedLanguage     = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                               AvailableLanguages.FirstOrDefault();
+        HasError             = false;
+        ErrorMessage         = string.Empty;
     }
 
     public void ApplyFilter()
