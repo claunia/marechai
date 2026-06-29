@@ -887,6 +887,96 @@
   <data name="LogoHistoryText" xml:space="preserve">
     <value>Histórico de Logotipos</value>
   </data>
+  <data name="MergeCompanyButton" xml:space="preserve">
+    <value>Mesclar</value>
+  </data>
+  <data name="MergeCompanyPanelTitle" xml:space="preserve">
+    <value>Mesclar empresa</value>
+  </data>
+  <data name="MergeTargetLabel" xml:space="preserve">
+    <value>Mesclar com</value>
+  </data>
+  <data name="MergeWarningTitle" xml:space="preserve">
+    <value>Aviso</value>
+  </data>
+  <data name="MergeWarningMessage" xml:space="preserve">
+    <value>Esta ação não pode ser desfeita. A empresa de origem será excluída permanentemente após a mesclagem.</value>
+  </data>
+  <data name="MergeRelationshipsSectionTitle" xml:space="preserve">
+    <value>Dados a serem movidos</value>
+  </data>
+  <data name="MergeButton" xml:space="preserve">
+    <value>Mesclar</value>
+  </data>
+  <data name="MergeConfirmDialogTitle" xml:space="preserve">
+    <value>Mesclar empresas</value>
+  </data>
+  <data name="MergeConfirmDialogMessage" xml:space="preserve">
+    <value>Esta ação não pode ser desfeita. A empresa de origem será excluída e todos os seus dados serão movidos para a empresa de destino. Continuar?</value>
+  </data>
+  <data name="FailedToLoadMergePreview" xml:space="preserve">
+    <value>Falha ao carregar a pré-visualização da mesclagem</value>
+  </data>
+  <data name="FailedToMergeCompanies" xml:space="preserve">
+    <value>Falha ao mesclar empresas</value>
+  </data>
+  <data name="MergeEmptyValue" xml:space="preserve">
+    <value>(vazio)</value>
+  </data>
+  <data name="MergeDuplicatesSuffix" xml:space="preserve">
+    <value>duplicado</value>
+  </data>
+  <data name="MergeNoRelationshipsLabel" xml:space="preserve">
+    <value>Nenhum dado relacionado para mover</value>
+  </data>
+  <data name="MergeLogosLabel" xml:space="preserve">
+    <value>Logotipos</value>
+  </data>
+  <data name="MergeGpusLabel" xml:space="preserve">
+    <value>GPUs</value>
+  </data>
+  <data name="MergeProcessorsLabel" xml:space="preserve">
+    <value>Processadores</value>
+  </data>
+  <data name="MergeSoundSynthsLabel" xml:space="preserve">
+    <value>Sintetizadores de som</value>
+  </data>
+  <data name="MergeMachinesLabel" xml:space="preserve">
+    <value>Máquinas</value>
+  </data>
+  <data name="MergeMachineFamiliesLabel" xml:space="preserve">
+    <value>Famílias de máquinas</value>
+  </data>
+  <data name="MergeSoftwareReleasesLabel" xml:space="preserve">
+    <value>Lançamentos de software</value>
+  </data>
+  <data name="MergePeopleLabel" xml:space="preserve">
+    <value>Pessoas</value>
+  </data>
+  <data name="MergeInverseSoldToLabel" xml:space="preserve">
+    <value>Empresas vendidas para esta empresa</value>
+  </data>
+  <data name="MergeDescriptionsLabel" xml:space="preserve">
+    <value>Descrições</value>
+  </data>
+  <data name="MergeSoftwareRolesLabel" xml:space="preserve">
+    <value>Funções de software</value>
+  </data>
+  <data name="MergeBooksLabel" xml:space="preserve">
+    <value>Livros</value>
+  </data>
+  <data name="MergeDocumentsLabel" xml:space="preserve">
+    <value>Documentos</value>
+  </data>
+  <data name="MergeMagazinesLabel" xml:space="preserve">
+    <value>Revistas</value>
+  </data>
+  <data name="MergeSoftwareVersionsLabel" xml:space="preserve">
+    <value>Versões de software</value>
+  </data>
+  <data name="MergeSoftwareFamiliesLabel" xml:space="preserve">
+    <value>Famílias de software</value>
+  </data>
   <data name="ComputersText" xml:space="preserve">
     <value>Computadores</value>
   </data>

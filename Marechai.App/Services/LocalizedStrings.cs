@@ -86,6 +86,13 @@ public class LocalizedStrings
     public string LoginPage_Title => _l["LoginPage_Title"];
     public string LoginPage_WelcomeMessage => _l["LoginPage_WelcomeMessage"];
     public string LogoHistoryText => _l["LogoHistoryText"];
+    public string MergeCompanyButton => _l["MergeCompanyButton"];
+    public string MergeCompanyPanelTitle => _l["MergeCompanyPanelTitle"];
+    public string MergeTargetLabel => _l["MergeTargetLabel"];
+    public string MergeWarningTitle => _l["MergeWarningTitle"];
+    public string MergeWarningMessage => _l["MergeWarningMessage"];
+    public string MergeRelationshipsSectionTitle => _l["MergeRelationshipsSectionTitle"];
+    public string MergeButton => _l["MergeButton"];
     public string MachineErrorInfoBar_Title => _l["MachineErrorInfoBar_Title"];
     public string ManageRolesButton => _l["ManageRolesButton"];
     public string ManufacturerText => _l["ManufacturerText"];

@@ -1,3 +1,4 @@
+using System;
 using Marechai.App.Presentation.ViewModels.Admin;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -38,4 +39,30 @@ public sealed partial class AdminCompaniesPage : Page
             vm.UpdatePeopleSuggestions(sender.Text);
     }
 
+    private void MergeTargetFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
+           DataContext is AdminCompaniesViewModel vm)
+            vm.UpdateMergeTargetSuggestions(sender.Text);
+    }
+
+    private async void MergeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if(DataContext is not AdminCompaniesViewModel vm) return;
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot          = XamlRoot,
+            Title             = vm.MergeConfirmDialogTitle,
+            PrimaryButtonText = vm.MergeButtonText,
+            CloseButtonText   = vm.CancelButtonText,
+            DefaultButton     = ContentDialogButton.Close,
+            Content           = vm.MergeConfirmDialogMessage
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+        if(result != ContentDialogResult.Primary) return;
+
+        await vm.ConfirmMergeCommand.ExecuteAsync(null);
+    }
 }

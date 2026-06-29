@@ -152,6 +152,34 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
     private List<CompanyDto>? _allCompaniesForSearch;
 
+    // --- Merge panel state ---
+    [ObservableProperty]
+    private bool _isMerging;
+
+    [ObservableProperty]
+    private CompanyDto? _mergeSourceCompany;
+
+    [ObservableProperty]
+    private string _mergeTargetSearchText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDto> _mergeTargetSuggestions = [];
+
+    [ObservableProperty]
+    private CompanyDto? _selectedMergeTargetCompany;
+
+    [ObservableProperty]
+    private CompanyMergePreviewDto? _mergePreview;
+
+    [ObservableProperty]
+    private ObservableCollection<MergeFieldChoice> _mergeFieldChoices = [];
+
+    [ObservableProperty]
+    private ObservableCollection<string> _mergeRelationshipSummaryLines = [];
+
+    [ObservableProperty]
+    private bool _isMergeTargetSelected;
+
     // --- Status items for ComboBox (index must match CompanyStatus enum) ---
     [ObservableProperty]
     private List<string> _statusItems = [];
@@ -234,6 +262,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         EditPersonCommand          = new RelayCommand<string>(EditPerson);
         SavePersonEditCommand      = new AsyncRelayCommand(SavePersonEditAsync);
         CancelPersonEditCommand    = new RelayCommand(CancelPersonEdit);
+        OpenMergeCommand           = new RelayCommand<CompanyDto>(OpenMerge);
+        ConfirmMergeCommand        = new AsyncRelayCommand(ConfirmMergeAsync);
+        CancelMergeCommand         = new RelayCommand(CancelMerge);
 
         InitializeLanguages();
 
@@ -258,6 +289,14 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IRelayCommand<string>                     EditPersonCommand        { get; }
     public IAsyncRelayCommand                        SavePersonEditCommand    { get; }
     public IRelayCommand                             CancelPersonEditCommand  { get; }
+    public IRelayCommand<CompanyDto>                 OpenMergeCommand         { get; }
+    public IAsyncRelayCommand                        ConfirmMergeCommand      { get; }
+    public IRelayCommand                             CancelMergeCommand       { get; }
+
+    public string MergeConfirmDialogTitle   => _localizer["MergeConfirmDialogTitle"];
+    public string MergeConfirmDialogMessage => _localizer["MergeConfirmDialogMessage"];
+    public string MergeButtonText           => _localizer["MergeButton"];
+    public string CancelButtonText          => _localizer["CancelButton"];
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -955,4 +994,259 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         NewPersonOngoing        = false;
         _editingPersonCompanyId = null;
     }
+
+    // --- Merge ---
+    private void OpenMerge(CompanyDto? company)
+    {
+        if(company?.Id == null) return;
+
+        MergeSourceCompany     = company;
+        MergeTargetSearchText  = string.Empty;
+        MergeTargetSuggestions.Clear();
+        SelectedMergeTargetCompany = null;
+        MergePreview               = null;
+        MergeFieldChoices.Clear();
+        MergeRelationshipSummaryLines.Clear();
+        IsMergeTargetSelected = false;
+        IsEditing              = false;
+        IsEditingDescription    = false;
+        HasError                = false;
+        ErrorMessage            = string.Empty;
+        IsMerging               = true;
+    }
+
+    public void UpdateMergeTargetSuggestions(string query)
+    {
+        MergeTargetSuggestions.Clear();
+
+        if(_allCompaniesForSearch == null || MergeSourceCompany?.Id == null) return;
+
+        IEnumerable<CompanyDto> source =
+            _allCompaniesForSearch.Where(c => c.Id != MergeSourceCompany.Id);
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(c => c.Name != null &&
+                                       c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        foreach(CompanyDto match in source)
+            MergeTargetSuggestions.Add(match);
+    }
+
+    partial void OnSelectedMergeTargetCompanyChanged(CompanyDto? value)
+    {
+        MergePreview = null;
+        MergeFieldChoices.Clear();
+        MergeRelationshipSummaryLines.Clear();
+        IsMergeTargetSelected = false;
+
+        if(value?.Id == null || MergeSourceCompany?.Id == null || value.Id == MergeSourceCompany.Id) return;
+
+        _ = LoadMergePreviewAsync(MergeSourceCompany, value);
+    }
+
+    private async Task LoadMergePreviewAsync(CompanyDto source, CompanyDto target)
+    {
+        if(source.Id == null || target.Id == null) return;
+
+        try
+        {
+            MergePreview = await _apiClient.Companies[target.Id.Value].MergePreview[source.Id.Value].GetAsync();
+
+            BuildMergeFieldChoices(source, target);
+            BuildMergeRelationshipSummary(MergePreview);
+            IsMergeTargetSelected = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading merge preview for {SourceId} -> {TargetId}", source.Id, target.Id);
+            ErrorMessage = _localizer["FailedToLoadMergePreview"];
+            HasError     = true;
+        }
+    }
+
+    private void BuildMergeFieldChoices(CompanyDto source, CompanyDto target)
+    {
+        MergeFieldChoices.Clear();
+
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyNameLabel"], target.Name, source.Name);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyLegalNameLabel"], target.LegalName, source.LegalName);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyStatusLabel"], GetStatusDisplay(target.Status),
+                                       GetStatusDisplay(source.Status));
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyFoundedLabel"], target.Founded?.ToString("yyyy-MM-dd"),
+                                       source.Founded?.ToString("yyyy-MM-dd"));
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanySoldLabel"], target.Sold?.ToString("yyyy-MM-dd"),
+                                       source.Sold?.ToString("yyyy-MM-dd"));
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanySoldToLabel"], target.SoldTo, source.SoldTo);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyCountryLabel"], target.Country, source.Country);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyAddressLabel"], target.Address, source.Address);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyCityLabel"], target.City, source.City);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyProvinceLabel"], target.Province, source.Province);
+        AddMergeFieldChoiceIfDifferent(_localizer["CompanyPostalCodeLabel"], target.PostalCode, source.PostalCode);
+        AddMergeFieldChoiceIfDifferent(_localizer["WebsiteText"], target.Website, source.Website);
+        AddMergeFieldChoiceIfDifferent(_localizer["TwitterText"], target.Twitter, source.Twitter);
+        AddMergeFieldChoiceIfDifferent(_localizer["FacebookText"], target.Facebook, source.Facebook);
+    }
+
+    private void BuildMergeRelationshipSummary(CompanyMergePreviewDto? preview)
+    {
+        MergeRelationshipSummaryLines.Clear();
+
+        if(preview == null) return;
+
+        void AddLine(string labelKey, int? count)
+        {
+            if(count is > 0) MergeRelationshipSummaryLines.Add($"{_localizer[labelKey]}: {count}");
+        }
+
+        void AddLineWithDuplicates(string labelKey, int? total, int? duplicates)
+        {
+            if(total is > 0)
+                MergeRelationshipSummaryLines.Add(duplicates is > 0
+                                                       ? $"{_localizer[labelKey]}: {total} ({duplicates} {_localizer["MergeDuplicatesSuffix"]})"
+                                                       : $"{_localizer[labelKey]}: {total}");
+        }
+
+        AddLine("MergeLogosLabel", preview.LogosCount);
+        AddLine("MergeGpusLabel", preview.GpusCount);
+        AddLine("MergeProcessorsLabel", preview.ProcessorsCount);
+        AddLine("MergeSoundSynthsLabel", preview.SoundSynthsCount);
+        AddLine("MergeMachinesLabel", preview.MachinesCount);
+        AddLine("MergeMachineFamiliesLabel", preview.MachineFamiliesCount);
+        AddLine("MergeSoftwareReleasesLabel", preview.SoftwareReleasesCount);
+        AddLine("MergePeopleLabel", preview.PeopleCount);
+        AddLine("MergeInverseSoldToLabel", preview.InverseSoldToCount);
+        AddLineWithDuplicates("MergeDescriptionsLabel", preview.DescriptionsTotal, preview.DescriptionsDuplicates);
+        AddLineWithDuplicates("MergeSoftwareRolesLabel", preview.SoftwareRolesTotal, preview.SoftwareRolesDuplicates);
+        AddLineWithDuplicates("MergeBooksLabel", preview.BooksTotal, preview.BooksDuplicates);
+        AddLineWithDuplicates("MergeDocumentsLabel", preview.DocumentsTotal, preview.DocumentsDuplicates);
+        AddLineWithDuplicates("MergeMagazinesLabel", preview.MagazinesTotal, preview.MagazinesDuplicates);
+        AddLineWithDuplicates("MergeSoftwareVersionsLabel", preview.SoftwareVersionsTotal,
+                              preview.SoftwareVersionsDuplicates);
+        AddLineWithDuplicates("MergeSoftwareFamiliesLabel", preview.SoftwareFamiliesTotal,
+                              preview.SoftwareFamiliesDuplicates);
+
+        if(MergeRelationshipSummaryLines.Count == 0)
+            MergeRelationshipSummaryLines.Add(_localizer["MergeNoRelationshipsLabel"]);
+    }
+
+    private void AddMergeFieldChoiceIfDifferent(string label, string? targetValue, string? sourceValue)
+    {
+        if(string.Equals(targetValue ?? string.Empty, sourceValue ?? string.Empty, StringComparison.Ordinal)) return;
+
+        MergeFieldChoices.Add(new MergeFieldChoice
+        {
+            Label             = label,
+            TargetValue       = string.IsNullOrEmpty(targetValue) ? _localizer["MergeEmptyValue"] : targetValue,
+            SourceValue       = string.IsNullOrEmpty(sourceValue) ? _localizer["MergeEmptyValue"] : sourceValue,
+            UseSource         = false
+        });
+    }
+
+    private async Task ConfirmMergeAsync()
+    {
+        CompanyDto? source = MergeSourceCompany;
+        CompanyDto? target = SelectedMergeTargetCompany;
+
+        if(source?.Id == null || target?.Id == null || source.Id == target.Id) return;
+
+        try
+        {
+            string ChosenValue(string label, string? targetValue, string? sourceValue)
+            {
+                MergeFieldChoice? choice = MergeFieldChoices.FirstOrDefault(c => c.Label == label);
+
+                return choice is { UseSource: true } ? sourceValue ?? string.Empty : targetValue ?? string.Empty;
+            }
+
+            var dto = new CompanyMergeRequestDto
+            {
+                Name = ChosenValue(_localizer["CompanyNameLabel"], target.Name, source.Name),
+                LegalName = NullIfEmpty(ChosenValue(_localizer["CompanyLegalNameLabel"], target.LegalName,
+                                                     source.LegalName)),
+                Status =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanyStatusLabel"]) is
+                        { UseSource: true }
+                        ? source.Status
+                        : target.Status,
+                Founded =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanyFoundedLabel"]) is
+                        { UseSource: true }
+                        ? source.Founded
+                        : target.Founded,
+                FoundedPrecision =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanyFoundedLabel"]) is
+                        { UseSource: true }
+                        ? source.FoundedPrecision
+                        : target.FoundedPrecision,
+                Sold =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanySoldLabel"]) is
+                        { UseSource: true }
+                        ? source.Sold
+                        : target.Sold,
+                SoldPrecision =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanySoldLabel"]) is
+                        { UseSource: true }
+                        ? source.SoldPrecision
+                        : target.SoldPrecision,
+                SoldToId =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanySoldToLabel"]) is
+                        { UseSource: true }
+                        ? source.SoldToId
+                        : target.SoldToId,
+                CountryId =
+                    MergeFieldChoices.FirstOrDefault(c => c.Label == _localizer["CompanyCountryLabel"]) is
+                        { UseSource: true }
+                        ? source.CountryId
+                        : target.CountryId,
+                Address = NullIfEmpty(ChosenValue(_localizer["CompanyAddressLabel"], target.Address, source.Address)),
+                City    = NullIfEmpty(ChosenValue(_localizer["CompanyCityLabel"], target.City, source.City)),
+                Province = NullIfEmpty(ChosenValue(_localizer["CompanyProvinceLabel"], target.Province,
+                                                    source.Province)),
+                PostalCode = NullIfEmpty(ChosenValue(_localizer["CompanyPostalCodeLabel"], target.PostalCode,
+                                                      source.PostalCode)),
+                Website = NullIfEmpty(ChosenValue(_localizer["WebsiteText"], target.Website, source.Website)),
+                Twitter = NullIfEmpty(ChosenValue(_localizer["TwitterText"], target.Twitter, source.Twitter)),
+                Facebook = NullIfEmpty(ChosenValue(_localizer["FacebookText"], target.Facebook, source.Facebook))
+            };
+
+            await _apiClient.Companies[target.Id.Value].Merge[source.Id.Value].PostAsync(dto);
+
+            CancelMerge();
+            await LoadCompaniesAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error merging company {SourceId} into {TargetId}", source.Id, target.Id);
+            ErrorMessage = _localizer["FailedToMergeCompanies"];
+            HasError     = true;
+        }
+    }
+
+    private static string? NullIfEmpty(string value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void CancelMerge()
+    {
+        IsMerging                  = false;
+        MergeSourceCompany         = null;
+        MergeTargetSearchText      = string.Empty;
+        MergeTargetSuggestions.Clear();
+        SelectedMergeTargetCompany = null;
+        MergePreview               = null;
+        MergeFieldChoices.Clear();
+        MergeRelationshipSummaryLines.Clear();
+        IsMergeTargetSelected      = false;
+        HasError                   = false;
+        ErrorMessage                = string.Empty;
+    }
+}
+
+/// <summary>One scalar field that differs between the merge source and target company.</summary>
+public partial class MergeFieldChoice : ObservableObject
+{
+    public string Label       { get; set; } = string.Empty;
+    public string TargetValue { get; set; } = string.Empty;
+    public string SourceValue { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    private bool _useSource;
 }
