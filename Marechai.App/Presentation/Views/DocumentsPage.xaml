@@ -84,7 +84,7 @@
                                     <Button Content="{Binding}"
                                             Command="{Binding DataContext.NavigateByLetterCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
-                                            Style="{StaticResource KeyboardKeyButtonStyle}" />
+                                            Style="{StaticResource LetterYearButtonStyle}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -102,7 +102,7 @@
                                     <Button Content="{Binding}"
                                             Command="{Binding DataContext.NavigateByYearCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
-                                            Style="{StaticResource KeyboardKeyButtonStyle}" />
+                                            Style="{StaticResource LetterYearButtonStyle}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -130,83 +130,6 @@
     </Grid>
 
     <Page.Resources>
-        <Style x:Key="KeyboardKeyButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="#1A1A1A" />
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#D6D6D6" Offset="0" />
-                        <GradientStop Color="#C2C2C2" Offset="0.55" />
-                        <GradientStop Color="#B0B0B0" Offset="1" />
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderBrush" Value="#7A7A7A" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="14,12" />
-            <Setter Property="Margin" Value="4" />
-            <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="MinWidth" Value="52" />
-            <Setter Property="MinHeight" Value="52" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="Shadow" CornerRadius="6" Background="#33000000" Margin="2,4,4,2" />
-                            <Border x:Name="KeyBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
-                                <Grid>
-                                    <Border CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="#60FFFFFF" BorderThickness="1,1,0,0" />
-                                    <Border CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="#30000000" BorderThickness="0,0,1,1" />
-                                    <ContentPresenter x:Name="ContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="0" TextWrapping="NoWrap" />
-                                </Grid>
-                            </Border>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <VisualState.Setters>
-                                            <Setter Target="KeyBorder.Background"><Setter.Value><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#E0E0E0" Offset="0" /><GradientStop Color="#CFCFCF" Offset="0.55" /><GradientStop Color="#BDBDBD" Offset="1" /></LinearGradientBrush></Setter.Value></Setter>
-                                            <Setter Target="KeyBorder.BorderBrush" Value="#5F5F5F" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Target="KeyBorder.Background"><Setter.Value><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#9C9C9C" Offset="0" /><GradientStop Color="#A8A8A8" Offset="0.55" /><GradientStop Color="#B4B4B4" Offset="1" /></LinearGradientBrush></Setter.Value></Setter>
-                                            <Setter Target="KeyBorder.BorderBrush" Value="#4A4A4A" />
-                                            <Setter Target="KeyBorder.RenderTransform"><Setter.Value><TranslateTransform Y="2" /></Setter.Value></Setter>
-                                            <Setter Target="Shadow.Opacity" Value="0.15" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <VisualState.Setters>
-                                            <Setter Target="KeyBorder.Opacity" Value="0.45" />
-                                            <Setter Target="ContentPresenter.Foreground" Value="#777777" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FocusStates">
-                                    <VisualState x:Name="Focused">
-                                        <VisualState.Setters>
-                                            <Setter Target="KeyBorder.BorderBrush" Value="#3A7AFE" />
-                                            <Setter Target="KeyBorder.BorderThickness" Value="2" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Unfocused" />
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <UniformGridLayout x:Key="LettersGridLayout" ItemsStretch="Fill" MinItemWidth="44" MinItemHeight="44" MaximumRowsOrColumns="13" />
         <UniformGridLayout x:Key="YearsGridLayout" ItemsStretch="Fill" MinItemWidth="54" MinItemHeight="44" MaximumRowsOrColumns="10" />
     </Page.Resources>
