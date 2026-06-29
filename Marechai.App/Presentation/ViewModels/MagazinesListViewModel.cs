@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Data;
 namespace Marechai.App.Presentation.ViewModels;
 
 [Bindable]
-public partial class MagazinesListViewModel : ObservableObject
+public partial class MagazinesListViewModel : ObservableObject, IRegionAware
 {
     private readonly MagazinesService                _magazinesService;
     private readonly IMagazinesListFilterContext      _filterContext;
@@ -71,6 +71,15 @@ public partial class MagazinesListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     private async Task LoadDataAsync()

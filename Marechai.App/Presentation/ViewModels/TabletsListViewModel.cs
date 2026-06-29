@@ -16,7 +16,7 @@ namespace Marechai.App.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for displaying a filtered list of Tablets
 /// </summary>
-public partial class TabletsListViewModel : ObservableObject
+public partial class TabletsListViewModel : ObservableObject, IRegionAware
 {
     private readonly TabletsService                _tabletsService;
     private readonly ITabletsListFilterContext     _filterContext;
@@ -79,6 +79,15 @@ public partial class TabletsListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     /// <summary>

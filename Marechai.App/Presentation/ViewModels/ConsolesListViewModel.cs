@@ -16,7 +16,7 @@ namespace Marechai.App.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for displaying a filtered list of consoles
 /// </summary>
-public partial class ConsolesListViewModel : ObservableObject
+public partial class ConsolesListViewModel : ObservableObject, IRegionAware
 {
     private readonly ConsolesService                _consolesService;
     private readonly IConsolesListFilterContext     _filterContext;
@@ -79,6 +79,15 @@ public partial class ConsolesListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     /// <summary>

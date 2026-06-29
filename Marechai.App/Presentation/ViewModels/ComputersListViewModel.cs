@@ -16,7 +16,7 @@ namespace Marechai.App.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for displaying a filtered list of computers
 /// </summary>
-public partial class ComputersListViewModel : ObservableObject
+public partial class ComputersListViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService                _computersService;
     private readonly IComputersListFilterContext     _filterContext;
@@ -79,6 +79,15 @@ public partial class ComputersListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     /// <summary>

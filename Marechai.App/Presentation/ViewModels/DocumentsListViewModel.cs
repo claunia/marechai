@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Data;
 namespace Marechai.App.Presentation.ViewModels;
 
 [Bindable]
-public partial class DocumentsListViewModel : ObservableObject
+public partial class DocumentsListViewModel : ObservableObject, IRegionAware
 {
     private readonly DocumentsService                _documentsService;
     private readonly IDocumentsListFilterContext      _filterContext;
@@ -71,6 +71,15 @@ public partial class DocumentsListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     private async Task LoadDataAsync()

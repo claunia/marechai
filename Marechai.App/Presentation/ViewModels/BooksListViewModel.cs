@@ -17,7 +17,7 @@ using Microsoft.UI.Xaml.Data;
 namespace Marechai.App.Presentation.ViewModels;
 
 [Bindable]
-public partial class BooksListViewModel : ObservableObject
+public partial class BooksListViewModel : ObservableObject, IRegionAware
 {
     private readonly BookCoverCache                  _coverCache;
     private readonly BooksService                    _booksService;
@@ -80,6 +80,15 @@ public partial class BooksListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     private async Task LoadDataAsync()

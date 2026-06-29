@@ -16,7 +16,7 @@ namespace Marechai.App.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for displaying a filtered list of PDAs
 /// </summary>
-public partial class PdasListViewModel : ObservableObject
+public partial class PdasListViewModel : ObservableObject, IRegionAware
 {
     private readonly PdasService                _pdasService;
     private readonly IPdasListFilterContext     _filterContext;
@@ -79,6 +79,15 @@ public partial class PdasListViewModel : ObservableObject
     {
         get => _filterContext.FilterValue;
         set => _filterContext.FilterValue = value;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        _ = LoadDataAsync();
     }
 
     /// <summary>
