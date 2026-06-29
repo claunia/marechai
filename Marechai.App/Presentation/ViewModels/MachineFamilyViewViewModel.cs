@@ -86,7 +86,7 @@ public partial class MachineFamilyViewViewModel : ObservableObject, IRegionAware
         OnPropertyChanged(nameof(ShowEmptyMachines));
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

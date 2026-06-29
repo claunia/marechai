@@ -205,7 +205,7 @@ public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
         _imageSourceFactory = imageSourceFactory;
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

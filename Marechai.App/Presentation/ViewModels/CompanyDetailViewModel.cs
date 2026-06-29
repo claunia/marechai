@@ -605,7 +605,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         return Task.CompletedTask;
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

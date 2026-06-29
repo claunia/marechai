@@ -515,7 +515,7 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
         _navigationSource = source;
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

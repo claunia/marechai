@@ -550,7 +550,7 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
         _navigationSource = source;
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

@@ -182,7 +182,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     public int PromoArtCount => PromoArtGroups.Sum(group => group.Items.Count);
     public bool HasPromoArt => PromoArtCount > 0;
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 

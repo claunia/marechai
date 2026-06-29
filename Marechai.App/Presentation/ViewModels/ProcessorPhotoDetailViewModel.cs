@@ -179,7 +179,7 @@ public partial class ProcessorPhotoDetailViewModel : ObservableObject, IRegionAw
         _imageSourceFactory = imageSourceFactory;
     }
 
-    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+    public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 
