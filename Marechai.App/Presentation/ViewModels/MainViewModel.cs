@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
-using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -79,6 +78,7 @@ public partial class MainViewModel : ObservableObject
     public string MagazineManagementButtonText      => _localizer["MagazineManagementButton"];
     public string SoftwareAdminManagementButtonText   => _localizer["SoftwareAdminManagementButton"];
     public string SoftwareReleaseManagementButtonText    => _localizer["SoftwareReleaseManagementButton"];
+    public string SoftwareAttributesManagementButtonText => _localizer["SoftwareAttributesManagementButton"];
     public string SoftwareScreenshotManagementButtonText => _localizer["SoftwareScreenshotManagementButton"];
     public string SoftwarePlatformManagementButtonText => _localizer["SoftwarePlatformManagementButton"];
     public string ExternalSiteManagementButtonText     => _localizer["ExternalSiteManagementButton"];
@@ -163,6 +163,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminMagazinesCommand                     = new RelayCommand(() => NavigateTo(nameof(AdminMagazinesPage)));
         NavigateToAdminSoftwareCommand                      = new RelayCommand(() => NavigateTo(nameof(AdminSoftwarePage)));
         NavigateToAdminSoftwareReleasesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareReleasesPage)));
+        NavigateToAdminSoftwareAttributesCommand            = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareAttributesPage)));
         NavigateToAdminSoftwareScreenshotsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareScreenshotsPage)));
         NavigateToAdminSoftwarePlatformsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwarePlatformsPage)));
         NavigateToAdminExternalSitesCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminExternalSitesPage)));
@@ -238,6 +239,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminMagazinesCommand           { get; }
     public ICommand NavigateToAdminSoftwareCommand            { get; }
     public ICommand NavigateToAdminSoftwareReleasesCommand    { get; }
+    public ICommand NavigateToAdminSoftwareAttributesCommand  { get; }
     public ICommand NavigateToAdminSoftwareScreenshotsCommand { get; }
     public ICommand NavigateToAdminSoftwarePlatformsCommand   { get; }
     public ICommand NavigateToAdminExternalSitesCommand       { get; }

@@ -206,6 +206,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareService>();
         containerRegistry.RegisterSingleton<SoftwareFamiliesService>();
         containerRegistry.RegisterSingleton<SoftwarePlatformsService>();
+        containerRegistry.RegisterSingleton<SoftwareAttributesService>();
         containerRegistry.RegisterSingleton<ExternalSitesService>();
         containerRegistry.RegisterSingleton<SoftwareVersionsService>();
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
@@ -323,6 +324,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareViewModel>();
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
         containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
+        containerRegistry.Register<AdminSoftwareAttributesViewModel>();
         containerRegistry.Register<AdminExternalSitesViewModel>();
         containerRegistry.Register<AdminSoftwareVersionsViewModel>();
         containerRegistry.Register<AdminSoftwareReleasesViewModel>();
@@ -437,6 +439,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareAttributesPage, AdminSoftwareAttributesViewModel>();
         containerRegistry.RegisterForNavigation<AdminExternalSitesPage, AdminExternalSitesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareVersionsPage, AdminSoftwareVersionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();

@@ -3247,4 +3247,43 @@
   <data name="MergeSoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
   <data name="MergeSoftwareCompilationsLabel" xml:space="preserve"><value>Referências de compilação</value></data>
   <data name="MergeSoftwareVideosLabel" xml:space="preserve"><value>Vídeos</value></data>
+  <data name="SoftwareAttributesManagementTitle" xml:space="preserve"><value>Software Attributes Management</value></data>
+  <data name="SoftwareAttributesManagementSubtitle" xml:space="preserve"><value>Manage software attributes (specifications and ratings).</value></data>
+  <data name="SoftwareAttributesManagementButton" xml:space="preserve"><value>Software Attributes Management</value></data>
+  <data name="SoftwareAttributesPageSizeLabel" xml:space="preserve"><value>Page size</value></data>
+  <data name="SoftwareAttributesSoftwareColumn" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareAttributesReleaseColumn" xml:space="preserve"><value>Release</value></data>
+  <data name="SoftwareAttributesCategoryLabel" xml:space="preserve"><value>Category</value></data>
+  <data name="SoftwareAttributesKeyLabel" xml:space="preserve"><value>Key</value></data>
+  <data name="SoftwareAttributesValueLabel" xml:space="preserve"><value>Value</value></data>
+  <data name="SoftwareAttributesFilterSoftwareLabel" xml:space="preserve"><value>Filter by software</value></data>
+  <data name="SoftwareAttributesFilterReleaseLabel" xml:space="preserve"><value>Filter by release</value></data>
+  <data name="SoftwareAttributesSearchSoftwarePlaceholder" xml:space="preserve"><value>Search software...</value></data>
+  <data name="SoftwareAttributesSearchReleasePlaceholder" xml:space="preserve"><value>Search releases...</value></data>
+  <data name="SoftwareAttributesSearchCategoryPlaceholder" xml:space="preserve"><value>Search categories...</value></data>
+  <data name="SoftwareAttributesSearchKeyPlaceholder" xml:space="preserve"><value>Search keys...</value></data>
+  <data name="SoftwareAttributesClearFilters" xml:space="preserve"><value>Clear filters</value></data>
+  <data name="SoftwareAttributesContextLabel" xml:space="preserve"><value>Software · Release</value></data>
+  <data name="SoftwareAttributesLoadFailed" xml:space="preserve"><value>Failed to load software attributes.</value></data>
+  <data name="SoftwareAttributesSaveFailed" xml:space="preserve"><value>Failed to save software attribute.</value></data>
+  <data name="SoftwareAttributesDeleteFailed" xml:space="preserve"><value>Failed to delete software attribute.</value></data>
+  <data name="SoftwareAttributesCreateSucceeded" xml:space="preserve"><value>Attribute created successfully.</value></data>
+  <data name="SoftwareAttributesUpdateSucceeded" xml:space="preserve"><value>Attribute updated successfully.</value></data>
+  <data name="SoftwareAttributesDeleteSucceeded" xml:space="preserve"><value>Attribute deleted successfully.</value></data>
+  <data name="SoftwareAttributesCategoryRequired" xml:space="preserve"><value>Category is required.</value></data>
+  <data name="SoftwareAttributesKeyRequired" xml:space="preserve"><value>Key is required.</value></data>
+  <data name="SoftwareAttributesValueRequired" xml:space="preserve"><value>Value cannot be empty.</value></data>
+  <data name="SoftwareAttributesReleaseRequired" xml:space="preserve"><value>Release is required.</value></data>
+  <data name="SoftwareAttributesSplitPreviewButton" xml:space="preserve"><value>Split preview</value></data>
+  <data name="SoftwareAttributesSplitApplyButton" xml:space="preserve"><value>Apply split</value></data>
+  <data name="SoftwareAttributesSplitExistingLabel" xml:space="preserve"><value>Existing</value></data>
+  <data name="SoftwareAttributesSplitNewLabel" xml:space="preserve"><value>New</value></data>
+  <data name="SoftwareAttributesSplitPreviewFailed" xml:space="preserve"><value>Failed to preview attribute split.</value></data>
+  <data name="SoftwareAttributesSplitApplyFailed" xml:space="preserve"><value>Failed to apply attribute split.</value></data>
+  <data name="SoftwareAttributesSplitSummary" xml:space="preserve"><value>Attribute split into {0} new value(s) ({1} skipped).</value></data>
+  <data name="SoftwareAttributesPaginationSummary" xml:space="preserve"><value>Showing {0}-{1} of {2}</value></data>
+  <data name="SoftwareAttributesPaginationEmpty" xml:space="preserve"><value>No attributes found.</value></data>
+  <data name="AddSoftwareAttributeDialog_Title" xml:space="preserve"><value>Add Attribute</value></data>
+  <data name="EditSoftwareAttributeDialog_Title" xml:space="preserve"><value>Edit Attribute</value></data>
+  <data name="SuccessTitle" xml:space="preserve"><value>Success</value></data>
 </root>
