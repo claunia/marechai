@@ -172,6 +172,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
         containerRegistry.RegisterSingleton<SoftwareCoverCache>();
         containerRegistry.RegisterSingleton<SoftwarePromoArtCache>();
+        containerRegistry.RegisterSingleton<StartupCacheCleanupService>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
@@ -468,6 +469,8 @@ public partial class App : PrismApplication
     protected override async void OnInitialized()
     {
         base.OnInitialized();
+
+        _ = Container.Resolve<StartupCacheCleanupService>().CleanupExpiredEntriesAsync();
 
         // Navigate to NewsPage as the default content view
         RegionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
