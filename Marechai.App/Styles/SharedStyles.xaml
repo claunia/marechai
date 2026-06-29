@@ -1,6 +1,7 @@
 <ResourceDictionary x:Class="Marechai.App.Styles.SharedStyles"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="using:Marechai.App.Presentation.Components">
 
     <!-- Structural styles for the modernized UI. Only ThemeResource references here,
          no literal colors — palettes override the semantic keys below. -->
@@ -179,12 +180,15 @@
 
     <!-- Letter/year browse-grid buttons (Computers/Software/Books/etc "browse by letter or year" pages),
          replacing a hardcoded skeuomorphic gray-gradient "keyboard key" style that ignored every palette. -->
-    <Style x:Key="LetterYearButtonStyle" TargetType="Button">
+    <!-- Letter/year browse-grid keycap. Drawn entirely with straight-line Path
+         geometry (four trapezoid bevel facets + a flat top face), never a
+         Border+CornerRadius — every CornerRadius-based attempt here hit a
+         corner-clipping/chamfering rendering bug on this Uno.Sdk build.
+         Implicit style (no x:Key): applies to every components:KeyButton. -->
+    <Style TargetType="components:KeyButton">
         <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
         <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="6" />
         <Setter Property="Padding" Value="14,12" />
         <Setter Property="Margin" Value="4" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -197,46 +201,100 @@
         <Setter Property="MinHeight" Value="52" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="KeyBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                <ControlTemplate TargetType="components:KeyButton">
+                    <Grid>
+                        <!-- Stretch="Fill" on an individual Path scales THAT path's own
+                             geometry bounding box to fill the element — it does not map
+                             multiple paths into one shared coordinate space. With five
+                             separate small-bbox Paths each doing that independently, every
+                             one silently warped to cover the full tile, destroying the
+                             bevel layout entirely. A Viewbox scales one fixed-size design
+                             as a single rigid unit, so relative positions are preserved. -->
+                        <Viewbox Stretch="Fill">
+                            <Grid Width="100" Height="100">
+                                <!-- Base footprint, the keycap's solid themed color -->
+                                <Path x:Name="BaseFillPath"
+                                      Data="M0,0 L100,0 L100,100 L0,100 Z"
+                                      Fill="{TemplateBinding Background}" />
+
+                                <!-- Bevel walls: translucent black/white overlays (not
+                                     theme-tier brushes — those read as near-identical flat
+                                     tones in most palettes). Achromatic overlays always
+                                     read as light/shadow regardless of the base color. -->
+                                <Path x:Name="BottomShadePath"
+                                      Data="M0,100 L100,100 L86,86 L14,86 Z"
+                                      Fill="Black"
+                                      Opacity="0.30" />
+                                <Path x:Name="RightShadePath"
+                                      Data="M100,0 L100,100 L86,86 L86,14 Z"
+                                      Fill="Black"
+                                      Opacity="0.20" />
+                                <Path x:Name="LeftLightPath"
+                                      Data="M0,0 L14,14 L14,86 L0,100 Z"
+                                      Fill="White"
+                                      Opacity="0.10" />
+                                <Path x:Name="TopLightPath"
+                                      Data="M0,0 L100,0 L86,14 L14,14 Z"
+                                      Fill="White"
+                                      Opacity="0.18" />
+
+                                <!-- Flat top face: undimmed base color, where the legend sits -->
+                                <Path x:Name="TopFacePath"
+                                      Data="M14,14 L86,14 L86,86 L14,86 Z"
+                                      Fill="{TemplateBinding Background}" />
+                                <!-- Outer edge stroke -->
+                                <Path x:Name="OuterStrokePath"
+                                      Data="M0,0 L100,0 L100,100 L0,100 Z"
+                                      Stroke="{TemplateBinding BorderBrush}"
+                                      StrokeThickness="2" />
+                            </Grid>
+                        </Viewbox>
+
                         <ContentPresenter x:Name="ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Foreground="{TemplateBinding Foreground}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           TextWrapping="NoWrap" />
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="KeyBorder.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        <Setter Target="BaseFillPath.Fill" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        <Setter Target="TopFacePath.Fill" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="KeyBorder.Background" Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                        <!-- Flatten the bevel and darken the face to read as sunken -->
+                                        <Setter Target="BaseFillPath.Fill" Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                        <Setter Target="TopFacePath.Fill" Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                        <Setter Target="TopLightPath.Opacity" Value="0.05" />
+                                        <Setter Target="LeftLightPath.Opacity" Value="0.03" />
+                                        <Setter Target="BottomShadePath.Opacity" Value="0.12" />
+                                        <Setter Target="RightShadePath.Opacity" Value="0.08" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="KeyBorder.Opacity" Value="0.45" />
+                                        <Setter Target="ContentPresenter.Opacity" Value="0.45" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="FocusStates">
                                 <VisualState x:Name="Focused">
                                     <VisualState.Setters>
-                                        <Setter Target="KeyBorder.BorderBrush" Value="{ThemeResource SystemAccentColor}" />
-                                        <Setter Target="KeyBorder.BorderThickness" Value="2" />
+                                        <Setter Target="OuterStrokePath.Stroke" Value="{ThemeResource SystemAccentColor}" />
+                                        <Setter Target="OuterStrokePath.StrokeThickness" Value="2" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Unfocused" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
