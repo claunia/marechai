@@ -2055,6 +2055,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Vidéo liée avec succès.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Vidéo mise à jour avec succès.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Vidéo supprimée avec succès.</value></data>
+  <data name="SoftwareVideosTitle" xml:space="preserve"><value>Vidéos du logiciel</value></data>
+  <data name="SoftwareVideosSubtitle" xml:space="preserve"><value>Lier, vérifier et gérer les vidéos du logiciel</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les vidéos du logiciel.</value></data>
+  <data name="SoftwareVideosLinkSectionTitle" xml:space="preserve"><value>Lier une vidéo</value></data>
+  <data name="SoftwareVideosLinkSectionSubtitle" xml:space="preserve"><value>Ajoutez un nouveau lien vidéo pour ce logiciel à l'aide d'une URL YouTube, d'un identifiant vidéo YouTube ou d'une paire personnalisée fournisseur/identifiant vidéo.</value></data>
+  <data name="SoftwareVideosUrlInputLabel" xml:space="preserve"><value>URL YouTube ou identifiant vidéo</value></data>
+  <data name="SoftwareVideosDetectedIdLabel" xml:space="preserve"><value>Identifiant vidéo détecté</value></data>
+  <data name="SoftwareVideosAdvancedSectionTitle" xml:space="preserve"><value>Avancé</value></data>
+  <data name="SoftwareVideosManualIdLabel" xml:space="preserve"><value>Identifiant vidéo manuel</value></data>
+  <data name="SoftwareVideosManualIdHelpText" xml:space="preserve"><value>Utilisez ceci lorsque l'URL ne peut pas être analysée ou lorsque vous liez un fournisseur autre que YouTube.</value></data>
+  <data name="SoftwareVideosLinkButton" xml:space="preserve"><value>Lier la vidéo</value></data>
+  <data name="SoftwareVideosEmptyMessage" xml:space="preserve"><value>Aucune vidéo n'est encore liée à ce logiciel.</value></data>
+  <data name="SoftwareVideosLoadFailed" xml:space="preserve"><value>Impossible de charger les vidéos du logiciel.</value></data>
+  <data name="SoftwareVideosLinkFailed" xml:space="preserve"><value>Impossible de lier la vidéo du logiciel.</value></data>
+  <data name="SoftwareVideosUpdateFailed" xml:space="preserve"><value>Impossible de mettre à jour la vidéo du logiciel.</value></data>
+  <data name="SoftwareVideosDeleteFailed" xml:space="preserve"><value>Impossible de supprimer la vidéo du logiciel.</value></data>
+  <data name="SoftwareVideosOpenFailed" xml:space="preserve"><value>Impossible d'ouvrir la vidéo du logiciel.</value></data>
+  <data name="SoftwareVideosLinkedSuccessfully" xml:space="preserve"><value>Vidéo liée avec succès.</value></data>
+  <data name="SoftwareVideosUpdatedSuccessfully" xml:space="preserve"><value>Vidéo mise à jour avec succès.</value></data>
+  <data name="SoftwareVideosDeletedSuccessfully" xml:space="preserve"><value>Vidéo supprimée avec succès.</value></data>
   <data name="ProcessorVideosTitle" xml:space="preserve"><value>Vidéos de processeur</value></data>
   <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Lier, réviser et gérer les vidéos de processeur</value></data>
   <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès administrateur requis</value></data>
@@ -2916,6 +2937,8 @@
   <data name="AboutMarechaiButton" xml:space="preserve"><value>À propos de Marechai</value></data>
   <data name="VideosLabel" xml:space="preserve"><value>Vidéos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Ouvrir</value></data>
+  <data name="TitleLabel" xml:space="preserve"><value>Titre</value></data>
+  <data name="ProviderLabel" xml:space="preserve"><value>Fournisseur</value></data>
   <data name="Video" xml:space="preserve"><value>Vidéo</value></data>
   <data name="CriticReviewsLabel" xml:space="preserve"><value>Critiques</value></data>
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Non noté</value></data>

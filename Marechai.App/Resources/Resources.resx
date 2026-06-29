@@ -2412,6 +2412,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
+  <data name="SoftwareVideosTitle" xml:space="preserve"><value>Software Videos</value></data>
+  <data name="SoftwareVideosSubtitle" xml:space="preserve"><value>Link, review, and manage software videos</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Admin access required</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an administrator to manage software videos.</value></data>
+  <data name="SoftwareVideosLinkSectionTitle" xml:space="preserve"><value>Link Video</value></data>
+  <data name="SoftwareVideosLinkSectionSubtitle" xml:space="preserve"><value>Add a new video link for this software using a YouTube URL, a YouTube video ID, or a custom provider/video ID pair.</value></data>
+  <data name="SoftwareVideosUrlInputLabel" xml:space="preserve"><value>YouTube URL or Video ID</value></data>
+  <data name="SoftwareVideosDetectedIdLabel" xml:space="preserve"><value>Detected Video ID</value></data>
+  <data name="SoftwareVideosAdvancedSectionTitle" xml:space="preserve"><value>Advanced</value></data>
+  <data name="SoftwareVideosManualIdLabel" xml:space="preserve"><value>Manual Video ID</value></data>
+  <data name="SoftwareVideosManualIdHelpText" xml:space="preserve"><value>Use this when the URL cannot be parsed or when you are linking a non-YouTube provider.</value></data>
+  <data name="SoftwareVideosLinkButton" xml:space="preserve"><value>Link Video</value></data>
+  <data name="SoftwareVideosEmptyMessage" xml:space="preserve"><value>No videos are linked to this software yet.</value></data>
+  <data name="SoftwareVideosLoadFailed" xml:space="preserve"><value>Failed to load software videos.</value></data>
+  <data name="SoftwareVideosLinkFailed" xml:space="preserve"><value>Failed to link software video.</value></data>
+  <data name="SoftwareVideosUpdateFailed" xml:space="preserve"><value>Failed to update software video.</value></data>
+  <data name="SoftwareVideosDeleteFailed" xml:space="preserve"><value>Failed to delete software video.</value></data>
+  <data name="SoftwareVideosOpenFailed" xml:space="preserve"><value>Failed to open software video.</value></data>
+  <data name="SoftwareVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
+  <data name="SoftwareVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
+  <data name="SoftwareVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
   <data name="ProcessorVideosTitle" xml:space="preserve"><value>Processor Videos</value></data>
   <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Link, review, and manage processor videos</value></data>
   <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Admin access required</value></data>
@@ -3298,6 +3319,8 @@
   <data name="AboutMarechaiButton" xml:space="preserve"><value>About Marechai</value></data>
   <data name="VideosLabel" xml:space="preserve"><value>Videos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Open</value></data>
+  <data name="TitleLabel" xml:space="preserve"><value>Title</value></data>
+  <data name="ProviderLabel" xml:space="preserve"><value>Provider</value></data>
   <data name="Video" xml:space="preserve"><value>Video</value></data>
   <data name="CriticReviewsLabel" xml:space="preserve"><value>Critic Reviews</value></data>
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Unscored</value></data>

@@ -1951,6 +1951,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
+  <data name="SoftwareVideosTitle" xml:space="preserve"><value>Software-Videos</value></data>
+  <data name="SoftwareVideosSubtitle" xml:space="preserve"><value>Software-Videos verknüpfen, prüfen und verwalten</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Software-Videos zu verwalten.</value></data>
+  <data name="SoftwareVideosLinkSectionTitle" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="SoftwareVideosLinkSectionSubtitle" xml:space="preserve"><value>Fügen Sie einen neuen Videolink für diese Software hinzu, entweder über eine YouTube-URL, eine YouTube-Video-ID oder ein benutzerdefiniertes Provider-/Video-ID-Paar.</value></data>
+  <data name="SoftwareVideosUrlInputLabel" xml:space="preserve"><value>YouTube-URL oder Video-ID</value></data>
+  <data name="SoftwareVideosDetectedIdLabel" xml:space="preserve"><value>Erkannte Video-ID</value></data>
+  <data name="SoftwareVideosAdvancedSectionTitle" xml:space="preserve"><value>Erweitert</value></data>
+  <data name="SoftwareVideosManualIdLabel" xml:space="preserve"><value>Manuelle Video-ID</value></data>
+  <data name="SoftwareVideosManualIdHelpText" xml:space="preserve"><value>Verwenden Sie dies, wenn die URL nicht ausgewertet werden kann oder wenn Sie einen Nicht-YouTube-Anbieter verknüpfen.</value></data>
+  <data name="SoftwareVideosLinkButton" xml:space="preserve"><value>Video verknüpfen</value></data>
+  <data name="SoftwareVideosEmptyMessage" xml:space="preserve"><value>Dieser Software sind noch keine Videos zugeordnet.</value></data>
+  <data name="SoftwareVideosLoadFailed" xml:space="preserve"><value>Software-Videos konnten nicht geladen werden.</value></data>
+  <data name="SoftwareVideosLinkFailed" xml:space="preserve"><value>Software-Video konnte nicht verknüpft werden.</value></data>
+  <data name="SoftwareVideosUpdateFailed" xml:space="preserve"><value>Software-Video konnte nicht aktualisiert werden.</value></data>
+  <data name="SoftwareVideosDeleteFailed" xml:space="preserve"><value>Software-Video konnte nicht gelöscht werden.</value></data>
+  <data name="SoftwareVideosOpenFailed" xml:space="preserve"><value>Software-Video konnte nicht geöffnet werden.</value></data>
+  <data name="SoftwareVideosLinkedSuccessfully" xml:space="preserve"><value>Video erfolgreich verknüpft.</value></data>
+  <data name="SoftwareVideosUpdatedSuccessfully" xml:space="preserve"><value>Video erfolgreich aktualisiert.</value></data>
+  <data name="SoftwareVideosDeletedSuccessfully" xml:space="preserve"><value>Video erfolgreich gelöscht.</value></data>
   <data name="ProcessorVideosTitle" xml:space="preserve"><value>Prozessorvideos</value></data>
   <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Prozessorvideos verknüpfen, prüfen und verwalten</value></data>
   <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Administratorzugriff erforderlich</value></data>
@@ -2812,6 +2833,8 @@
   <data name="AboutMarechaiButton" xml:space="preserve"><value>Über Marechai</value></data>
   <data name="VideosLabel" xml:space="preserve"><value>Videos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="TitleLabel" xml:space="preserve"><value>Titel</value></data>
+  <data name="ProviderLabel" xml:space="preserve"><value>Anbieter</value></data>
   <data name="Video" xml:space="preserve"><value>Video</value></data>
   <data name="CriticReviewsLabel" xml:space="preserve"><value>Kritikerbewertungen</value></data>
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Ohne Bewertung</value></data>

@@ -193,6 +193,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareScreenshotsService>();
         containerRegistry.RegisterSingleton<MachinePromoArtService>();
         containerRegistry.RegisterSingleton<SoftwarePromoArtService>();
+        containerRegistry.RegisterSingleton<SoftwareVideosService>();
         containerRegistry.RegisterSingleton<LicensesService>();
         containerRegistry.RegisterSingleton<GpusService>();
         containerRegistry.RegisterSingleton<ProcessorsService>();
@@ -328,6 +329,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
         containerRegistry.Register<AdminSoftwareCoversViewModel>();
         containerRegistry.Register<AdminSoftwarePromoArtViewModel>();
+        containerRegistry.Register<AdminSoftwareVideosViewModel>();
         containerRegistry.Register<AdminWwpcImportsViewModel>();
         containerRegistry.Register<AdminWwpcImportReviewViewModel>();
         containerRegistry.Register<AdminOldDosImportsViewModel>();
@@ -439,6 +441,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareCoversPage, AdminSoftwareCoversViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePromoArtPage, AdminSoftwarePromoArtViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareVideosPage, AdminSoftwareVideosViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportsPage, AdminWwpcImportsViewModel>();
         containerRegistry.RegisterForNavigation<AdminWwpcImportReviewPage, AdminWwpcImportReviewViewModel>();
         containerRegistry.RegisterForNavigation<AdminOldDosImportsPage, AdminOldDosImportsViewModel>();

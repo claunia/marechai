@@ -1951,6 +1951,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo vinculado com sucesso.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo atualizado com sucesso.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo excluído com sucesso.</value></data>
+  <data name="SoftwareVideosTitle" xml:space="preserve"><value>Vídeos do software</value></data>
+  <data name="SoftwareVideosSubtitle" xml:space="preserve"><value>Vincular, revisar e gerenciar vídeos do software</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Você deve ser Administrador para gerenciar vídeos do software.</value></data>
+  <data name="SoftwareVideosLinkSectionTitle" xml:space="preserve"><value>Vincular vídeo</value></data>
+  <data name="SoftwareVideosLinkSectionSubtitle" xml:space="preserve"><value>Adicione um novo link de vídeo para este software usando uma URL do YouTube, um ID de vídeo do YouTube ou um par personalizado de provedor/ID de vídeo.</value></data>
+  <data name="SoftwareVideosUrlInputLabel" xml:space="preserve"><value>URL do YouTube ou ID do vídeo</value></data>
+  <data name="SoftwareVideosDetectedIdLabel" xml:space="preserve"><value>ID do vídeo detectado</value></data>
+  <data name="SoftwareVideosAdvancedSectionTitle" xml:space="preserve"><value>Avançado</value></data>
+  <data name="SoftwareVideosManualIdLabel" xml:space="preserve"><value>ID manual do vídeo</value></data>
+  <data name="SoftwareVideosManualIdHelpText" xml:space="preserve"><value>Use isto quando a URL não puder ser analisada ou quando você estiver vinculando um provedor diferente do YouTube.</value></data>
+  <data name="SoftwareVideosLinkButton" xml:space="preserve"><value>Vincular vídeo</value></data>
+  <data name="SoftwareVideosEmptyMessage" xml:space="preserve"><value>Ainda não há vídeos vinculados a este software.</value></data>
+  <data name="SoftwareVideosLoadFailed" xml:space="preserve"><value>Falha ao carregar os vídeos do software.</value></data>
+  <data name="SoftwareVideosLinkFailed" xml:space="preserve"><value>Falha ao vincular o vídeo do software.</value></data>
+  <data name="SoftwareVideosUpdateFailed" xml:space="preserve"><value>Falha ao atualizar o vídeo do software.</value></data>
+  <data name="SoftwareVideosDeleteFailed" xml:space="preserve"><value>Falha ao excluir o vídeo do software.</value></data>
+  <data name="SoftwareVideosOpenFailed" xml:space="preserve"><value>Falha ao abrir o vídeo do software.</value></data>
+  <data name="SoftwareVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo vinculado com sucesso.</value></data>
+  <data name="SoftwareVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo atualizado com sucesso.</value></data>
+  <data name="SoftwareVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo excluído com sucesso.</value></data>
   <data name="ProcessorVideosTitle" xml:space="preserve"><value>Vídeos do processador</value></data>
   <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Vincule, revise e gerencie vídeos do processador</value></data>
   <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso de administrador necessário</value></data>
@@ -2812,6 +2833,8 @@
   <data name="AboutMarechaiButton" xml:space="preserve"><value>Sobre o Marechai</value></data>
   <data name="VideosLabel" xml:space="preserve"><value>Vídeos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Abrir</value></data>
+  <data name="TitleLabel" xml:space="preserve"><value>Título</value></data>
+  <data name="ProviderLabel" xml:space="preserve"><value>Provedor</value></data>
   <data name="Video" xml:space="preserve"><value>Vídeo</value></data>
   <data name="CriticReviewsLabel" xml:space="preserve"><value>Críticas</value></data>
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Sem nota</value></data>

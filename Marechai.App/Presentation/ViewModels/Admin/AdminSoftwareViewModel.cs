@@ -117,6 +117,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         RemoveSimilarSoftwareCommand = new AsyncRelayCommand<SoftwareSimilarToDto>(RemoveSimilarSoftwareAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
         OpenPromoArtCommand = new RelayCommand<SoftwareDto>(OpenPromoArt);
+        OpenVideosCommand   = new RelayCommand<SoftwareDto>(OpenVideos);
         OpenDescriptionCommand     = new AsyncRelayCommand<SoftwareDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
@@ -141,6 +142,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<SoftwareSimilarToDto>        RemoveSimilarSoftwareCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenPromoArtCommand { get; }
+    public IRelayCommand<SoftwareDto>        OpenVideosCommand { get; }
     public IAsyncRelayCommand<SoftwareDto>              OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
     public IRelayCommand                                CancelDescriptionCommand { get; }
@@ -347,6 +349,17 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
         };
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePromoArtPage), parameters);
+    }
+
+    private void OpenVideos(SoftwareDto? item)
+    {
+        if(item?.Id == null) return;
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, item.Id.Value },
+            { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
+        };
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVideosPage), parameters);
     }
 
     public void ApplyFilter()

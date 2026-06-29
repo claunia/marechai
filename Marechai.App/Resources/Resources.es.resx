@@ -2091,6 +2091,27 @@
   <data name="GpuVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
   <data name="GpuVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
   <data name="GpuVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
+  <data name="SoftwareVideosTitle" xml:space="preserve"><value>Vídeos de software</value></data>
+  <data name="SoftwareVideosSubtitle" xml:space="preserve"><value>Enlazar, revisar y gestionar vídeos de software</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="SoftwareVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar vídeos de software.</value></data>
+  <data name="SoftwareVideosLinkSectionTitle" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="SoftwareVideosLinkSectionSubtitle" xml:space="preserve"><value>Añada un nuevo enlace de vídeo para este software mediante una URL de YouTube, un ID de vídeo de YouTube o un par personalizado de proveedor/ID de vídeo.</value></data>
+  <data name="SoftwareVideosUrlInputLabel" xml:space="preserve"><value>URL de YouTube o ID de vídeo</value></data>
+  <data name="SoftwareVideosDetectedIdLabel" xml:space="preserve"><value>ID de vídeo detectado</value></data>
+  <data name="SoftwareVideosAdvancedSectionTitle" xml:space="preserve"><value>Opciones avanzadas</value></data>
+  <data name="SoftwareVideosManualIdLabel" xml:space="preserve"><value>ID de vídeo manual</value></data>
+  <data name="SoftwareVideosManualIdHelpText" xml:space="preserve"><value>Úselo cuando no se pueda analizar la URL o cuando quiera enlazar un proveedor distinto de YouTube.</value></data>
+  <data name="SoftwareVideosLinkButton" xml:space="preserve"><value>Enlazar vídeo</value></data>
+  <data name="SoftwareVideosEmptyMessage" xml:space="preserve"><value>Todavía no hay vídeos vinculados a este software.</value></data>
+  <data name="SoftwareVideosLoadFailed" xml:space="preserve"><value>No se pudieron cargar los vídeos del software.</value></data>
+  <data name="SoftwareVideosLinkFailed" xml:space="preserve"><value>No se pudo enlazar el vídeo del software.</value></data>
+  <data name="SoftwareVideosUpdateFailed" xml:space="preserve"><value>No se pudo actualizar el vídeo del software.</value></data>
+  <data name="SoftwareVideosDeleteFailed" xml:space="preserve"><value>No se pudo eliminar el vídeo del software.</value></data>
+  <data name="SoftwareVideosOpenFailed" xml:space="preserve"><value>No se pudo abrir el vídeo del software.</value></data>
+  <data name="SoftwareVideosLinkedSuccessfully" xml:space="preserve"><value>Vídeo enlazado correctamente.</value></data>
+  <data name="SoftwareVideosUpdatedSuccessfully" xml:space="preserve"><value>Vídeo actualizado correctamente.</value></data>
+  <data name="SoftwareVideosDeletedSuccessfully" xml:space="preserve"><value>Vídeo eliminado correctamente.</value></data>
   <data name="ProcessorVideosTitle" xml:space="preserve"><value>Vídeos del procesador</value></data>
   <data name="ProcessorVideosSubtitle" xml:space="preserve"><value>Enlaza, revisa y administra vídeos del procesador</value></data>
   <data name="ProcessorVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Se requiere acceso de administrador</value></data>
@@ -2952,6 +2973,8 @@
   <data name="AboutMarechaiButton" xml:space="preserve"><value>Acerca de Marechai</value></data>
   <data name="VideosLabel" xml:space="preserve"><value>Videos</value></data>
   <data name="OpenVideoButton" xml:space="preserve"><value>Abrir</value></data>
+  <data name="TitleLabel" xml:space="preserve"><value>Título</value></data>
+  <data name="ProviderLabel" xml:space="preserve"><value>Proveedor</value></data>
   <data name="Video" xml:space="preserve"><value>Video</value></data>
   <data name="CriticReviewsLabel" xml:space="preserve"><value>Reseñas de la crítica</value></data>
   <data name="CriticReviewsUnscored" xml:space="preserve"><value>Sin puntuación</value></data>

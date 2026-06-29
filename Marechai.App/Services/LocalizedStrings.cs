@@ -188,6 +188,8 @@ public class LocalizedStrings
     public string VoicesText => _l["VoicesText"];
     public string VideosLabel => _l["VideosLabel"];
     public string OpenVideoButton => _l["OpenVideoButton"];
+    public string TitleLabel => _l["TitleLabel"];
+    public string ProviderLabel => _l["ProviderLabel"];
     public string WebsiteText => _l["WebsiteText"];
 
     // News page welcome hero
@@ -514,6 +516,27 @@ public class LocalizedStrings
     public string GpuVideosLinkedSuccessfully => _l["GpuVideosLinkedSuccessfully"];
     public string GpuVideosUpdatedSuccessfully => _l["GpuVideosUpdatedSuccessfully"];
     public string GpuVideosDeletedSuccessfully => _l["GpuVideosDeletedSuccessfully"];
+    public string SoftwareVideosTitle => _l["SoftwareVideosTitle"];
+    public string SoftwareVideosSubtitle => _l["SoftwareVideosSubtitle"];
+    public string SoftwareVideosMgmtAccessDeniedTitle => _l["SoftwareVideosMgmtAccessDeniedTitle"];
+    public string SoftwareVideosMgmtAccessDeniedMessage => _l["SoftwareVideosMgmtAccessDeniedMessage"];
+    public string SoftwareVideosLinkSectionTitle => _l["SoftwareVideosLinkSectionTitle"];
+    public string SoftwareVideosLinkSectionSubtitle => _l["SoftwareVideosLinkSectionSubtitle"];
+    public string SoftwareVideosUrlInputLabel => _l["SoftwareVideosUrlInputLabel"];
+    public string SoftwareVideosDetectedIdLabel => _l["SoftwareVideosDetectedIdLabel"];
+    public string SoftwareVideosAdvancedSectionTitle => _l["SoftwareVideosAdvancedSectionTitle"];
+    public string SoftwareVideosManualIdLabel => _l["SoftwareVideosManualIdLabel"];
+    public string SoftwareVideosManualIdHelpText => _l["SoftwareVideosManualIdHelpText"];
+    public string SoftwareVideosLinkButton => _l["SoftwareVideosLinkButton"];
+    public string SoftwareVideosEmptyMessage => _l["SoftwareVideosEmptyMessage"];
+    public string SoftwareVideosLoadFailed => _l["SoftwareVideosLoadFailed"];
+    public string SoftwareVideosLinkFailed => _l["SoftwareVideosLinkFailed"];
+    public string SoftwareVideosUpdateFailed => _l["SoftwareVideosUpdateFailed"];
+    public string SoftwareVideosDeleteFailed => _l["SoftwareVideosDeleteFailed"];
+    public string SoftwareVideosOpenFailed => _l["SoftwareVideosOpenFailed"];
+    public string SoftwareVideosLinkedSuccessfully => _l["SoftwareVideosLinkedSuccessfully"];
+    public string SoftwareVideosUpdatedSuccessfully => _l["SoftwareVideosUpdatedSuccessfully"];
+    public string SoftwareVideosDeletedSuccessfully => _l["SoftwareVideosDeletedSuccessfully"];
     public string ProcessorVideosTitle => _l["ProcessorVideosTitle"];
     public string ProcessorVideosSubtitle => _l["ProcessorVideosSubtitle"];
     public string ProcessorVideosMgmtAccessDeniedTitle => _l["ProcessorVideosMgmtAccessDeniedTitle"];
