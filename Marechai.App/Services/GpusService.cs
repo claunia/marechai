@@ -186,6 +186,81 @@ public class GpusService
     }
 
     /// <summary>
+    ///     Fetches all stored description translations for a GPU.
+    /// </summary>
+    public async Task<List<GpuDescriptionDto>> GetDescriptionsAsync(int gpuId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching descriptions for GPU {GpuId}", gpuId);
+
+            List<GpuDescriptionDto>? descriptions = await _apiClient.Gpus[gpuId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching descriptions for GPU {GpuId}", gpuId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Creates or updates a GPU description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> CreateOrUpdateDescriptionAsync(int gpuId, GpuDescriptionDto dto)
+    {
+        try
+        {
+            await _apiClient.Gpus[gpuId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error saving description for GPU {GpuId} in {LanguageCode}", gpuId,
+                             dto.LanguageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description for GPU {GpuId} in {LanguageCode}", gpuId,
+                             dto.LanguageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a GPU description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> DeleteDescriptionAsync(int gpuId, string languageCode)
+    {
+        try
+        {
+            await _apiClient.Gpus[gpuId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error deleting description for GPU {GpuId} in {LanguageCode}", gpuId,
+                             languageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting description for GPU {GpuId} in {LanguageCode}", gpuId,
+                             languageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
     ///     Fetches full photo details for a GPU photo
     /// </summary>
     public async Task<GpuPhotoDto> GetGpuPhotoDetailsAsync(Guid photoId)

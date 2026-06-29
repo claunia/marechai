@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
+using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -14,6 +16,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 {
     private readonly Client                    _apiClient;
+    private readonly GpusService               _gpusService;
     private readonly IJwtService                  _jwtService;
     private readonly IStringLocalizer             _localizer;
     private readonly ILogger<AdminGpusViewModel>  _logger;
@@ -58,6 +61,30 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private string _editPanelTitle = string.Empty;
 
     private int? _editingGpuId;
+
+    // --- Description panel state ---
+    [ObservableProperty]
+    private bool _isEditingDescription;
+
+    [ObservableProperty]
+    private string _descriptionMarkdown = string.Empty;
+
+    [ObservableProperty]
+    private int? _descriptionGpuId;
+
+    [ObservableProperty]
+    private ObservableCollection<LanguageItem> _availableLanguages = [];
+
+    [ObservableProperty]
+    private LanguageItem? _selectedLanguage;
+
+    [ObservableProperty]
+    private ObservableCollection<GpuDescriptionDto> _existingTranslations = [];
+
+    public bool CanSaveDescription =>
+        DescriptionGpuId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
     // --- Form fields ---
     [ObservableProperty]
@@ -115,6 +142,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private List<ResolutionDto>? _allResolutions;
 
     public AdminGpusViewModel(Client                    apiClient,
+                              GpusService               gpusService,
                               IJwtService                  jwtService,
                               ITokenService                tokenService,
                               ILogger<AdminGpusViewModel>  logger,
@@ -122,6 +150,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
                               IRegionManager               regionManager)
     {
         _apiClient    = apiClient;
+        _gpusService  = gpusService;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
@@ -131,6 +160,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         LoadGpusCommand       = new AsyncRelayCommand(LoadGpusAsync);
         OpenAddGpuCommand     = new RelayCommand(OpenAddGpu);
         OpenEditGpuCommand    = new RelayCommand<GpuDto>(OpenEditGpu);
+        OpenDescriptionCommand = new AsyncRelayCommand<GpuDto>(OpenDescriptionAsync);
         OpenPhotosCommand     = new RelayCommand<GpuDto>(OpenPhotos);
         OpenVideosCommand     = new RelayCommand<GpuDto>(OpenVideos);
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
@@ -139,7 +169,12 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         AddResolutionCommand  = new AsyncRelayCommand(AddResolutionAsync);
         RemoveResolutionCommand = new AsyncRelayCommand<ResolutionByGpuDto>(RemoveResolutionAsync);
         RemoveResolutionByIndexCommand = new AsyncRelayCommand<string>(RemoveResolutionByDisplayAsync);
+        SaveDescriptionCommand = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand = new AsyncRelayCommand<GpuDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand = new RelayCommand<GpuDescriptionDto>(EditTranslation);
 
+        InitializeLanguages();
         CheckAdminRole();
     }
 
@@ -147,6 +182,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand          LoadGpusCommand    { get; }
     public IRelayCommand               OpenAddGpuCommand  { get; }
     public IRelayCommand<GpuDto>       OpenEditGpuCommand { get; }
+    public IAsyncRelayCommand<GpuDto>  OpenDescriptionCommand { get; }
     public IRelayCommand<GpuDto>       OpenPhotosCommand { get; }
     public IRelayCommand<GpuDto>       OpenVideosCommand { get; }
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
@@ -155,6 +191,10 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand          AddResolutionCommand    { get; }
     public IAsyncRelayCommand<ResolutionByGpuDto> RemoveResolutionCommand { get; }
     public IAsyncRelayCommand<string>  RemoveResolutionByIndexCommand { get; }
+    public IAsyncRelayCommand          SaveDescriptionCommand { get; }
+    public IRelayCommand               CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<GpuDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<GpuDescriptionDto> EditTranslationCommand { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -234,6 +274,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     {
         _editingGpuId = null;
         EditPanelTitle = _localizer["AddGpuDialog_Title"];
+        IsEditingDescription = false;
         ClearForm();
         IsEditing = true;
     }
@@ -278,6 +319,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 
             _editingGpuId  = gpu.Id;
             EditPanelTitle = _localizer["EditGpuDialog_Title"];
+            IsEditingDescription = false;
             PopulateForm(full);
 
             if(gpu.Id.HasValue)
@@ -366,6 +408,191 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         ClearForm();
         HasError     = false;
         ErrorMessage = string.Empty;
+    }
+
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0];
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
+
+            return;
+        }
+
+        GpuDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionGpuIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    private async Task OpenDescriptionAsync(GpuDto? gpu)
+    {
+        if(gpu?.Id == null) return;
+
+        try
+        {
+            HasError            = false;
+            ErrorMessage        = string.Empty;
+            DescriptionGpuId    = gpu.Id;
+            DescriptionMarkdown = string.Empty;
+            IsEditing           = false;
+            ExistingTranslations.Clear();
+            await ReloadDescriptionTranslationsAsync(gpu.Id.Value);
+            SelectedLanguage     = GetDefaultDescriptionLanguage();
+            IsEditingDescription = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading descriptions for GPU {Id}", gpu.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task ReloadDescriptionTranslationsAsync(int gpuId)
+    {
+        ExistingTranslations.Clear();
+
+        List<GpuDescriptionDto> translations = await _gpusService.GetDescriptionsAsync(gpuId);
+
+        foreach(GpuDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    private LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    private string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(!CanSaveDescription || DescriptionGpuId == null || SelectedLanguage == null) return;
+
+        try
+        {
+            var dto = new GpuDescriptionDto
+            {
+                GpuId        = DescriptionGpuId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
+            };
+
+            (bool succeeded, string? error) =
+                await _gpusService.CreateOrUpdateDescriptionAsync(DescriptionGpuId.Value, dto);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToSaveDescription"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionGpuId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving GPU description");
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void EditTranslation(GpuDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(GpuDescriptionDto? translation)
+    {
+        if(DescriptionGpuId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            (bool succeeded, string? error) =
+                await _gpusService.DeleteDescriptionAsync(DescriptionGpuId.Value, translation.LanguageCode);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToDeleteTranslation"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionGpuId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting GPU description");
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription = false;
+        DescriptionGpuId     = null;
+        DescriptionMarkdown  = string.Empty;
+        ExistingTranslations.Clear();
+        SelectedLanguage     = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                               AvailableLanguages.FirstOrDefault();
+        HasError             = false;
+        ErrorMessage         = string.Empty;
     }
 
     // --- Filtering ---
