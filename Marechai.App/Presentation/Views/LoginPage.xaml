@@ -105,8 +105,8 @@
 
                             <!-- Error Message -->
                             <Border x:Name="ErrorBorder"
-                                    Background="#FFF4E6"
-                                    BorderBrush="#FFB84D"
+                                    Background="{ThemeResource WarningFillColorTertiaryBrush}"
+                                    BorderBrush="{ThemeResource WarningBorderColorDefaultBrush}"
                                     BorderThickness="2"
                                     CornerRadius="4"
                                     Padding="12"
@@ -120,7 +120,7 @@
                                     <!-- Warning Icon -->
                                     <FontIcon Grid.Column="0"
                                               Glyph="&#xE7BA;"
-                                              Foreground="#D97706"
+                                              Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
                                               FontSize="20"
                                               Margin="0,0,8,0"
                                               VerticalAlignment="Top" />
@@ -128,7 +128,7 @@
                                     <!-- Error Text -->
                                     <TextBlock Grid.Column="1"
                                                Text="{Binding ErrorMessage}"
-                                               Foreground="#92400E"
+                                               Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
                                                TextWrapping="Wrap"
                                                VerticalAlignment="Center" />
 
@@ -143,7 +143,7 @@
                                             AutomationProperties.Name="Close error message">
                                         <FontIcon Glyph="&#xE711;"
                                                   FontSize="12"
-                                                  Foreground="#92400E" />
+                                                  Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                                     </Button>
                                 </Grid>
                             </Border>

@@ -35,13 +35,13 @@
                                       Height="32">
                                     <TextBlock Text="★"
                                                FontSize="24"
-                                               Foreground="#D4AF37"
+                                               Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Visibility="{Binding IsFilled, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <TextBlock Text="★"
                                                FontSize="24"
-                                               Foreground="#D4AF37"
+                                               Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
                                                Opacity="0.45"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"

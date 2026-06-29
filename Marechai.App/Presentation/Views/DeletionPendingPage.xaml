@@ -15,14 +15,14 @@
     <Grid utu:SafeArea.Insets="VisibleBounds">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Padding="32">
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="#c62828" BorderThickness="2" CornerRadius="8" Padding="0">
+                    BorderBrush="{ThemeResource SystemFillColorCriticalBrush}" BorderThickness="2" CornerRadius="8" Padding="0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Background="#c62828" Padding="16,12" CornerRadius="6,6,0,0">
+                    <Border Grid.Row="0" Background="{ThemeResource SystemFillColorCriticalBrush}" Padding="16,12" CornerRadius="6,6,0,0">
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <FontIcon Glyph="&#xE823;" FontSize="20" Foreground="White" VerticalAlignment="Center" />
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DeletionPendingPage_Title}"

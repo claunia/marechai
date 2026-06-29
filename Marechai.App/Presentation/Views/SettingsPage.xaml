@@ -119,13 +119,13 @@
                     </Border>
 
                     <!-- Status / error message -->
-                    <Border Background="#FFF4E6"
-                            BorderBrush="#FFB84D"
+                    <Border Background="{ThemeResource WarningFillColorTertiaryBrush}"
+                            BorderBrush="{ThemeResource WarningBorderColorDefaultBrush}"
                             BorderThickness="1"
                             CornerRadius="4"
                             Padding="8"
                             Visibility="{Binding SecurityMessage, Converter={StaticResource NullToVisibilityConverter}}">
-                        <TextBlock Text="{Binding SecurityMessage}" Foreground="#92400E" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding SecurityMessage}" Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" TextWrapping="Wrap"/>
                     </Border>
 
                     <!-- Change password -->
@@ -190,8 +190,8 @@
                     </StackPanel>
 
                     <!-- Recovery codes one-shot display -->
-                    <Border Background="#FFF4E6"
-                            BorderBrush="#FFB84D"
+                    <Border Background="{ThemeResource WarningFillColorTertiaryBrush}"
+                            BorderBrush="{ThemeResource WarningBorderColorDefaultBrush}"
                             BorderThickness="2"
                             CornerRadius="4"
                             Padding="12"
@@ -199,12 +199,12 @@
                         <StackPanel Spacing="8">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_RecoveryCodesNotice}"
                                        FontWeight="SemiBold"
-                                       Foreground="#92400E"
+                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
                                        TextWrapping="Wrap"/>
                             <ItemsControl ItemsSource="{Binding DisplayedRecoveryCodes}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding}" FontFamily="Consolas" Foreground="#92400E"/>
+                                        <TextBlock Text="{Binding}" FontFamily="Consolas" Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -220,8 +220,8 @@
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_Notifications_NotifyOnNewMessage}"
                               IsChecked="{Binding NotifyOnNewMessage, Mode=TwoWay}" />
-                    <Border Background="#FFF4E6"
-                            BorderBrush="#FFB84D"
+                    <Border Background="{ThemeResource WarningFillColorTertiaryBrush}"
+                            BorderBrush="{ThemeResource WarningBorderColorDefaultBrush}"
                             BorderThickness="1"
                             CornerRadius="4"
                             Padding="8"
