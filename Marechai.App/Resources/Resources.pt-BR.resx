@@ -3182,4 +3182,43 @@
   <data name="SoftwarePromoArtUploadedSuccessfully" xml:space="preserve"><value>Material promocional enviado com sucesso.</value></data>
   <data name="SoftwarePromoArtUpdatedSuccessfully" xml:space="preserve"><value>Material promocional atualizado com sucesso.</value></data>
   <data name="SoftwarePromoArtDeletedSuccessfully" xml:space="preserve"><value>Material promocional excluído com sucesso.</value></data>
+  <data name="SoftwareDuplicatesManagementButton" xml:space="preserve"><value>Duplicatas de software</value></data>
+  <data name="SoftwareDuplicatesPageTitle" xml:space="preserve"><value>Duplicatas de software</value></data>
+  <data name="SoftwareDuplicatesPageSubtitle" xml:space="preserve"><value>Encontre e mescle possíveis entradas de software duplicadas.</value></data>
+  <data name="KindFilterLabel" xml:space="preserve"><value>Filtro de tipo</value></data>
+  <data name="ExcludeDlcLabel" xml:space="preserve"><value>Ocultar DLC/complemento</value></data>
+  <data name="MasterColumnHeader" xml:space="preserve"><value>Principal</value></data>
+  <data name="MergeIntoMasterTooltip" xml:space="preserve"><value>Mesclar esta entrada com o principal selecionado</value></data>
+  <data name="MergeIntoOtherTooltip" xml:space="preserve"><value>Mesclar com outro…</value></data>
+  <data name="IsMasterTooltip" xml:space="preserve"><value>Marcar esta entrada como principal deste grupo de duplicatas</value></data>
+  <data name="OpenInNewWindowTooltip" xml:space="preserve"><value>Abrir em uma nova janela</value></data>
+  <data name="MergeSoftwarePanelTitle" xml:space="preserve"><value>Mesclar software</value></data>
+  <data name="MergeReleaseTitleLabel" xml:space="preserve"><value>Título do lançamento</value></data>
+  <data name="SoftwareDuplicatesPageInfo" xml:space="preserve"><value>Página {0} de {1}</value></data>
+  <data name="FailedToLoadDuplicateGroups" xml:space="preserve"><value>Não foi possível carregar os grupos de duplicatas.</value></data>
+  <data name="FailedToMergeSoftware" xml:space="preserve"><value>Não foi possível mesclar o software.</value></data>
+  <data name="SoftwareSearchBox_Placeholder" xml:space="preserve"><value>Buscar software...</value></data>
+  <data name="PreviousPageButton" xml:space="preserve"><value>Anterior</value></data>
+  <data name="NextPageButton" xml:space="preserve"><value>Próxima</value></data>
+  <data name="SoftwareKindFilterAll" xml:space="preserve"><value>Todos</value></data>
+  <data name="SoftwareKindSoftware" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareKindOperatingSystem" xml:space="preserve"><value>Sistema operacional</value></data>
+  <data name="SoftwareKindGame" xml:space="preserve"><value>Jogo</value></data>
+  <data name="SoftwareKindDlc" xml:space="preserve"><value>DLC/complemento</value></data>
+  <data name="SoftwareKindSystemSoftware" xml:space="preserve"><value>Software de sistema</value></data>
+  <data name="SoftwareKindApplication" xml:space="preserve"><value>Aplicativo</value></data>
+  <data name="SoftwareKindDevelopmentSoftware" xml:space="preserve"><value>Software de desenvolvimento</value></data>
+  <data name="SoftwareKindServerSoftware" xml:space="preserve"><value>Software de servidor</value></data>
+  <data name="SoftwareKindMiddleware" xml:space="preserve"><value>Middleware</value></data>
+  <data name="SoftwareKindFirmware" xml:space="preserve"><value>Firmware</value></data>
+  <data name="SoftwareKindEmbeddedSoftware" xml:space="preserve"><value>Software embarcado</value></data>
+  <data name="MergeSoftwareVersionsCountLabel" xml:space="preserve"><value>Versões</value></data>
+  <data name="MergeSoftwareDirectReleasesLabel" xml:space="preserve"><value>Lançamentos diretos</value></data>
+  <data name="MergeSoftwareScreenshotsLabel" xml:space="preserve"><value>Capturas de tela</value></data>
+  <data name="MergeSoftwarePromoArtLabel" xml:space="preserve"><value>Arte promocional</value></data>
+  <data name="MergeSoftwareCompanyRolesLabel" xml:space="preserve"><value>Funções de empresa</value></data>
+  <data name="MergeSoftwareGenresLabel" xml:space="preserve"><value>Gêneros</value></data>
+  <data name="MergeSoftwareCreditsLabel" xml:space="preserve"><value>Créditos</value></data>
+  <data name="MergeSoftwareCompilationsLabel" xml:space="preserve"><value>Referências de compilação</value></data>
+  <data name="MergeSoftwareVideosLabel" xml:space="preserve"><value>Vídeos</value></data>
 </root>

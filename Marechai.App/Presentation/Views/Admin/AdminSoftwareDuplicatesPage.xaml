@@ -1,0 +1,375 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.Admin.AdminSoftwareDuplicatesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="using:Marechai.App.Presentation.ViewModels.Admin"
+      x:Name="PageRoot"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareDuplicatesPageTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareDuplicatesPageSubtitle}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Access Denied -->
+            <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Warning"
+                         Title="{Binding Source={StaticResource Strings}, Path=CompanyMgmtAccessDeniedTitle}"
+                         Message="{Binding Source={StaticResource Strings}, Path=CompanyMgmtAccessDeniedMessage}"
+                         IsClosable="False" />
+            </StackPanel>
+
+            <!-- Content (admin only) -->
+            <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
+                  Canvas.ZIndex="0">
+
+                <!-- Loading -->
+                <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="64"
+                                  Width="64"
+                                  Foreground="{ThemeResource SystemAccentColor}" />
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="24"
+                            Spacing="16"
+                            MaxWidth="400"
+                            Canvas.ZIndex="100">
+                    <InfoBar IsOpen="True"
+                             Severity="Error"
+                             Title="{Binding Source={StaticResource Strings}, Path=ErrorTitle}"
+                             Message="{Binding ErrorMessage}"
+                             IsClosable="False" />
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                            Command="{Binding LoadDuplicateGroupsCommand}"
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+
+                <!-- List View -->
+                <Grid Visibility="{Binding IsDataLoaded, Converter={StaticResource BoolToVisibilityConverter}}"
+                      Canvas.ZIndex="1">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Duplicate groups list -->
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Toolbar -->
+                            <Grid Grid.Row="0"
+                                  Padding="16,12"
+                                  ColumnSpacing="12"
+                                  BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                  BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox Grid.Column="0"
+                                          Header="{Binding Source={StaticResource Strings}, Path=KindFilterLabel}"
+                                          ItemsSource="{Binding KindFilterItems}"
+                                          SelectedIndex="{Binding KindFilterIndex, Mode=TwoWay}"
+                                          MinWidth="220" />
+
+                                <CheckBox Grid.Column="1"
+                                          Content="{Binding Source={StaticResource Strings}, Path=ExcludeDlcLabel}"
+                                          IsChecked="{Binding ExcludeDlc, Mode=TwoWay}"
+                                          IsEnabled="{Binding IsExcludeDlcEnabled}"
+                                          VerticalAlignment="Bottom"
+                                          Margin="0,0,0,6" />
+
+                                <Button Grid.Column="3"
+                                        Content="{Binding Source={StaticResource Strings}, Path=RefreshCompaniesButton}"
+                                        Command="{Binding LoadDuplicateGroupsCommand}"
+                                        VerticalAlignment="Bottom" />
+                            </Grid>
+
+                            <!-- Groups -->
+                            <ListView Grid.Row="1"
+                                      Padding="16"
+                                      SelectionMode="None"
+                                      IsItemClickEnabled="False"
+                                      ItemsSource="{Binding GroupedDuplicates.View}">
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate x:DataType="vm:DuplicateGroupItem">
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="12"
+                                                            Padding="0,8,0,4">
+                                                    <TextBlock Text="{Binding NormalizedName}"
+                                                               FontWeight="SemiBold" />
+                                                    <Border Background="{ThemeResource SystemAccentColor}"
+                                                            CornerRadius="10"
+                                                            Padding="8,2">
+                                                        <TextBlock Text="{Binding EntriesCountText}"
+                                                                   Foreground="White"
+                                                                   FontSize="12" />
+                                                    </Border>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:DuplicateItemRow">
+                                        <Grid Padding="8"
+                                              ColumnSpacing="8"
+                                              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                              BorderThickness="0,0,0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ToggleButton Grid.Column="0"
+                                                          IsChecked="{Binding IsMaster, Mode=OneWay}"
+                                                          Content="{Binding Source={StaticResource Strings}, Path=MasterColumnHeader}"
+                                                          Click="MasterToggle_Click"
+                                                          ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=IsMasterTooltip}" />
+
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Item.Name}"
+                                                           FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding KindLabel}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding EarliestReleaseYearText}"
+                                                       VerticalAlignment="Center" />
+
+                                            <TextBlock Grid.Column="3"
+                                                       Text="{Binding Item.ReleasesCount}"
+                                                       VerticalAlignment="Center" />
+
+                                            <TextBlock Grid.Column="4"
+                                                       Text="{Binding PlatformsText}"
+                                                       VerticalAlignment="Center"
+                                                       MaxWidth="220"
+                                                       TextTrimming="CharacterEllipsis" />
+
+                                            <StackPanel Grid.Column="5"
+                                                        Orientation="Horizontal"
+                                                        Spacing="4">
+                                                <Button Click="OpenInNewWindow_Click"
+                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
+                                                    <FontIcon Glyph="&#xE8A7;" />
+                                                </Button>
+                                                <Button Click="MergeIntoMaster_Click"
+                                                        IsEnabled="{Binding CanMergeIntoMaster}"
+                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoMasterTooltip}">
+                                                    <FontIcon Glyph="&#xE7C1;" />
+                                                </Button>
+                                                <Button Click="MergeIntoOther_Click"
+                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoOtherTooltip}">
+                                                    <FontIcon Glyph="&#xE8AB;" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <!-- Pager -->
+                            <Grid Grid.Row="2"
+                                  Padding="16,12"
+                                  ColumnSpacing="12"
+                                  BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                  BorderThickness="0,1,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0"
+                                        Content="{Binding Source={StaticResource Strings}, Path=PreviousPageButton}"
+                                        Command="{Binding PreviousPageCommand}"
+                                        IsEnabled="{Binding CanGoPrevious}" />
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding PageInfoText}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+
+                                <Button Grid.Column="2"
+                                        Content="{Binding Source={StaticResource Strings}, Path=NextPageButton}"
+                                        Command="{Binding NextPageCommand}"
+                                        IsEnabled="{Binding CanGoNext}" />
+                            </Grid>
+                        </Grid>
+
+                        <!-- Merge Panel -->
+                        <Border Grid.Column="1"
+                                Visibility="{Binding IsMerging, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="500"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Merge header -->
+                                <Grid Grid.Row="0"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeSoftwarePanelTitle}"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding MergeSourceItem.Name}"
+                                                   FontSize="13"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Merge body (scrollable) -->
+                                <ScrollViewer Grid.Row="1"
+                                              Padding="16"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Spacing="12">
+
+                                        <!-- Target picker -->
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=MergeTargetLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareSearchBox_Placeholder}"
+                                                        Text="{Binding MergeTargetSearchText, Mode=TwoWay}"
+                                                        QueryIcon="Find"
+                                                        x:Name="MergeTargetFilterBox"
+                                                        TextChanged="MergeTargetFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding MergeTargetSuggestions}"
+                                                  SelectedItem="{Binding SelectedMergeTargetSoftware, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name"
+                                                  HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=MergeTargetLabel}" />
+
+                                        <!-- Warning -->
+                                        <InfoBar IsOpen="{Binding IsMergeTargetSelected}"
+                                                 Severity="Warning"
+                                                 Title="{Binding Source={StaticResource Strings}, Path=MergeWarningTitle}"
+                                                 Message="{Binding Source={StaticResource Strings}, Path=MergeWarningMessage}"
+                                                 IsClosable="False" />
+
+                                        <!-- Release title -->
+                                        <TextBox Visibility="{Binding IsMergeTargetSelected, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Header="{Binding Source={StaticResource Strings}, Path=MergeReleaseTitleLabel}"
+                                                 Text="{Binding ReleaseTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <!-- Relationship summary -->
+                                        <StackPanel Visibility="{Binding IsMergeTargetSelected, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="4"
+                                                    Margin="0,12,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeRelationshipsSectionTitle}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding MergeRelationshipSummaryLines}">
+                                                <ItemsRepeater.Layout>
+                                                    <StackLayout Spacing="2" />
+                                                </ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" />
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+
+                                <!-- Merge footer -->
+                                <Grid Grid.Row="2"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,1,0,0"
+                                      ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Command="{Binding CancelMergeCommand}"
+                                            HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1"
+                                            Content="{Binding Source={StaticResource Strings}, Path=MergeButton}"
+                                            IsEnabled="{Binding IsMergeTargetSelected}"
+                                            Click="MergeButton_Click"
+                                            HorizontalAlignment="Stretch"
+                                            Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
