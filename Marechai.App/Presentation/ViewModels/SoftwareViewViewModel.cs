@@ -103,6 +103,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showVersions = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showReleases = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showOsBadge = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -585,8 +588,13 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             ShowRatings = Ratings.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             // Load versions (without nested releases)
+            Versions.Clear();
+            Releases.Clear();
+
             List<SoftwareVersionDto> versions = await _browsingService.GetVersionsAsync(softwareId);
             versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
+
+            Dictionary<int, VersionDisplayItem> versionItemsById = [];
 
             foreach(SoftwareVersionDto version in versions)
             {
@@ -601,9 +609,14 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 };
 
                 Versions.Add(versionItem);
+
+                if(versionId > 0)
+                    versionItemsById[versionId] = versionItem;
             }
 
-            // Load all non-compilation releases for this software (flat list)
+            // Load all non-compilation releases for this software. Version-scoped releases
+            // are shown inside their version cards; versionless releases fall back to the
+            // flat list rendered below the versions section.
             List<SoftwareReleaseDto> releases = await _browsingService.GetReleasesBySoftwareAsync(softwareId);
 
             foreach(SoftwareReleaseDto release in releases)
@@ -613,6 +626,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 var releaseItem = new ReleaseDisplayItem
                 {
                     Id              = (int)(release.Id ?? 0),
+                    Title           = release.Title,
                     SoftwareVersion = release.SoftwareVersion,
                     Platform        = release.Platform,
                     Regions         = release.Regions is { Count: > 0 }
@@ -622,7 +636,11 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                     ReleaseDate     = dateDisplay
                 };
 
-                Releases.Add(releaseItem);
+                if(release.SoftwareVersionId.HasValue &&
+                   versionItemsById.TryGetValue((int)release.SoftwareVersionId.Value, out VersionDisplayItem? versionItem))
+                    versionItem.Releases.Add(releaseItem);
+                else
+                    Releases.Add(releaseItem);
             }
 
             // Load covers
@@ -1376,6 +1394,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowSuccessor    = SuccessorId is not null && !string.IsNullOrEmpty(Successor) ? Visibility.Visible : Visibility.Collapsed;
         ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowVersions    = Versions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowReleases    = Releases.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowOsBadge       = Kind == SoftwareKind.OperatingSystem ? Visibility.Visible : Visibility.Collapsed;
         ShowGameBadge     = Kind == SoftwareKind.Game ? Visibility.Visible : Visibility.Collapsed;
         ShowSoftwareBadge = Kind == SoftwareKind.Software ? Visibility.Visible : Visibility.Collapsed;
@@ -1496,6 +1515,7 @@ public class VersionDisplayItem
 public class ReleaseDisplayItem
 {
     public int     Id              { get; set; }
+    public string? Title           { get; set; }
     public string? SoftwareVersion { get; set; }
     public string? Platform        { get; set; }
     public string? Regions          { get; set; }

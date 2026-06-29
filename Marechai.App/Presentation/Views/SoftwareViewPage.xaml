@@ -696,6 +696,70 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <StackPanel Visibility="{Binding ShowReleases}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=Releases}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Releases}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Padding="0"
+                                            Margin="0"
+                                            HorizontalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToReleaseCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Padding="12,8">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                           Visibility="{Binding Title, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                <wctui:WrapPanel Orientation="Horizontal"
+                                                                 HorizontalSpacing="8"
+                                                                 VerticalSpacing="4">
+                                                    <TextBlock Text="{Binding Platform}"
+                                                               FontSize="13"
+                                                               Foreground="{ThemeResource TextControlForeground}"
+                                                               Visibility="{Binding Platform, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding Regions}"
+                                                               FontSize="13"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               Visibility="{Binding Regions, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding Publisher}"
+                                                               FontSize="13"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               Visibility="{Binding Publisher, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                    <TextBlock Text="{Binding ReleaseDate}"
+                                                               FontSize="13"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               Visibility="{Binding ReleaseDate, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                </wctui:WrapPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                             </StackPanel>
                         </ScrollViewer>
                     </TabViewItem>
