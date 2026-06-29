@@ -83,10 +83,8 @@
                                TextWrapping="Wrap" />
 
                     <!-- Company Status -->
-                    <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
+                    <StackPanel Style="{StaticResource MetadataPanelStyle}"
+                                    Spacing="8">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=StatusText}"
                                    FontSize="14"
@@ -99,9 +97,7 @@
 
                     <!-- Founded Date -->
                     <StackPanel Visibility="{Binding Company.Founded, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
+                                Style="{StaticResource MetadataPanelStyle}"
                                 Spacing="8">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=FoundedText}"
@@ -114,9 +110,7 @@
 
                     <!-- Legal Name -->
                     <StackPanel Visibility="{Binding Company.LegalName, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
+                                Style="{StaticResource MetadataPanelStyle}"
                                 Spacing="8">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=LegalNameText}"
@@ -128,9 +122,8 @@
                     </StackPanel>
 
                     <!-- Country -->
-                    <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12">
+                    <StackPanel Style="{StaticResource MetadataPanelStyle}"
+                                    >
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -165,9 +158,7 @@
 
                     <!-- Address -->
                     <StackPanel Visibility="{Binding Company.Address, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
+                                Style="{StaticResource MetadataPanelStyle}"
                                 Spacing="8">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=AddressText}"

@@ -1051,6 +1051,7 @@ public class LocalizedStrings
     public string OverviewTabHeader => _l["OverviewTabHeader"];
     public string ReleasesTabHeader => _l["ReleasesTabHeader"];
     public string ReviewsTabHeader => _l["ReviewsTabHeader"];
+    public string MachinesTabHeader => _l["MachinesTabHeader"];
 
     // Software user-facing pages
     public string AllSoftwareButton => _l["AllSoftwareButton"];

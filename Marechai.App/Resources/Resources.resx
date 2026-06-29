@@ -1397,6 +1397,9 @@
   <data name="ReviewsTabHeader" xml:space="preserve">
     <value>Reviews</value>
   </data>
+  <data name="MachinesTabHeader" xml:space="preserve">
+    <value>Machines</value>
+  </data>
   <data name="PhotosLabel" xml:space="preserve">
     <value>Photos</value>
   </data>

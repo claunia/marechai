@@ -70,6 +70,14 @@
         </Setter>
     </Style>
 
+    <!-- Borderless variant of MetadataCardStyle for pages that wrap field values directly
+         in a StackPanel (background fill + rounded corners, no stroke) rather than a Border. -->
+    <Style x:Key="MetadataPanelStyle" TargetType="StackPanel">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12" />
+    </Style>
+
     <!-- Shared control template for clickable cards (software/video/promo-art list items),
          replacing the ~60-line hand-rolled ControlTemplate+VisualStateManager duplicated per page. -->
     <ControlTemplate x:Key="InteractiveCardButtonTemplate" TargetType="Button">

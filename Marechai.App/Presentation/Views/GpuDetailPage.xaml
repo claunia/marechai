@@ -30,57 +30,68 @@
         </utu:NavigationBar>
 
         <!-- Content -->
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Padding="16"
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
                         Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="48"
+                              Width="48" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           TextAlignment="Center"
+                           FontSize="14" />
+            </StackPanel>
 
-                <!-- Loading State -->
-                <StackPanel Visibility="{Binding IsLoading}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Padding="32"
-                            Spacing="16">
-                    <ProgressRing IsActive="True"
-                                  IsIndeterminate="True"
-                                  Height="48"
-                                  Width="48" />
-                    <TextBlock
-                               Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
-                               TextAlignment="Center"
-                               FontSize="14" />
-                </StackPanel>
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        Padding="16"
+                        Background="{ThemeResource SystemErrorBackgroundColor}"
+                        CornerRadius="8"
+                        Spacing="8">
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=ErrorTitleText}"
+                           FontWeight="Bold"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
 
-                <!-- Error State -->
-                <StackPanel Visibility="{Binding HasError}"
-                            Padding="16"
-                            Background="{ThemeResource SystemErrorBackgroundColor}"
-                            CornerRadius="8"
-                            Spacing="8">
-                    <TextBlock
-                               Text="{Binding Source={StaticResource Strings}, Path=ErrorTitleText}"
-                               FontWeight="Bold"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
+            <!-- GPU Details -->
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <!-- GPU Details -->
-                <StackPanel Visibility="{Binding IsDataLoaded}"
-                            Spacing="16">
+                <!-- GPU Name -->
+                <TextBlock Grid.Row="0"
+                           Text="{Binding DisplayName}"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap"
+                           Margin="16,16,16,0" />
 
-                    <!-- GPU Name -->
-                    <TextBlock Text="{Binding DisplayName}"
-                               FontSize="28"
-                               FontWeight="Bold"
-                               TextWrapping="Wrap" />
+                <TabView Grid.Row="1"
+                         Style="{StaticResource DetailTabViewStyle}">
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SpecificationsTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <StackPanel Visibility="{Binding ShowSpecifications}"
                                 Spacing="16">
                         <!-- Company/Manufacturer -->
-                        <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                        <StackPanel Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
@@ -94,9 +105,7 @@
 
                         <!-- Model Code -->
                         <StackPanel Visibility="{Binding Gpu.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
@@ -110,9 +119,7 @@
 
                         <!-- Introduced Date -->
                         <StackPanel Visibility="{Binding Gpu.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
@@ -125,9 +132,7 @@
 
                         <!-- Package -->
                         <StackPanel Visibility="{Binding Gpu.Package, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=PackageText}"
@@ -141,9 +146,7 @@
 
                         <!-- Process -->
                         <StackPanel Visibility="{Binding Gpu.Process, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ProcessText}"
@@ -157,9 +160,7 @@
 
                         <!-- Process (nm) -->
                         <StackPanel Visibility="{Binding Gpu.ProcessNm, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ProcessNmText}"
@@ -173,9 +174,7 @@
 
                         <!-- Die Size -->
                         <StackPanel Visibility="{Binding Gpu.DieSize, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=DieSizeText}"
@@ -189,9 +188,7 @@
 
                         <!-- Transistors -->
                         <StackPanel Visibility="{Binding Gpu.Transistors, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=TransistorsText}"
@@ -262,6 +259,17 @@
                         <WebView2 x:Name="DescriptionWebView"
                                   MinHeight="200" />
                     </StackPanel>
+
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MediaTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <!-- Photos Carousel -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
@@ -334,11 +342,7 @@
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Stretch">
                                                     <Border x:Name="VideoShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
+                                                            Style="{StaticResource MetadataCardStyle}"
                                                             Translation="0, 0, 4"
                                                             VerticalAlignment="Stretch">
                                                         <Border.Shadow>
@@ -432,6 +436,17 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MachinesTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <!-- Computers Section -->
                     <StackPanel Visibility="{Binding HasComputers}"
@@ -561,10 +576,15 @@
                         </ScrollViewer>
                     </StackPanel>
 
-                </StackPanel>
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
 
-            </StackPanel>
-        </ScrollViewer>
+                </TabView>
+
+            </Grid>
+
+        </Grid>
 
     </Grid>
 

@@ -30,57 +30,68 @@
         </utu:NavigationBar>
 
         <!-- Content -->
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Padding="16"
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
                         Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="48"
+                              Width="48" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           TextAlignment="Center"
+                           FontSize="14" />
+            </StackPanel>
 
-                <!-- Loading State -->
-                <StackPanel Visibility="{Binding IsLoading}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Padding="32"
-                            Spacing="16">
-                    <ProgressRing IsActive="True"
-                                  IsIndeterminate="True"
-                                  Height="48"
-                                  Width="48" />
-                    <TextBlock
-                               Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
-                               TextAlignment="Center"
-                               FontSize="14" />
-                </StackPanel>
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        Padding="16"
+                        Background="{ThemeResource SystemErrorBackgroundColor}"
+                        CornerRadius="8"
+                        Spacing="8">
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
+                           FontWeight="Bold"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
 
-                <!-- Error State -->
-                <StackPanel Visibility="{Binding HasError}"
-                            Padding="16"
-                            Background="{ThemeResource SystemErrorBackgroundColor}"
-                            CornerRadius="8"
-                            Spacing="8">
-                    <TextBlock
-                               Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
-                               FontWeight="Bold"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
+            <!-- Sound Synthesizer Details -->
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <!-- Sound Synthesizer Details -->
-                <StackPanel Visibility="{Binding IsDataLoaded}"
-                            Spacing="16">
+                <!-- Sound Synthesizer Name -->
+                <TextBlock Grid.Row="0"
+                           Text="{Binding DisplayName}"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap"
+                           Margin="16,16,16,0" />
 
-                    <!-- Sound Synthesizer Name -->
-                    <TextBlock Text="{Binding DisplayName}"
-                               FontSize="28"
-                               FontWeight="Bold"
-                               TextWrapping="Wrap" />
+                <TabView Grid.Row="1"
+                         Style="{StaticResource DetailTabViewStyle}">
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SpecificationsTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <StackPanel Visibility="{Binding ShowSpecifications}"
                                 Spacing="16">
                         <!-- Company/Manufacturer -->
-                        <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                        <StackPanel Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
@@ -94,9 +105,7 @@
 
                         <!-- Model Code -->
                         <StackPanel Visibility="{Binding SoundSynth.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
@@ -110,9 +119,7 @@
 
                         <!-- Introduced Date -->
                         <StackPanel Visibility="{Binding SoundSynth.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
@@ -125,9 +132,7 @@
 
                         <!-- Voices -->
                         <StackPanel Visibility="{Binding SoundSynth.Voices, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=VoicesText}"
@@ -141,9 +146,7 @@
 
                         <!-- Frequency -->
                         <StackPanel Visibility="{Binding SoundSynth.Frequency, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=FrequencyText}"
@@ -157,9 +160,7 @@
 
                         <!-- Depth -->
                         <StackPanel Visibility="{Binding SoundSynth.Depth, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=DepthText}"
@@ -173,9 +174,7 @@
 
                         <!-- Type -->
                         <StackPanel Visibility="{Binding SynthTypeDisplay, Converter={StaticResource StringToVisibilityConverter}}"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
-                                    Padding="12"
+                                    Style="{StaticResource MetadataPanelStyle}"
                                     Spacing="8">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=TypeText}"
@@ -198,6 +197,17 @@
                         <WebView2 x:Name="DescriptionWebView"
                                   MinHeight="200" />
                     </StackPanel>
+
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MediaTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <!-- Photos Carousel -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
@@ -270,11 +280,7 @@
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Stretch">
                                                     <Border x:Name="VideoShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
+                                                            Style="{StaticResource MetadataCardStyle}"
                                                             Translation="0, 0, 4"
                                                             VerticalAlignment="Stretch">
                                                         <Border.Shadow>
@@ -368,6 +374,17 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MachinesTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="16"
+                                Spacing="16">
 
                     <!-- Computers Section -->
                     <StackPanel Visibility="{Binding HasComputers}"
@@ -497,10 +514,15 @@
                         </ScrollViewer>
                     </StackPanel>
 
-                </StackPanel>
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
 
-            </StackPanel>
-        </ScrollViewer>
+                </TabView>
+
+            </Grid>
+
+        </Grid>
 
     </Grid>
 
