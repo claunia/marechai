@@ -39,7 +39,8 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           Grid.Column="1">
+                           Grid.Column="1"
+                           HorizontalContentAlignment="Stretch">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="GlobalNavigationButton"
                               Command="{Binding ToggleSidebarCommand}"
@@ -47,11 +48,11 @@
                               AutomationProperties.Name="Toggle sidebar visibility" />
             </utu:NavigationBar.MainCommand>
             <utu:NavigationBar.Content>
-                <Grid ColumnSpacing="12">
+                <Grid HorizontalAlignment="Stretch"
+                      ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*"
-                                          MaxWidth="480" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -59,6 +60,7 @@
                                VerticalAlignment="Center" />
 
                     <Grid Grid.Column="1"
+                          HorizontalAlignment="Stretch"
                           ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -68,6 +70,7 @@
                         <AutoSuggestBox x:Name="GlobalSearchBox"
                                     Grid.Column="0"
                                     VerticalAlignment="Center"
+                                    HorizontalAlignment="Stretch"
                                     PlaceholderText="{Binding Source={StaticResource Strings}, Path=GlobalSearchBox_Placeholder}"
                                     Text="{Binding GlobalSearchQuery, Mode=TwoWay}"
                                     ItemsSource="{Binding GlobalSearchSuggestions}"
@@ -87,6 +90,7 @@
 
                         <Grid Grid.Column="1"
                               VerticalAlignment="Center"
+                              HorizontalAlignment="Right"
                               Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Button Command="{Binding NavigateToMessagesCommand}"
                                     Padding="8"
