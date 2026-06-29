@@ -165,6 +165,9 @@ public partial class MagazineIssueViewViewModel : ObservableObject, IRegionAware
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         if(_magazineId.HasValue)
         {
             var parameters = new NavigationParameters

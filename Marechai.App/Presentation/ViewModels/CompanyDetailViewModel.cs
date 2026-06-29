@@ -600,6 +600,9 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     /// </summary>
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(CompaniesPage));
 
         return Task.CompletedTask;

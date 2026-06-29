@@ -148,6 +148,9 @@ public partial class ComputersViewModel : ObservableObject
     /// </summary>
     private async Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
     }
 

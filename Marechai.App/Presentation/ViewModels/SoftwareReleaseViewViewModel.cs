@@ -128,6 +128,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         if(_sourceCompilationId > 0)
         {
             var compilationParameters = new NavigationParameters

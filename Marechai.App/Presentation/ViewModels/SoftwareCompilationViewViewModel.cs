@@ -119,6 +119,9 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         if(_sourceCompilationId > 0)
         {
             var parameters = new NavigationParameters

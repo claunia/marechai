@@ -197,6 +197,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         switch(_navigationSource)
         {
             case nameof(NewsViewModel):
@@ -232,40 +235,12 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 break;
 
             case nameof(GpuDetailViewModel):
-            {
-                var parameters = new NavigationParameters
-                {
-                    { NavParamKeys.GpuId, _sourceGpuId },
-                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
-                };
-
-                _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuDetailPage), parameters);
-
-                break;
-            }
-
             case nameof(ProcessorDetailViewModel):
-            {
-                var parameters = new NavigationParameters
-                {
-                    { NavParamKeys.ProcessorId, _sourceProcessorId },
-                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
-                };
-
-                _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorDetailPage), parameters);
-
-                break;
-            }
-
             case nameof(SoundSynthDetailViewModel):
             {
-                var parameters = new NavigationParameters
-                {
-                    { NavParamKeys.SoundSynthId, _sourceSoundSynthId },
-                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
-                };
-
-                _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthDetailPage), parameters);
+                // When a machine is opened from a component detail page, use the journal
+                // so Back returns to the prior page instead of rebuilding a navigation loop.
+                _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
 
                 break;
             }

@@ -134,6 +134,9 @@ public partial class PeopleViewModel : ObservableObject
 
     private async Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
     }
 

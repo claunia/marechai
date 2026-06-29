@@ -123,6 +123,9 @@ public partial class SoftwareRankingDetailViewModel : ObservableObject, IRegionA
 
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareRankingsPage));
 
         return Task.CompletedTask;

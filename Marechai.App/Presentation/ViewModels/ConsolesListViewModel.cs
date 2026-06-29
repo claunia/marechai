@@ -231,6 +231,9 @@ public partial class ConsolesListViewModel : ObservableObject, IRegionAware
     /// </summary>
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesPage));
 
         return Task.CompletedTask;

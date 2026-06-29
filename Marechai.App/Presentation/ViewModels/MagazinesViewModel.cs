@@ -132,8 +132,13 @@ public partial class MagazinesViewModel : ObservableObject
         }
     }
 
-    private async Task GoBackAsync() =>
+    private async Task GoBackAsync()
+    {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+    }
 
     private Task NavigateByLetterAsync(char letter)
     {

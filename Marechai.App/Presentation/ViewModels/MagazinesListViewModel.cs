@@ -165,6 +165,9 @@ public partial class MagazinesListViewModel : ObservableObject, IRegionAware
 
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(MagazinesPage));
 
         return Task.CompletedTask;

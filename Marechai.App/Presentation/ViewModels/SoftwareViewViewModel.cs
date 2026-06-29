@@ -339,6 +339,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         if(_navigationSource == nameof(SoftwareListViewModel))
             _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareListPage));
         else

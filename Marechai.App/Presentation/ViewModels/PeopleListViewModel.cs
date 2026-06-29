@@ -190,6 +190,9 @@ public partial class PeopleListViewModel : ObservableObject, IRegionAware
 
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(PeoplePage));
 
         return Task.CompletedTask;

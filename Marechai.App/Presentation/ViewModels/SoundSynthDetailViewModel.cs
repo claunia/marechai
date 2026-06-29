@@ -448,10 +448,10 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     /// </summary>
     private Task GoBackAsync()
     {
-        if(_navigationSource == nameof(MachineViewViewModel))
-            _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
-        else
-            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthListPage));
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthListPage));
 
         return Task.CompletedTask;
     }

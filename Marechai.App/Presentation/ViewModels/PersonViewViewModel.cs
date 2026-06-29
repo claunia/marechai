@@ -137,6 +137,9 @@ public partial class PersonViewViewModel : ObservableObject, IRegionAware
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         switch(_navigationSource)
         {
             case nameof(PeopleListViewModel):

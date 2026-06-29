@@ -89,6 +89,9 @@ public partial class MagazineIssuesByYearViewModel : ObservableObject, IRegionAw
     [RelayCommand]
     public Task GoBack()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         var parameters = new NavigationParameters
         {
             { NavParamKeys.MagazineId, _magazineId },

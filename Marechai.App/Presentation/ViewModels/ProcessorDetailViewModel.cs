@@ -347,10 +347,10 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     /// </summary>
     private Task GoBackAsync()
     {
-        if(_navigationSource == nameof(MachineViewViewModel))
-            _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
-        else
-            _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorListPage));
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorListPage));
 
         return Task.CompletedTask;
     }

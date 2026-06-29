@@ -211,6 +211,9 @@ public partial class BooksListViewModel : ObservableObject, IRegionAware
 
     private Task GoBackAsync()
     {
+        if(_regionManager.TryGoBack(RegionNames.Content))
+            return Task.CompletedTask;
+
         _regionManager.RequestNavigate(RegionNames.Content, nameof(BooksPage));
 
         return Task.CompletedTask;
