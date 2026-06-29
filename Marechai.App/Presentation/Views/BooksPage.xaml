@@ -5,6 +5,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:components="using:Marechai.App.Presentation.Components"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:utu="using:Uno.Toolkit.UI"
       NavigationCacheMode="Required"
@@ -91,10 +92,10 @@
                                        Layout="{StaticResource LettersGridLayout}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Content="{Binding}"
+                                    <components:KeyButton Content="{Binding}"
                                             Command="{Binding DataContext.NavigateByLetterCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
-                                            Style="{StaticResource LetterYearButtonStyle}" />
+                                            />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -110,10 +111,10 @@
                                        Layout="{StaticResource YearsGridLayout}">
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Content="{Binding}"
+                                    <components:KeyButton Content="{Binding}"
                                             Command="{Binding DataContext.NavigateByYearCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
-                                            Style="{StaticResource LetterYearButtonStyle}" />
+                                            />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -149,13 +150,13 @@
         <UniformGridLayout x:Key="LettersGridLayout"
                            ItemsStretch="Fill"
                            MinItemWidth="44"
-                           MinItemHeight="44"
+                           MinItemHeight="60"
                            MaximumRowsOrColumns="13" />
 
         <UniformGridLayout x:Key="YearsGridLayout"
                            ItemsStretch="Fill"
                            MinItemWidth="54"
-                           MinItemHeight="44"
+                           MinItemHeight="60"
                            MaximumRowsOrColumns="10" />
 
     </Page.Resources>
