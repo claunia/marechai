@@ -3,6 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Marechai.ApiClient;
+using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -223,4 +226,90 @@ public class PeopleService
             return [];
         }
     }
+
+    public async Task<List<PersonDescriptionDto>> GetDescriptionsAsync(int personId)
+    {
+        try
+        {
+            List<PersonDescriptionDto>? descriptions = await _apiClient.People[personId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching descriptions for person {PersonId}", personId);
+
+            return [];
+        }
+    }
+
+    public async Task<PersonDescriptionDto?> GetDescriptionAsync(int personId, string languageCode)
+    {
+        try
+        {
+            return await _apiClient.People[personId].Description.GetAsync(c => c.QueryParameters.Lang = languageCode);
+        }
+        catch(ApiException ex) when (ex is ProblemDetails { Status: 404 })
+        {
+            return null;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for person {PersonId} in {LanguageCode}", personId,
+                             languageCode);
+
+            return null;
+        }
+    }
+
+    public async Task<(bool Succeeded, string? Error)> CreateOrUpdateDescriptionAsync(int personId, PersonDescriptionDto dto)
+    {
+        try
+        {
+            await _apiClient.People[personId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error saving description for person {PersonId} in {LanguageCode}", personId,
+                             dto.LanguageCode);
+
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description for person {PersonId} in {LanguageCode}", personId,
+                             dto.LanguageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool Succeeded, string? Error)> DeleteDescriptionAsync(int personId, string languageCode)
+    {
+        try
+        {
+            await _apiClient.People[personId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error deleting description for person {PersonId} in {LanguageCode}", personId,
+                             languageCode);
+
+            return (false, ExtractErrorMessage(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting description for person {PersonId} in {LanguageCode}", personId,
+                             languageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    static string ExtractErrorMessage(ApiException ex) =>
+        ex is ProblemDetails pd ? pd.Detail ?? pd.Title ?? ex.Message : ex.Message;
 }

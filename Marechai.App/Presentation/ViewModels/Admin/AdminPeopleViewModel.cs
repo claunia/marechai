@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using Marechai.App.Models;
+using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -15,6 +18,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                      _jwtService;
     private readonly IStringLocalizer                 _localizer;
     private readonly ILogger<AdminPeopleViewModel>    _logger;
+    private readonly PeopleService                    _peopleService;
     private readonly ITokenService                    _tokenService;
 
     [ObservableProperty]
@@ -91,38 +95,76 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Iso31661NumericDto? _selectedCountry;
 
+    // --- Description panel state ---
+    [ObservableProperty]
+    private bool _isEditingDescription;
+
+    [ObservableProperty]
+    private string _descriptionMarkdown = string.Empty;
+
+    [ObservableProperty]
+    private int? _descriptionPersonId;
+
+    [ObservableProperty]
+    private ObservableCollection<LanguageItem> _availableLanguages = [];
+
+    [ObservableProperty]
+    private LanguageItem? _selectedLanguage;
+
+    [ObservableProperty]
+    private ObservableCollection<PersonDescriptionDto> _existingTranslations = [];
+
+    public bool CanSaveDescription =>
+        DescriptionPersonId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
+
     // --- Picker data ---
     [ObservableProperty]
     private ObservableCollection<Iso31661NumericDto> _countries = [];
 
     public AdminPeopleViewModel(Client                        apiClient,
                                 IJwtService                      jwtService,
+                                PeopleService                    peopleService,
                                 ITokenService                    tokenService,
                                 ILogger<AdminPeopleViewModel>    logger,
                                 IStringLocalizer                 localizer)
     {
         _apiClient    = apiClient;
         _jwtService   = jwtService;
+        _peopleService = peopleService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
 
-        LoadPeopleCommand = new AsyncRelayCommand(LoadPeopleAsync);
-        OpenAddCommand    = new RelayCommand(OpenAdd);
-        OpenEditCommand   = new RelayCommand<PersonDto>(OpenEdit);
-        DeleteCommand     = new AsyncRelayCommand<PersonDto>(DeleteAsync);
-        SaveCommand       = new AsyncRelayCommand(SaveAsync);
-        CancelEditCommand = new RelayCommand(CancelEdit);
+        LoadPeopleCommand         = new AsyncRelayCommand(LoadPeopleAsync);
+        OpenAddCommand            = new RelayCommand(OpenAdd);
+        OpenEditCommand           = new RelayCommand<PersonDto>(OpenEdit);
+        DeleteCommand             = new AsyncRelayCommand<PersonDto>(DeleteAsync);
+        SaveCommand               = new AsyncRelayCommand(SaveAsync);
+        CancelEditCommand         = new RelayCommand(CancelEdit);
+        OpenDescriptionCommand    = new AsyncRelayCommand<PersonDto>(OpenDescriptionAsync);
+        SaveDescriptionCommand    = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand  = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand  = new AsyncRelayCommand<PersonDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand    = new RelayCommand<PersonDescriptionDto>(EditTranslation);
+
+        InitializeLanguages();
 
         CheckAdminRole();
     }
 
-    public IAsyncRelayCommand            LoadPeopleCommand { get; }
-    public IRelayCommand                 OpenAddCommand    { get; }
-    public IRelayCommand<PersonDto>      OpenEditCommand   { get; }
-    public IAsyncRelayCommand<PersonDto> DeleteCommand     { get; }
-    public IAsyncRelayCommand            SaveCommand       { get; }
-    public IRelayCommand                 CancelEditCommand { get; }
+    public IAsyncRelayCommand                       LoadPeopleCommand        { get; }
+    public IRelayCommand                            OpenAddCommand           { get; }
+    public IRelayCommand<PersonDto>                 OpenEditCommand          { get; }
+    public IAsyncRelayCommand<PersonDto>            DeleteCommand            { get; }
+    public IAsyncRelayCommand                       SaveCommand              { get; }
+    public IRelayCommand                            CancelEditCommand        { get; }
+    public IAsyncRelayCommand<PersonDto>            OpenDescriptionCommand   { get; }
+    public IAsyncRelayCommand                       SaveDescriptionCommand   { get; }
+    public IRelayCommand                            CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<PersonDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<PersonDescriptionDto>      EditTranslationCommand   { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -198,7 +240,8 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         _editingId     = null;
         EditPanelTitle = _localizer["AddPersonDialog_Title"];
         ClearForm();
-        IsEditing = true;
+        IsEditingDescription = false;
+        IsEditing            = true;
     }
 
     private void OpenEdit(PersonDto? item)
@@ -223,9 +266,10 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
                               ? Countries.FirstOrDefault(c => c.Id == item.CountryId.Value)
                               : null;
 
-        HasError     = false;
-        ErrorMessage = string.Empty;
-        IsEditing    = true;
+        HasError             = false;
+        ErrorMessage         = string.Empty;
+        IsEditingDescription = false;
+        IsEditing            = true;
     }
 
     private async Task DeleteAsync(PersonDto? item)
@@ -295,11 +339,197 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 
     private void CancelEdit()
     {
-        IsEditing  = false;
-        _editingId = null;
+        IsEditing            = false;
+        IsEditingDescription = false;
+        _editingId           = null;
         ClearForm();
         HasError     = false;
         ErrorMessage = string.Empty;
+    }
+
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0];
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
+
+            return;
+        }
+
+        PersonDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionPersonIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    private async Task OpenDescriptionAsync(PersonDto? person)
+    {
+        if(person?.Id == null) return;
+
+        try
+        {
+            HasError             = false;
+            ErrorMessage         = string.Empty;
+            DescriptionPersonId  = person.Id;
+            DescriptionMarkdown  = string.Empty;
+            IsEditing            = false;
+            ExistingTranslations.Clear();
+            await ReloadDescriptionTranslationsAsync(person.Id.Value);
+            SelectedLanguage     = GetDefaultDescriptionLanguage();
+            IsEditingDescription = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading descriptions for person {Id}", person.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task ReloadDescriptionTranslationsAsync(int personId)
+    {
+        ExistingTranslations.Clear();
+
+        List<PersonDescriptionDto> translations = await _peopleService.GetDescriptionsAsync(personId);
+
+        foreach(PersonDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(!CanSaveDescription || DescriptionPersonId == null || SelectedLanguage == null) return;
+
+        try
+        {
+            var dto = new PersonDescriptionDto
+            {
+                PersonId     = DescriptionPersonId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
+            };
+
+            (bool succeeded, string? error) =
+                await _peopleService.CreateOrUpdateDescriptionAsync(DescriptionPersonId.Value, dto);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToSaveDescription"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionPersonId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description for person {Id}", DescriptionPersonId);
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void EditTranslation(PersonDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(PersonDescriptionDto? translation)
+    {
+        if(DescriptionPersonId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            (bool succeeded, string? error) =
+                await _peopleService.DeleteDescriptionAsync(DescriptionPersonId.Value, translation.LanguageCode);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToDeleteTranslation"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionPersonId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting description for person {Id}", DescriptionPersonId);
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription = false;
+        DescriptionPersonId  = null;
+        DescriptionMarkdown  = string.Empty;
+        ExistingTranslations.Clear();
+        SelectedLanguage     = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                               AvailableLanguages.FirstOrDefault();
+        HasError             = false;
+        ErrorMessage         = string.Empty;
     }
 
     public void ApplyFilter()
