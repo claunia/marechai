@@ -3025,6 +3025,11 @@
   <data name="SettingsPage_CurrentPasswordLabel" xml:space="preserve"><value>Contraseña actual</value></data>
   <data name="SettingsPage_RecoveryCodesNotice" xml:space="preserve"><value>Guarde estos códigos de recuperación en un lugar seguro. No se mostrarán de nuevo.</value></data>
   <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve"><value>Los he guardado</value></data>
+  <data name="SettingsPage_Notifications_Header" xml:space="preserve"><value>Notificaciones</value></data>
+  <data name="SettingsPage_Notifications_NotifyOnNewMessage" xml:space="preserve"><value>Notificarme por correo cuando reciba un mensaje nuevo</value></data>
+  <data name="SettingsPage_Notifications_SaveButton" xml:space="preserve"><value>Guardar preferencias de notificaciones</value></data>
+  <data name="SettingsPage_Notifications_SaveSucceeded" xml:space="preserve"><value>Las preferencias de notificaciones se actualizaron correctamente.</value></data>
+  <data name="SettingsPage_Notifications_SaveFailed" xml:space="preserve"><value>No se pudieron actualizar las preferencias de notificaciones.</value></data>
   <data name="Failed to generate authenticator setup." xml:space="preserve"><value>No se pudo generar la configuración del autenticador.</value></data>
   <data name="Verification code is required." xml:space="preserve"><value>Se requiere el código de verificación.</value></data>
   <data name="Invalid verification code." xml:space="preserve"><value>Código de verificación inválido.</value></data>

@@ -216,9 +216,9 @@
 
                 <StackPanel Spacing="12"
                             Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="Notifications"
+                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_Notifications_Header}"
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                    <CheckBox Content="Notify me by email when I receive a new message"
+                    <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_Notifications_NotifyOnNewMessage}"
                               IsChecked="{Binding NotifyOnNewMessage, Mode=TwoWay}" />
                     <Border Background="#FFF4E6"
                             BorderBrush="#FFB84D"
@@ -229,7 +229,7 @@
                         <TextBlock Text="{Binding NotificationPreferencesMessage}"
                                    TextWrapping="Wrap" />
                     </Border>
-                    <Button Content="Save notification preferences"
+                    <Button Content="{Binding Source={StaticResource Strings}, Path=SettingsPage_Notifications_SaveButton}"
                             Command="{Binding SaveNotificationPreferencesCommand}"
                             IsEnabled="{Binding IsNotificationPreferencesBusy, Converter={StaticResource InvertBoolConverter}}"
                             Style="{ThemeResource AccentButtonStyle}"

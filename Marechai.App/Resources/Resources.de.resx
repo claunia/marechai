@@ -2885,6 +2885,11 @@
   <data name="SettingsPage_CurrentPasswordLabel" xml:space="preserve"><value>Aktuelles Passwort</value></data>
   <data name="SettingsPage_RecoveryCodesNotice" xml:space="preserve"><value>Bewahren Sie diese Wiederherstellungscodes sicher auf. Sie werden nicht erneut angezeigt.</value></data>
   <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve"><value>Ich habe sie gespeichert</value></data>
+  <data name="SettingsPage_Notifications_Header" xml:space="preserve"><value>Benachrichtigungen</value></data>
+  <data name="SettingsPage_Notifications_NotifyOnNewMessage" xml:space="preserve"><value>Per E-Mail benachrichtigen, wenn ich eine neue Nachricht erhalte</value></data>
+  <data name="SettingsPage_Notifications_SaveButton" xml:space="preserve"><value>Benachrichtigungseinstellungen speichern</value></data>
+  <data name="SettingsPage_Notifications_SaveSucceeded" xml:space="preserve"><value>Benachrichtigungseinstellungen erfolgreich aktualisiert.</value></data>
+  <data name="SettingsPage_Notifications_SaveFailed" xml:space="preserve"><value>Benachrichtigungseinstellungen konnten nicht aktualisiert werden.</value></data>
   <data name="Failed to generate authenticator setup." xml:space="preserve"><value>Authentifikator-Einrichtung konnte nicht generiert werden.</value></data>
   <data name="Verification code is required." xml:space="preserve"><value>Verifizierungscode ist erforderlich.</value></data>
   <data name="Invalid verification code." xml:space="preserve"><value>Ungültiger Verifizierungscode.</value></data>

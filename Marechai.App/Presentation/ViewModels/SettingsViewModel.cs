@@ -449,8 +449,8 @@ public partial class SettingsViewModel : ObservableObject
 
         IsNotificationPreferencesBusy = false;
         NotificationPreferencesMessage = succeeded
-            ? "Notification preferences updated successfully."
-            : errorMessage ?? "Failed to update notification preferences.";
+            ? _localizer["SettingsPage_Notifications_SaveSucceeded"]
+            : errorMessage ?? _localizer["SettingsPage_Notifications_SaveFailed"];
         OnPropertyChanged(nameof(HasNotificationPreferencesMessage));
     }
 

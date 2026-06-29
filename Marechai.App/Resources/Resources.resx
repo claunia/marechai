@@ -245,6 +245,21 @@
   <data name="SettingsPage_DismissRecoveryCodesButton" xml:space="preserve">
     <value>I have saved them</value>
   </data>
+  <data name="SettingsPage_Notifications_Header" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="SettingsPage_Notifications_NotifyOnNewMessage" xml:space="preserve">
+    <value>Notify me by email when I receive a new message</value>
+  </data>
+  <data name="SettingsPage_Notifications_SaveButton" xml:space="preserve">
+    <value>Save notification preferences</value>
+  </data>
+  <data name="SettingsPage_Notifications_SaveSucceeded" xml:space="preserve">
+    <value>Notification preferences updated successfully.</value>
+  </data>
+  <data name="SettingsPage_Notifications_SaveFailed" xml:space="preserve">
+    <value>Failed to update notification preferences.</value>
+  </data>
   <data name="Failed to generate authenticator setup." xml:space="preserve">
     <value>Failed to generate authenticator setup.</value>
   </data>
