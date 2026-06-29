@@ -142,6 +142,33 @@ public partial class SoftwareCompilations
         }
     }
 
+    async Task OpenMergeDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<MergeSoftwareCompilationsDialog>(L["Merge Compilations"], new DialogOptions
+        {
+            MaxWidth  = MaxWidth.Small,
+            FullWidth = true
+        });
+
+        DialogResult result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: MergeSoftwareCompilationsDialogResult data })
+        {
+            (bool succeeded, string errorMessage) =
+                await SoftwareCompilationsService.MergeAsync(data.TargetId, data.SourceIds);
+
+            if(succeeded)
+            {
+                _successMessage = L["Compilations merged successfully."];
+                await _dataGrid.ReloadServerData();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
     async Task ConfirmDelete(SoftwareCompilationDto compilation)
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()

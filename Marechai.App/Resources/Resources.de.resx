@@ -953,6 +953,24 @@
   <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
     <value>Softwareplattformen konnten nicht zusammengeführt werden</value>
   </data>
+  <data name="MergeCompilationsButton" xml:space="preserve">
+    <value>Kompilationen zusammenführen</value>
+  </data>
+  <data name="MergeCompilationsPanelTitle" xml:space="preserve">
+    <value>Software-Kompilationen zusammenführen</value>
+  </data>
+  <data name="MergeCompilationsTargetLabel" xml:space="preserve">
+    <value>Zielkompilation</value>
+  </data>
+  <data name="MergeCompilationsSourcesLabel" xml:space="preserve">
+    <value>Zu fusionierende Kompilationen</value>
+  </data>
+  <data name="MergeCompilationsHelpText" xml:space="preserve">
+    <value>Wählen Sie eine oder mehrere Quellkompilationen aus, die in das Ziel zusammengeführt werden sollen. Die ausgewählten Quellkompilationen werden gelöscht, nachdem ihre Referenzen verschoben wurden.</value>
+  </data>
+  <data name="FailedToMergeSoftwareCompilations" xml:space="preserve">
+    <value>Softwarekompilationen konnten nicht zusammengeführt werden</value>
+  </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Unternehmen konnten nicht zusammengeführt werden</value>
   </data>

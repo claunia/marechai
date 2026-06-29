@@ -953,6 +953,24 @@
   <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
     <value>Impossible de fusionner les plateformes logicielles</value>
   </data>
+  <data name="MergeCompilationsButton" xml:space="preserve">
+    <value>Fusionner les compilations</value>
+  </data>
+  <data name="MergeCompilationsPanelTitle" xml:space="preserve">
+    <value>Fusionner les compilations logicielles</value>
+  </data>
+  <data name="MergeCompilationsTargetLabel" xml:space="preserve">
+    <value>Compilation cible</value>
+  </data>
+  <data name="MergeCompilationsSourcesLabel" xml:space="preserve">
+    <value>Compilations à fusionner</value>
+  </data>
+  <data name="MergeCompilationsHelpText" xml:space="preserve">
+    <value>Sélectionnez une ou plusieurs compilations source à fusionner dans la cible. Les compilations source sélectionnées seront supprimées après le déplacement de leurs références.</value>
+  </data>
+  <data name="FailedToMergeSoftwareCompilations" xml:space="preserve">
+    <value>Impossible de fusionner les compilations logicielles</value>
+  </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Impossible de fusionner les entreprises</value>
   </data>

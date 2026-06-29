@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Marechai.App.Services;
@@ -170,6 +171,28 @@ public sealed class SoftwareCompilationsService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error deleting software compilation {Id}", id);
+
+            return false;
+        }
+    }
+
+    public async Task<bool> MergeAsync(int targetId, IReadOnlyList<int> sourceIds)
+    {
+        try
+        {
+            var request = new MergeSoftwareCompilationsRequest
+            {
+                TargetId  = targetId,
+                SourceIds = sourceIds.Select(id => (int?)id).ToList()
+            };
+
+            await _apiClient.SoftwareCompilations[targetId].Merge.PostAsync(request);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error merging software compilations {SourceIds} into {TargetId}", sourceIds, targetId);
 
             return false;
         }

@@ -1052,6 +1052,24 @@
   <data name="FailedToMergeSoftwarePlatforms" xml:space="preserve">
     <value>Failed to merge software platforms</value>
   </data>
+  <data name="MergeCompilationsButton" xml:space="preserve">
+    <value>Merge Compilations</value>
+  </data>
+  <data name="MergeCompilationsPanelTitle" xml:space="preserve">
+    <value>Merge Software Compilations</value>
+  </data>
+  <data name="MergeCompilationsTargetLabel" xml:space="preserve">
+    <value>Target compilation</value>
+  </data>
+  <data name="MergeCompilationsSourcesLabel" xml:space="preserve">
+    <value>Compilations to merge</value>
+  </data>
+  <data name="MergeCompilationsHelpText" xml:space="preserve">
+    <value>Select one or more source compilations to merge into the target. The selected source compilations will be deleted after their references are moved.</value>
+  </data>
+  <data name="FailedToMergeSoftwareCompilations" xml:space="preserve">
+    <value>Failed to merge software compilations</value>
+  </data>
   <data name="FailedToMergeCompanies" xml:space="preserve">
     <value>Failed to merge companies</value>
   </data>

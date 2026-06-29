@@ -1,0 +1,73 @@
+@using System.Threading
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareCompilationsService SoftwareCompilationsService
+@inject IStringLocalizer<SoftwareCompilationsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudAlert Severity="Severity.Info">
+                @L["Select a target compilation and the compilations to merge into it. The target compilation will keep its name and ID, and all references will be updated."]
+            </MudAlert>
+
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@L["Target Compilation"]</MudText>
+                <MudAutocomplete T="SoftwareCompilationDto"
+                                Value="SelectedTarget"
+                                ValueChanged="OnTargetChanged"
+                                SearchFunc="SearchTargetAsync"
+                                ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                Label="@L["Select target compilation"]"
+                                Variant="Variant.Outlined"
+                                Clearable="true"
+                                DebounceInterval="300"
+                                MinCharacters="2"/>
+            </MudStack>
+
+            @if(SelectedTarget != null)
+            {
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.subtitle2" Class="font-weight-bold">@L["Compilations to Merge"]</MudText>
+                    <MudText Typo="Typo.caption">
+                        @L["Search and add one or more compilations to merge into the target. The selected compilations will be deleted after merging their data."]
+                    </MudText>
+
+                    <MudAutocomplete T="SoftwareCompilationDto"
+                                    Value="_sourcePickerValue"
+                                    ValueChanged="OnSourcePicked"
+                                    SearchFunc="SearchSourcesAsync"
+                                    ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                    Label="@L["Search compilation to add"]"
+                                    Variant="Variant.Outlined"
+                                    Clearable="true"
+                                    DebounceInterval="300"
+                                    MinCharacters="2"/>
+
+                    @if(SelectedSources.Count > 0)
+                    {
+                        <MudChipSet T="string" ReadOnly="false">
+                            @foreach(var source in SelectedSources)
+                            {
+                                <MudChip T="string" Value="@source.Name" OnClose="@(() => RemoveSource(source))">@source.Name</MudChip>
+                            }
+                        </MudChipSet>
+
+                        <MudAlert Severity="Severity.Warning">
+                            @L["Will merge"] @SelectedSources.Count @L["compilation(s) into"] "<strong>@SelectedTarget.Name</strong>".
+                        </MudAlert>
+                    }
+                </MudStack>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Warning"
+                  Variant="Variant.Filled"
+                  OnClick="Merge"
+                  Disabled="@(SelectedTarget == null || SelectedSources.Count == 0)">
+            @L["Merge Compilations"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>

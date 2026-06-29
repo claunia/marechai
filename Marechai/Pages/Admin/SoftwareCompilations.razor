@@ -28,6 +28,7 @@
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddDialog">@L["Add Compilation"]</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Merge" OnClick="OpenMergeDialog" Class="ml-2">@L["Merge Compilations"]</MudButton>
         <MudSpacer/>
         <MudTextField T="string" ValueChanged="OnSearch" Placeholder="@L["Search by name..."]"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"

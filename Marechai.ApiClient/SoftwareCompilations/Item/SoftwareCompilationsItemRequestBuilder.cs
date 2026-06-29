@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.SoftwareCompilations.Item.Compilations;
 using Marechai.ApiClient.SoftwareCompilations.Item.Covers;
+using Marechai.ApiClient.SoftwareCompilations.Item.Merge;
 using Marechai.ApiClient.SoftwareCompilations.Item.Releases;
 using Marechai.ApiClient.SoftwareCompilations.Item.Software;
 using Marechai.ApiClient.SoftwareCompilations.Item.Versions;
@@ -31,6 +32,11 @@ namespace Marechai.ApiClient.SoftwareCompilations.Item
         public global::Marechai.ApiClient.SoftwareCompilations.Item.Covers.CoversRequestBuilder Covers
         {
             get => new global::Marechai.ApiClient.SoftwareCompilations.Item.Covers.CoversRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The merge property</summary>
+        public global::Marechai.ApiClient.SoftwareCompilations.Item.Merge.MergeRequestBuilder Merge
+        {
+            get => new global::Marechai.ApiClient.SoftwareCompilations.Item.Merge.MergeRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The releases property</summary>
         public global::Marechai.ApiClient.SoftwareCompilations.Item.Releases.ReleasesRequestBuilder Releases

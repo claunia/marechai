@@ -179,6 +179,181 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
         return Ok();
     }
 
+    [HttpPost("{id:ulong}/merge")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult> MergeAsync(ulong id, [FromBody] MergeSoftwareCompilationsRequest request)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(request?.SourceIds == null || request.SourceIds.Count == 0)
+            return Problem(detail: "At least one source compilation must be specified", statusCode: StatusCodes.Status400BadRequest);
+
+        if(request.SourceIds.Contains(id))
+            return Problem(detail: "Target compilation cannot be in the source list", statusCode: StatusCodes.Status400BadRequest);
+
+        SoftwareCompilation target = await context.SoftwareCompilations.FindAsync(id);
+
+        if(target is null) return NotFound("Target compilation not found");
+
+        var sourcesToDelete = await context.SoftwareCompilations
+                                           .Where(c => request.SourceIds.Contains(c.Id))
+                                           .ToListAsync();
+
+        if(sourcesToDelete.Count != request.SourceIds.Count)
+            return NotFound("One or more source compilations not found");
+
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await context.SoftwareReleases
+                        .Where(r => r.SoftwareCompilationId.HasValue &&
+                                    request.SourceIds.Contains(r.SoftwareCompilationId.Value))
+                        .ExecuteUpdateAsync(setters =>
+                             setters.SetProperty(r => r.SoftwareCompilationId, (ulong?)id));
+
+            await context.SoftwareCovers
+                        .Where(c => c.SoftwareCompilationId.HasValue &&
+                                    request.SourceIds.Contains(c.SoftwareCompilationId.Value))
+                        .ExecuteUpdateAsync(setters =>
+                             setters.SetProperty(c => c.SoftwareCompilationId, (ulong?)id));
+
+            // --- SoftwareBySoftwareCompilation: dedupe on (target id, SoftwareId) ---
+
+            var targetSoftwareKeys = (await context.SoftwareBySoftwareCompilation
+                                                    .Where(x => x.SoftwareCompilationId == id)
+                                                    .Select(x => x.SoftwareId)
+                                                    .ToListAsync())
+                                     .ToHashSet();
+
+            var sourceSoftwareLinks = await context.SoftwareBySoftwareCompilation
+                                                   .Where(x => request.SourceIds.Contains(x.SoftwareCompilationId))
+                                                   .ToListAsync();
+
+            foreach(SoftwareBySoftwareCompilation link in sourceSoftwareLinks)
+            {
+                context.SoftwareBySoftwareCompilation.Remove(link);
+
+                if(targetSoftwareKeys.Add(link.SoftwareId))
+                    await context.SoftwareBySoftwareCompilation.AddAsync(new SoftwareBySoftwareCompilation
+                    {
+                        SoftwareCompilationId = id,
+                        SoftwareId            = link.SoftwareId
+                    });
+            }
+
+            // --- SoftwareVersionBySoftwareCompilation: dedupe on (target id, SoftwareVersionId) ---
+
+            var targetVersionKeys = (await context.SoftwareVersionBySoftwareCompilation
+                                                   .Where(x => x.SoftwareCompilationId == id)
+                                                   .Select(x => x.SoftwareVersionId)
+                                                   .ToListAsync())
+                                    .ToHashSet();
+
+            var sourceVersionLinks = await context.SoftwareVersionBySoftwareCompilation
+                                                  .Where(x => request.SourceIds.Contains(x.SoftwareCompilationId))
+                                                  .ToListAsync();
+
+            foreach(SoftwareVersionBySoftwareCompilation link in sourceVersionLinks)
+            {
+                context.SoftwareVersionBySoftwareCompilation.Remove(link);
+
+                if(targetVersionKeys.Add(link.SoftwareVersionId))
+                    await context.SoftwareVersionBySoftwareCompilation.AddAsync(new SoftwareVersionBySoftwareCompilation
+                    {
+                        SoftwareCompilationId = id,
+                        SoftwareVersionId     = link.SoftwareVersionId
+                    });
+            }
+
+            // --- SoftwareCompilationBySoftwareCompilation: re-parent both roles, dedupe and drop self-loops ---
+
+            var targetParentKeys = (await context.SoftwareCompilationBySoftwareCompilation
+                                                  .Where(x => x.ParentCompilationId == id)
+                                                  .Select(x => x.ChildCompilationId)
+                                                  .ToListAsync())
+                                   .ToHashSet();
+
+            var sourceAsParentLinks = await context.SoftwareCompilationBySoftwareCompilation
+                                                    .Where(x => request.SourceIds.Contains(x.ParentCompilationId))
+                                                    .ToListAsync();
+
+            foreach(SoftwareCompilationBySoftwareCompilation link in sourceAsParentLinks)
+            {
+                context.SoftwareCompilationBySoftwareCompilation.Remove(link);
+
+                if(link.ChildCompilationId == id) continue; // would become a self-loop
+
+                if(targetParentKeys.Add(link.ChildCompilationId))
+                    await context.SoftwareCompilationBySoftwareCompilation.AddAsync(
+                        new SoftwareCompilationBySoftwareCompilation
+                        {
+                            ParentCompilationId = id,
+                            ChildCompilationId  = link.ChildCompilationId
+                        });
+            }
+
+            var targetChildKeys = (await context.SoftwareCompilationBySoftwareCompilation
+                                                 .Where(x => x.ChildCompilationId == id)
+                                                 .Select(x => x.ParentCompilationId)
+                                                 .ToListAsync())
+                                  .ToHashSet();
+
+            var sourceAsChildLinks = await context.SoftwareCompilationBySoftwareCompilation
+                                                   .Where(x => request.SourceIds.Contains(x.ChildCompilationId))
+                                                   .ToListAsync();
+
+            foreach(SoftwareCompilationBySoftwareCompilation link in sourceAsChildLinks)
+            {
+                context.SoftwareCompilationBySoftwareCompilation.Remove(link);
+
+                if(link.ParentCompilationId == id) continue; // would become a self-loop
+
+                if(targetChildKeys.Add(link.ParentCompilationId))
+                    await context.SoftwareCompilationBySoftwareCompilation.AddAsync(
+                        new SoftwareCompilationBySoftwareCompilation
+                        {
+                            ParentCompilationId = link.ParentCompilationId,
+                            ChildCompilationId  = id
+                        });
+            }
+
+            // --- Predecessor self-reference ---
+
+            await context.SoftwareCompilations
+                        .Where(c => c.PredecessorId.HasValue &&
+                                    request.SourceIds.Contains(c.PredecessorId.Value) &&
+                                    !request.SourceIds.Contains(c.Id))
+                        .ExecuteUpdateAsync(setters =>
+                             setters.SetProperty(c => c.PredecessorId, (ulong?)id));
+
+            if(target.PredecessorId.HasValue && request.SourceIds.Contains(target.PredecessorId.Value))
+                target.PredecessorId = null;
+
+            foreach(SoftwareCompilation source in sourcesToDelete)
+                context.SoftwareCompilations.Remove(source);
+
+            await context.SaveChangesWithUserAsync(userId);
+
+            await transaction.CommitAsync();
+        }
+        catch(Exception ex)
+        {
+            await transaction.RollbackAsync();
+
+            return Problem(detail: $"Merge failed: {ex.Message}", statusCode: StatusCodes.Status409Conflict);
+        }
+
+        return Ok();
+    }
+
     [HttpGet("{id:ulong}/releases")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

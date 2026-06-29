@@ -137,6 +137,30 @@ public class SoftwareCompilationsService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<(bool succeeded, string error)> MergeAsync(ulong targetId, List<ulong> sourceIds)
+    {
+        try
+        {
+            var request = new MergeSoftwareCompilationsRequest
+            {
+                TargetId  = (int?)targetId,
+                SourceIds = sourceIds.ConvertAll(sourceId => (int?)sourceId)
+            };
+
+            await client.SoftwareCompilations[(int)targetId].Merge.PostAsync(request);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<List<SoftwareReleaseDto>> GetReleasesAsync(int id)
     {
         try

@@ -27,6 +27,8 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     private CancellationTokenSource? _predecessorPickerDebounce;
     private CancellationTokenSource? _includedSoftwareDebounce;
     private CancellationTokenSource? _includedCompilationDebounce;
+    private CancellationTokenSource? _mergeTargetDebounce;
+    private CancellationTokenSource? _mergeSourceDebounce;
 
     private int? _editingId;
     private List<MachineDto>? _allMachines;
@@ -91,6 +93,18 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     [ObservableProperty] private ObservableCollection<SoftwareCompilationDto> _includedCompilationSuggestions = [];
     [ObservableProperty] private SoftwareCompilationDto?                     _selectedIncludedCompilation;
 
+    // --- Merge ---
+    [ObservableProperty] private bool                                         _isMerging;
+    [ObservableProperty] private string                                       _mergeTargetSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoftwareCompilationDto> _mergeTargetSuggestions = [];
+    [ObservableProperty] private SoftwareCompilationDto?                      _selectedMergeTargetCompilation;
+    [ObservableProperty] private string                                       _mergeSourceSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoftwareCompilationDto> _mergeSourceSuggestions = [];
+    [ObservableProperty] private SoftwareCompilationDto?                      _mergeSourcePickerValue;
+    [ObservableProperty] private ObservableCollection<SoftwareCompilationDto> _mergeSelectedSources = [];
+
+    public bool CanConfirmMerge => SelectedMergeTargetCompilation?.Id is not null && MergeSelectedSources.Count > 0;
+
     public AdminSoftwareCompilationsViewModel(SoftwareCompilationsService                 service,
                                                IJwtService                                 jwtService,
                                                ITokenService                               tokenService,
@@ -128,6 +142,11 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
         AddIncludedCompilationCommand    = new AsyncRelayCommand(AddIncludedCompilationAsync);
         RemoveIncludedCompilationCommand = new AsyncRelayCommand<SoftwareCompilationDto>(RemoveIncludedCompilationAsync);
 
+        OpenMergeCommand    = new RelayCommand(OpenMerge);
+        ConfirmMergeCommand = new AsyncRelayCommand(ConfirmMergeAsync);
+        CancelMergeCommand  = new RelayCommand(CancelMerge);
+        RemoveMergeSourceCommand = new RelayCommand<SoftwareCompilationDto>(RemoveMergeSource);
+
         CheckAdminRole();
     }
 
@@ -146,6 +165,11 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     public IAsyncRelayCommand<SoftwareVersionBySoftwareCompilationDto>   RemoveIncludedVersionCommand  { get; }
     public IAsyncRelayCommand                                            AddIncludedCompilationCommand    { get; }
     public IAsyncRelayCommand<SoftwareCompilationDto>                    RemoveIncludedCompilationCommand { get; }
+
+    public IRelayCommand                              OpenMergeCommand         { get; }
+    public IAsyncRelayCommand                         ConfirmMergeCommand      { get; }
+    public IRelayCommand                              CancelMergeCommand       { get; }
+    public IRelayCommand<SoftwareCompilationDto>      RemoveMergeSourceCommand { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -617,4 +641,123 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     }
 
     private static string? NullIfEmpty(string value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    // --- Merge ---
+
+    public string MergeConfirmDialogTitle   => _localizer["MergeConfirmDialogTitle"];
+    public string MergeConfirmDialogMessage => _localizer["MergeConfirmDialogMessage"];
+    public string MergeButtonText           => _localizer["MergeButton"];
+    public string CancelButtonText          => _localizer["CancelButton"];
+
+    partial void OnSelectedMergeTargetCompilationChanged(SoftwareCompilationDto? value)
+    {
+        MergeSelectedSources.Clear();
+        MergeSourceSearchText = string.Empty;
+        MergeSourceSuggestions.Clear();
+        OnPropertyChanged(nameof(CanConfirmMerge));
+    }
+
+    partial void OnMergeSourcePickerValueChanged(SoftwareCompilationDto? value)
+    {
+        if(value?.Id is null) return;
+
+        if(MergeSelectedSources.All(s => s.Id != value.Id))
+            MergeSelectedSources.Add(value);
+
+        MergeSourcePickerValue = null;
+        MergeSourceSearchText  = string.Empty;
+        MergeSourceSuggestions.Clear();
+        OnPropertyChanged(nameof(CanConfirmMerge));
+    }
+
+    private void OpenMerge()
+    {
+        CancelEdit();
+        HasError     = false;
+        ErrorMessage = string.Empty;
+        IsMerging    = true;
+        MergeTargetSearchText = string.Empty;
+        MergeTargetSuggestions.Clear();
+        SelectedMergeTargetCompilation = null;
+        MergeSourceSearchText = string.Empty;
+        MergeSourceSuggestions.Clear();
+        MergeSelectedSources.Clear();
+    }
+
+    public void UpdateMergeTargetSuggestions(string query) => Debounce(ref _mergeTargetDebounce, async () =>
+    {
+        List<SoftwareCompilationDto> results = await _service.SearchAsync(query);
+        MergeTargetSuggestions.Clear();
+        foreach(SoftwareCompilationDto c in results) MergeTargetSuggestions.Add(c);
+    });
+
+    public void UpdateMergeSourceSuggestions(string query) => Debounce(ref _mergeSourceDebounce, async () =>
+    {
+        List<SoftwareCompilationDto> results = await _service.SearchAsync(query);
+
+        MergeSourceSuggestions.Clear();
+
+        foreach(SoftwareCompilationDto c in results)
+            if(c.Id != SelectedMergeTargetCompilation?.Id && MergeSelectedSources.All(s => s.Id != c.Id))
+                MergeSourceSuggestions.Add(c);
+    });
+
+    private void RemoveMergeSource(SoftwareCompilationDto? item)
+    {
+        if(item == null) return;
+
+        MergeSelectedSources.Remove(item);
+        OnPropertyChanged(nameof(CanConfirmMerge));
+    }
+
+    private async Task ConfirmMergeAsync()
+    {
+        if(SelectedMergeTargetCompilation?.Id is not int targetId) return;
+
+        List<int> sourceIds = MergeSelectedSources
+                              .Where(c => c.Id is not null)
+                              .Select(c => c.Id!.Value)
+                              .ToList();
+
+        if(sourceIds.Count == 0) return;
+
+        try
+        {
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            bool succeeded = await _service.MergeAsync(targetId, sourceIds);
+
+            if(!succeeded)
+            {
+                ErrorMessage = _localizer["FailedToMergeSoftwareCompilations"];
+                HasError     = true;
+
+                return;
+            }
+
+            CancelMerge();
+            await LoadAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error merging software compilations into {TargetId}", targetId);
+            ErrorMessage = _localizer["FailedToMergeSoftwareCompilations"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelMerge()
+    {
+        IsMerging = false;
+        MergeTargetSearchText = string.Empty;
+        MergeTargetSuggestions.Clear();
+        SelectedMergeTargetCompilation = null;
+        MergeSourceSearchText = string.Empty;
+        MergeSourceSuggestions.Clear();
+        MergeSelectedSources.Clear();
+        HasError     = false;
+        ErrorMessage = string.Empty;
+        OnPropertyChanged(nameof(CanConfirmMerge));
+    }
 }

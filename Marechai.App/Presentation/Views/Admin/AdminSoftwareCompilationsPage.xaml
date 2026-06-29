@@ -65,6 +65,8 @@
                             <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
                                 <AppBarButton Icon="Add" Label="{Binding Source={StaticResource Strings}, Path=AddButton}"
                                               Command="{Binding OpenAddCommand}" />
+                                <AppBarButton Icon="Switch" Label="{Binding Source={StaticResource Strings}, Path=MergeCompilationsButton}"
+                                              Command="{Binding OpenMergeCommand}" />
                                 <AppBarButton Icon="Refresh" Label="{Binding Source={StaticResource Strings}, Path=RefreshButton}"
                                               Command="{Binding LoadCommand}" />
                             </CommandBar>
@@ -298,6 +300,100 @@
                                             Command="{Binding CancelEditCommand}" HorizontalAlignment="Stretch" />
                                     <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
                                             Command="{Binding SaveCommand}" HorizontalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Merge panel -->
+                        <Border Grid.Column="1" Visibility="{Binding IsMerging, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="420" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeCompilationsPanelTitle}"
+                                                   FontSize="18" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding SelectedMergeTargetCompilation.Name}" FontSize="13"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Spacing="12">
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=MergeCompilationsTargetLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                        Text="{Binding MergeTargetSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                        x:Name="MergeTargetFilterBox" TextChanged="MergeTargetFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding MergeTargetSuggestions}"
+                                                  SelectedItem="{Binding SelectedMergeTargetCompilation, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name" HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=MergeCompilationsTargetLabel}" />
+
+                                        <InfoBar IsOpen="True"
+                                                 Visibility="{Binding SelectedMergeTargetCompilation, Converter={StaticResource NullToVisibilityConverter}}"
+                                                 Severity="Warning"
+                                                 Title="{Binding Source={StaticResource Strings}, Path=MergeWarningTitle}"
+                                                 Message="{Binding Source={StaticResource Strings}, Path=MergeCompilationsHelpText}"
+                                                 IsClosable="False" />
+
+                                        <StackPanel Visibility="{Binding SelectedMergeTargetCompilation, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    Spacing="8">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeCompilationsSourcesLabel}"
+                                                       FontSize="16" FontWeight="SemiBold" />
+                                            <Grid ColumnSpacing="4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <AutoSuggestBox Grid.Column="0"
+                                                                PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                                Text="{Binding MergeSourceSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                                x:Name="MergeSourceFilterBox" TextChanged="MergeSourceFilterBox_TextChanged" />
+                                            </Grid>
+                                            <ComboBox ItemsSource="{Binding MergeSourceSuggestions}"
+                                                      SelectedItem="{Binding MergeSourcePickerValue, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch"
+                                                      PlaceholderText="{Binding Source={StaticResource Strings}, Path=MergeCompilationsSourcesLabel}" />
+                                            <ItemsRepeater ItemsSource="{Binding MergeSelectedSources}">
+                                                <ItemsRepeater.Layout>
+                                                    <StackLayout Spacing="4" />
+                                                </ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,2" ColumnSpacing="8">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" />
+                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                                    Command="{Binding DataContext.RemoveMergeSourceCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"
+                                                                    Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+
+                                <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Command="{Binding CancelMergeCommand}" HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=MergeButton}"
+                                            IsEnabled="{Binding CanConfirmMerge}" Click="MergeButton_Click"
+                                            HorizontalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                                 </Grid>
                             </Grid>
                         </Border>
