@@ -3,12 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.Data;
 using Microsoft.UI.Xaml.Data;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -138,7 +140,10 @@ public partial class SoftwareViewModel : ObservableObject
                 YearsGridTitle = string.Format(_localizer["Browse by Year ({0} - {1})"], MinimumYear, MaximumYear);
             }
 
-            List<SoftwarePlatformDto> platforms = platformsTask.Result;
+            List<SoftwarePlatformDto> platforms = platformsTask.Result
+                                                              .OrderBy(platform => platform.Name ?? string.Empty,
+                                                                       NaturalStringComparer.Instance)
+                                                              .ToList();
 
             if(platforms.Count > 0)
             {
@@ -147,7 +152,10 @@ public partial class SoftwareViewModel : ObservableObject
                 foreach(SoftwarePlatformDto platform in platforms) PlatformsList.Add(platform);
             }
 
-            List<SoftwareSpecKeyDto> specs = specsTask.Result;
+            List<SoftwareSpecKeyDto> specs = specsTask.Result
+                                                      .OrderBy(spec => spec.Key ?? string.Empty,
+                                                               NaturalStringComparer.Instance)
+                                                      .ToList();
 
             if(specs.Count > 0)
             {
@@ -157,7 +165,7 @@ public partial class SoftwareViewModel : ObservableObject
                 {
                     var values = new ObservableCollection<SoftwareSpecValueItem>();
 
-                    foreach(string val in spec.Values ?? [])
+                    foreach(string val in (spec.Values ?? []).OrderBy(value => value, NaturalUnitComparer.Instance))
                     {
                         // Server pre-translates non-Rating spec keys/values via the
                         // SoftwareAttributeTranslationCache (see /software/specifications?lang=...).
