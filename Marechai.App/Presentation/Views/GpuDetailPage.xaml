@@ -70,185 +70,186 @@
                             Spacing="16">
 
                     <!-- GPU Name -->
-                    <TextBlock Text="{Binding Gpu.Name}"
+                    <TextBlock Text="{Binding DisplayName}"
                                FontSize="28"
                                FontWeight="Bold"
                                TextWrapping="Wrap" />
 
-                    <!-- Company/Manufacturer -->
-                    <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding ManufacturerName}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Model Code -->
-                    <StackPanel Visibility="{Binding Gpu.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.ModelCode}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Introduced Date -->
-                    <StackPanel Visibility="{Binding Gpu.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.Introduced}"
-                                   FontSize="14" />
-                    </StackPanel>
-
-                    <!-- Package -->
-                    <StackPanel Visibility="{Binding Gpu.Package, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=PackageText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.Package}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Process -->
-                    <StackPanel Visibility="{Binding Gpu.Process, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ProcessText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.Process}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Process (nm) -->
-                    <StackPanel Visibility="{Binding Gpu.ProcessNm, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ProcessNmText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.ProcessNm}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Die Size -->
-                    <StackPanel Visibility="{Binding Gpu.DieSize, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=DieSizeText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.DieSize}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Transistors -->
-                    <StackPanel Visibility="{Binding Gpu.Transistors, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=TransistorsText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Gpu.Transistors}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Resolutions Section -->
-                    <StackPanel Visibility="{Binding Resolutions.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
-                                Spacing="8">
-                        <StackPanel Orientation="Horizontal"
+                    <StackPanel Visibility="{Binding ShowSpecifications}"
+                                Spacing="16">
+                        <!-- Company/Manufacturer -->
+                        <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
                                     Spacing="8">
                             <TextBlock
-                                       Text="{Binding Source={StaticResource Strings}, Path=SupportedResolutionsText}"
+                                       Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <TextBlock Text="{Binding Resolutions.Count}"
+                            <TextBlock Text="{Binding ManufacturerName}"
                                        FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource SystemAccentColor}" />
+                                       TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <!-- Scrollable Resolutions List -->
-                        <ScrollViewer Height="200"
-                                      BorderThickness="1"
-                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                                      CornerRadius="8">
-                            <ItemsRepeater ItemsSource="{Binding Resolutions}"
-                                           Margin="0">
-                                <ItemsRepeater.Layout>
-                                    <StackLayout Spacing="4" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Padding="12,8"
-                                                HorizontalAlignment="Stretch"
-                                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                CornerRadius="4"
-                                                Margin="0,4">
-                                            <StackPanel Spacing="4">
-                                                <!-- First line: Resolution dimensions or format -->
-                                                <TextBlock Text="{Binding ResolutionDisplay}"
-                                                           FontSize="14"
-                                                           FontWeight="SemiBold" />
-                                                <!-- Second line: Color/palette information -->
-                                                <TextBlock Text="{Binding ColorDisplay}"
-                                                           FontSize="12"
-                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                        </ScrollViewer>
+                        <!-- Model Code -->
+                        <StackPanel Visibility="{Binding Gpu.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.ModelCode}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Introduced Date -->
+                        <StackPanel Visibility="{Binding Gpu.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.Introduced}"
+                                       FontSize="14" />
+                        </StackPanel>
+
+                        <!-- Package -->
+                        <StackPanel Visibility="{Binding Gpu.Package, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=PackageText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.Package}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Process -->
+                        <StackPanel Visibility="{Binding Gpu.Process, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ProcessText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.Process}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Process (nm) -->
+                        <StackPanel Visibility="{Binding Gpu.ProcessNm, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ProcessNmText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.ProcessNm}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Die Size -->
+                        <StackPanel Visibility="{Binding Gpu.DieSize, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=DieSizeText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.DieSize}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Transistors -->
+                        <StackPanel Visibility="{Binding Gpu.Transistors, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=TransistorsText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Gpu.Transistors}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Resolutions Section -->
+                        <StackPanel Visibility="{Binding Resolutions.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                    Spacing="8">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <TextBlock
+                                           Text="{Binding Source={StaticResource Strings}, Path=SupportedResolutionsText}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                <TextBlock Text="{Binding Resolutions.Count}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Foreground="{ThemeResource SystemAccentColor}" />
+                            </StackPanel>
+
+                            <!-- Scrollable Resolutions List -->
+                            <ScrollViewer Height="200"
+                                          BorderThickness="1"
+                                          BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                          CornerRadius="8">
+                                <ItemsRepeater ItemsSource="{Binding Resolutions}"
+                                               Margin="0">
+                                    <ItemsRepeater.Layout>
+                                        <StackLayout Spacing="4" />
+                                    </ItemsRepeater.Layout>
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="12,8"
+                                                    HorizontalAlignment="Stretch"
+                                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                    CornerRadius="4"
+                                                    Margin="0,4">
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{Binding ResolutionDisplay}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding ColorDisplay}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </ScrollViewer>
+                        </StackPanel>
                     </StackPanel>
 
                     <!-- Description Section -->

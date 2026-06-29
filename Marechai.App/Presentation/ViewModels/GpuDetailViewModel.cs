@@ -65,6 +65,9 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
     private int _gpuId;
 
     [ObservableProperty]
+    private string _displayName = string.Empty;
+
+    [ObservableProperty]
     private bool _hasComputers;
 
     [ObservableProperty]
@@ -81,6 +84,9 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private Visibility _showPhotos = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showSpecifications = Visibility.Visible;
 
     [ObservableProperty]
     private Visibility _showVideos = Visibility.Collapsed;
@@ -169,8 +175,11 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
             Videos.Clear();
             ShowPhotos = Visibility.Collapsed;
             ShowVideos = Visibility.Collapsed;
+            ShowDescription = Visibility.Collapsed;
+            ShowSpecifications = Visibility.Visible;
+            DisplayName = string.Empty;
 
-            if(GpuId <= 0)
+            if(GpuId == 0)
             {
                 ErrorMessage = _localizer["Invalid GPU ID"].Value;
                 HasError     = true;
@@ -215,6 +224,9 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
             else if(displayName == "DB_SOFTWARE")
                 displayName                               = _localizer["Software"];
             else if(displayName == "DB_NONE") displayName = _localizer["None_female"];
+
+            DisplayName = displayName;
+            ShowSpecifications = IsSentinelGpu(Gpu) ? Visibility.Collapsed : Visibility.Visible;
 
             _logger.LogInformation("GPU loaded: {Name}, Company: {Company}", displayName, ManufacturerName);
 
@@ -462,6 +474,9 @@ public partial class GpuDetailViewModel : ObservableObject, IRegionAware
             _logger.LogError(ex, "Error loading GPU photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
+
+    static bool IsSentinelGpu(GpuDto? gpu) =>
+        gpu?.Name is "DB_FRAMEBUFFER" or "DB_SOFTWARE" or "DB_NONE";
 
     /// <summary>
     ///     Navigates back to the GPU list

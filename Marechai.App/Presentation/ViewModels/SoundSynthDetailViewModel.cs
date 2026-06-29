@@ -73,10 +73,16 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
     private string _descriptionHtml = string.Empty;
 
     [ObservableProperty]
+    private string _displayName = string.Empty;
+
+    [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showPhotos = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showSpecifications = Visibility.Visible;
 
     [ObservableProperty]
     private Visibility _showVideos = Visibility.Collapsed;
@@ -172,8 +178,11 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
             Videos.Clear();
             ShowPhotos = Visibility.Collapsed;
             ShowVideos = Visibility.Collapsed;
+            ShowDescription = Visibility.Collapsed;
+            ShowSpecifications = Visibility.Visible;
+            DisplayName = string.Empty;
 
-            if(SoundSynthId <= 0)
+            if(SoundSynthId == 0)
             {
                 ErrorMessage = _localizer["Invalid Sound Synthesizer ID"].Value;
                 HasError     = true;
@@ -214,8 +223,11 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
                 }
             }
 
+            DisplayName = LocalizeSpecialSoundSynthName(SoundSynth.Name);
+            ShowSpecifications = IsSentinelSoundSynth(SoundSynth) ? Visibility.Collapsed : Visibility.Visible;
+
             _logger.LogInformation("Sound Synthesizer loaded: {Name}, Company: {Company}",
-                                   SoundSynth.Name,
+                                   DisplayName,
                                    ManufacturerName);
 
             // Load machines and separate into computers and consoles
@@ -422,6 +434,14 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
             _logger.LogError(ex, "Error loading sound synth photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
+
+    static bool IsSentinelSoundSynth(SoundSynthDto? soundSynth) => soundSynth?.Name == "DB_SOFTWARE";
+
+    string LocalizeSpecialSoundSynthName(string? name) => name switch
+    {
+        "DB_SOFTWARE" => _localizer["Software"],
+        _             => name ?? string.Empty
+    };
 
     /// <summary>
     ///     Navigates back to the Sound Synthesizer list

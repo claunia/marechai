@@ -70,119 +70,122 @@
                             Spacing="16">
 
                     <!-- Sound Synthesizer Name -->
-                    <TextBlock Text="{Binding SoundSynth.Name}"
+                    <TextBlock Text="{Binding DisplayName}"
                                FontSize="28"
                                FontWeight="Bold"
                                TextWrapping="Wrap" />
 
-                    <!-- Company/Manufacturer -->
-                    <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding ManufacturerName}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                    <StackPanel Visibility="{Binding ShowSpecifications}"
+                                Spacing="16">
+                        <!-- Company/Manufacturer -->
+                        <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding ManufacturerName}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Model Code -->
-                    <StackPanel Visibility="{Binding SoundSynth.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.ModelCode}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        <!-- Model Code -->
+                        <StackPanel Visibility="{Binding SoundSynth.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SoundSynth.ModelCode}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Introduced Date -->
-                    <StackPanel Visibility="{Binding SoundSynth.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.Introduced}"
-                                   FontSize="14" />
-                    </StackPanel>
+                        <!-- Introduced Date -->
+                        <StackPanel Visibility="{Binding SoundSynth.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SoundSynth.Introduced}"
+                                       FontSize="14" />
+                        </StackPanel>
 
-                    <!-- Voices -->
-                    <StackPanel Visibility="{Binding SoundSynth.Voices, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=VoicesText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.Voices}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        <!-- Voices -->
+                        <StackPanel Visibility="{Binding SoundSynth.Voices, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=VoicesText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SoundSynth.Voices}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Frequency -->
-                    <StackPanel Visibility="{Binding SoundSynth.Frequency, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=FrequencyText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.Frequency}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        <!-- Frequency -->
+                        <StackPanel Visibility="{Binding SoundSynth.Frequency, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=FrequencyText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SoundSynth.Frequency}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Depth -->
-                    <StackPanel Visibility="{Binding SoundSynth.Depth, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=DepthText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.Depth}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        <!-- Depth -->
+                        <StackPanel Visibility="{Binding SoundSynth.Depth, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=DepthText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SoundSynth.Depth}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Type -->
-                    <StackPanel Visibility="{Binding SynthTypeDisplay, Converter={StaticResource StringToVisibilityConverter}}"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=TypeText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SynthTypeDisplay}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
+                        <!-- Type -->
+                        <StackPanel Visibility="{Binding SynthTypeDisplay, Converter={StaticResource StringToVisibilityConverter}}"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8"
+                                    Padding="12"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=TypeText}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding SynthTypeDisplay}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
                     </StackPanel>
 
                     <!-- Description Section -->
