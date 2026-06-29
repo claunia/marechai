@@ -128,6 +128,86 @@ public class ProcessorsService
     }
 
     /// <summary>
+    ///     Fetches all stored description translations for a processor.
+    /// </summary>
+    public async Task<List<ProcessorDescriptionDto>> GetDescriptionsAsync(int processorId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching descriptions for processor {ProcessorId}", processorId);
+
+            List<ProcessorDescriptionDto>? descriptions = await _apiClient.Processors[processorId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching descriptions for processor {ProcessorId}", processorId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Creates or updates a processor description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> CreateOrUpdateDescriptionAsync(int processorId,
+        ProcessorDescriptionDto dto)
+    {
+        try
+        {
+            await _apiClient.Processors[processorId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error saving description for processor {ProcessorId} in {LanguageCode}",
+                             processorId,
+                             dto.LanguageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description for processor {ProcessorId} in {LanguageCode}",
+                             processorId,
+                             dto.LanguageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a processor description translation.
+    /// </summary>
+    public async Task<(bool Succeeded, string? Error)> DeleteDescriptionAsync(int processorId, string languageCode)
+    {
+        try
+        {
+            await _apiClient.Processors[processorId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            _logger.LogError(ex, "Error deleting description for processor {ProcessorId} in {LanguageCode}",
+                             processorId,
+                             languageCode);
+
+            return (false, ExtractDetail(ex));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting description for processor {ProcessorId} in {LanguageCode}",
+                             processorId,
+                             languageCode);
+
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
     ///     Fetches photo IDs for a processor
     /// </summary>
     public async Task<List<Guid>> GetProcessorPhotosAsync(int processorId)

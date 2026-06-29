@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
+using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -17,6 +19,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                     _jwtService;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<AdminProcessorsViewModel> _logger;
+    private readonly ProcessorsService               _processorsService;
     private readonly IRegionManager                  _regionManager;
     private readonly ITokenService                   _tokenService;
 
@@ -58,6 +61,30 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private string _editPanelTitle = string.Empty;
 
     private int? _editingProcessorId;
+
+    // --- Description panel state ---
+    [ObservableProperty]
+    private bool _isEditingDescription;
+
+    [ObservableProperty]
+    private string _descriptionMarkdown = string.Empty;
+
+    [ObservableProperty]
+    private int? _descriptionProcessorId;
+
+    [ObservableProperty]
+    private ObservableCollection<LanguageItem> _availableLanguages = [];
+
+    [ObservableProperty]
+    private LanguageItem? _selectedLanguage;
+
+    [ObservableProperty]
+    private ObservableCollection<ProcessorDescriptionDto> _existingTranslations = [];
+
+    public bool CanSaveDescription =>
+        DescriptionProcessorId.HasValue &&
+        SelectedLanguage is not null &&
+        !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
     // --- Form fields ---
     [ObservableProperty]
@@ -167,27 +194,35 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
                                     IJwtService                     jwtService,
                                     ITokenService                   tokenService,
                                     ILogger<AdminProcessorsViewModel> logger,
+                                    ProcessorsService               processorsService,
                                     IStringLocalizer                localizer,
                                     IRegionManager                  regionManager)
     {
-        _apiClient    = apiClient;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        _logger       = logger;
-        _localizer    = localizer;
-        _regionManager = regionManager;
+        _apiClient         = apiClient;
+        _jwtService        = jwtService;
+        _tokenService      = tokenService;
+        _logger            = logger;
+        _processorsService = processorsService;
+        _localizer         = localizer;
+        _regionManager     = regionManager;
 
         LoadProcessorsCommand    = new AsyncRelayCommand(LoadProcessorsAsync);
         OpenAddProcessorCommand  = new RelayCommand(OpenAddProcessor);
         OpenEditProcessorCommand = new RelayCommand<ProcessorDto>(OpenEditProcessor);
+        OpenDescriptionCommand   = new AsyncRelayCommand<ProcessorDto>(OpenDescriptionAsync);
         OpenPhotosCommand        = new RelayCommand<ProcessorDto>(OpenPhotos);
         OpenVideosCommand        = new RelayCommand<ProcessorDto>(OpenVideos);
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
         SaveProcessorCommand     = new AsyncRelayCommand(SaveProcessorAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
+        SaveDescriptionCommand   = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand = new AsyncRelayCommand<ProcessorDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand   = new RelayCommand<ProcessorDescriptionDto>(EditTranslation);
         AddExtensionCommand      = new AsyncRelayCommand(AddExtensionAsync);
         RemoveExtensionCommand   = new AsyncRelayCommand<InstructionSetExtensionByProcessorDto>(RemoveExtensionAsync);
 
+        InitializeLanguages();
         CheckAdminRole();
     }
 
@@ -195,11 +230,16 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand               LoadProcessorsCommand    { get; }
     public IRelayCommand                    OpenAddProcessorCommand  { get; }
     public IRelayCommand<ProcessorDto>      OpenEditProcessorCommand { get; }
+    public IAsyncRelayCommand<ProcessorDto> OpenDescriptionCommand   { get; }
     public IRelayCommand<ProcessorDto>      OpenPhotosCommand        { get; }
     public IRelayCommand<ProcessorDto>      OpenVideosCommand        { get; }
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
     public IAsyncRelayCommand               SaveProcessorCommand     { get; }
     public IRelayCommand                    CancelEditCommand        { get; }
+    public IAsyncRelayCommand               SaveDescriptionCommand   { get; }
+    public IRelayCommand                    CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<ProcessorDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<ProcessorDescriptionDto> EditTranslationCommand { get; }
     public IAsyncRelayCommand               AddExtensionCommand      { get; }
     public IAsyncRelayCommand<InstructionSetExtensionByProcessorDto> RemoveExtensionCommand { get; }
 
@@ -281,6 +321,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     {
         _editingProcessorId = null;
         EditPanelTitle      = _localizer["AddProcessorDialog_Title"];
+        IsEditingDescription = false;
         ClearForm();
         IsEditing = true;
     }
@@ -325,6 +366,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
 
             _editingProcessorId = proc.Id;
             EditPanelTitle      = _localizer["EditProcessorDialog_Title"];
+            IsEditingDescription = false;
             PopulateForm(full);
 
             if(proc.Id.HasValue)
@@ -450,6 +492,40 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
             FilteredProcessors.Add(proc);
     }
 
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0];
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+            OnPropertyChanged(nameof(CanSaveDescription));
+
+            return;
+        }
+
+        ProcessorDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+        OnPropertyChanged(nameof(CanSaveDescription));
+    }
+
+    partial void OnDescriptionMarkdownChanged(string value) => OnPropertyChanged(nameof(CanSaveDescription));
+
+    partial void OnDescriptionProcessorIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
+
     // --- Company search ---
     public void UpdateCompanySuggestions(string query)
     {
@@ -501,6 +577,157 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         {
             _logger.LogError(ex, "Error loading instruction set extensions");
         }
+    }
+
+    private async Task OpenDescriptionAsync(ProcessorDto? proc)
+    {
+        if(proc?.Id == null) return;
+
+        try
+        {
+            HasError               = false;
+            ErrorMessage           = string.Empty;
+            DescriptionProcessorId = proc.Id;
+            DescriptionMarkdown    = string.Empty;
+            IsEditing              = false;
+            ExistingTranslations.Clear();
+            await ReloadDescriptionTranslationsAsync(proc.Id.Value);
+            SelectedLanguage       = GetDefaultDescriptionLanguage();
+            IsEditingDescription   = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading descriptions for processor {Id}", proc.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task ReloadDescriptionTranslationsAsync(int processorId)
+    {
+        ExistingTranslations.Clear();
+
+        List<ProcessorDescriptionDto> translations = await _processorsService.GetDescriptionsAsync(processorId);
+
+        foreach(ProcessorDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        {
+            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+            ExistingTranslations.Add(translation);
+        }
+    }
+
+    private LanguageItem GetDefaultDescriptionLanguage()
+    {
+        return AvailableLanguages.FirstOrDefault(language =>
+                   ExistingTranslations.All(translation => translation.LanguageCode != language.Code)) ??
+               AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+               AvailableLanguages.First();
+    }
+
+    private string GetLanguageDisplayName(string? languageCode)
+    {
+        if(string.IsNullOrWhiteSpace(languageCode)) return string.Empty;
+
+        return AvailableLanguages.FirstOrDefault(language => language.Code == languageCode)?.DisplayName ??
+               ExistingTranslations.FirstOrDefault(translation => translation.LanguageCode == languageCode)?.Language ??
+               languageCode;
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(!CanSaveDescription || DescriptionProcessorId == null || SelectedLanguage == null) return;
+
+        try
+        {
+            var dto = new ProcessorDescriptionDto
+            {
+                ProcessorId  = DescriptionProcessorId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
+            };
+
+            (bool succeeded, string? error) =
+                await _processorsService.CreateOrUpdateDescriptionAsync(DescriptionProcessorId.Value, dto);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToSaveDescription"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionProcessorId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving processor description");
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void EditTranslation(ProcessorDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(ProcessorDescriptionDto? translation)
+    {
+        if(DescriptionProcessorId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            (bool succeeded, string? error) =
+                await _processorsService.DeleteDescriptionAsync(DescriptionProcessorId.Value, translation.LanguageCode);
+
+            if(!succeeded)
+            {
+                ErrorMessage = error ?? _localizer["FailedToDeleteTranslation"];
+                HasError     = true;
+
+                return;
+            }
+
+            await ReloadDescriptionTranslationsAsync(DescriptionProcessorId.Value);
+            HasError     = false;
+            ErrorMessage = string.Empty;
+
+            if(SelectedLanguage?.Code == translation.LanguageCode)
+            {
+                DescriptionMarkdown = string.Empty;
+
+                LanguageItem nextLanguage = GetDefaultDescriptionLanguage();
+
+                if(SelectedLanguage?.Code == nextLanguage.Code)
+                    OnSelectedLanguageChanged(nextLanguage);
+                else
+                    SelectedLanguage = nextLanguage;
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting processor description");
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription = false;
+        DescriptionProcessorId = null;
+        DescriptionMarkdown = string.Empty;
+        ExistingTranslations.Clear();
+        SelectedLanguage = AvailableLanguages.FirstOrDefault(language => language.Code == "eng") ??
+                           AvailableLanguages.FirstOrDefault();
+        HasError         = false;
+        ErrorMessage     = string.Empty;
     }
 
     // --- ISA extension management ---

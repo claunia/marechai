@@ -5,6 +5,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:local="using:Marechai.App.Presentation.Views"
       x:Name="PageRoot"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -162,6 +163,11 @@
                                                             Spacing="4">
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=EditProcessorButton}"
                                                             Command="{Binding DataContext.OpenEditProcessorCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}"
+                                                            Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
+                                                            Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}"
                                                             Padding="8,4" />
@@ -487,6 +493,153 @@
                                     <Button Grid.Column="1"
                                             Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
                                             Command="{Binding SaveProcessorCommand}"
+                                            HorizontalAlignment="Stretch"
+                                            Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Description Panel -->
+                        <Border Grid.Column="1"
+                                Visibility="{Binding IsEditingDescription, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="560"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionDialogTitle}"
+                                               FontSize="18"
+                                               FontWeight="SemiBold" />
+                                </Grid>
+
+                                <StackPanel Grid.Row="1"
+                                            Padding="16,8"
+                                            Spacing="4"
+                                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                            BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LanguageLabel}"
+                                               FontWeight="SemiBold" />
+                                    <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                                              SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                                              HorizontalAlignment="Stretch"
+                                              DisplayMemberPath="DisplayName" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2"
+                                            Padding="16,8"
+                                            Spacing="4"
+                                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                            BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ExistingTranslationsLabel}"
+                                               FontWeight="SemiBold" />
+                                    <ItemsRepeater ItemsSource="{Binding ExistingTranslations}">
+                                        <ItemsRepeater.Layout>
+                                            <StackLayout Spacing="4" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid ColumnSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding Language}"
+                                                               VerticalAlignment="Center" />
+                                                    <Button Grid.Column="1"
+                                                            Content="✏️"
+                                                            Command="{Binding DataContext.EditTranslationCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="4,2"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" />
+                                                    <Button Grid.Column="2"
+                                                            Content="🗑️"
+                                                            Command="{Binding DataContext.DeleteTranslationCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="4,2"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+
+                                <Grid Grid.Row="3"
+                                      Margin="16"
+                                      RowSpacing="12">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Grid.Row="0"
+                                                Spacing="6">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MarkdownSourceLabel}"
+                                                   FontWeight="SemiBold" />
+                                        <Border MinHeight="180"
+                                                Padding="1"
+                                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8">
+                                            <TextBox Text="{Binding DescriptionMarkdown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     AcceptsReturn="True"
+                                                     TextWrapping="Wrap"
+                                                     PlaceholderText="{Binding Source={StaticResource Strings}, Path=DescriptionMarkdownPlaceholder}"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     BorderThickness="0"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                        </Border>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1"
+                                                Spacing="6">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MarkdownPreviewLabel}"
+                                                   FontWeight="SemiBold" />
+                                        <Border MinHeight="180"
+                                                Padding="12"
+                                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                <local:MessageMarkdownView Markdown="{Binding DescriptionMarkdown}" />
+                                            </ScrollViewer>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Grid.Row="4"
+                                      Padding="16,12"
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                      BorderThickness="0,1,0,0"
+                                      ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                            Command="{Binding CancelDescriptionCommand}"
+                                            HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1"
+                                            Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
+                                            Command="{Binding SaveDescriptionCommand}"
+                                            IsEnabled="{Binding CanSaveDescription}"
                                             HorizontalAlignment="Stretch"
                                             Style="{ThemeResource AccentButtonStyle}" />
                                 </Grid>
