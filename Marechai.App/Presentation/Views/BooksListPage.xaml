@@ -140,24 +140,8 @@
                                             Command="{Binding DataContext.NavigateToBookCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
                                             Background="Transparent"
-                                            BorderThickness="0">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid MinHeight="80"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch">
-                                                    <Border x:Name="ShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
-                                                            Translation="0, 0, 4"
-                                                            VerticalAlignment="Stretch">
-                                                        <Border.Shadow>
-                                                            <ThemeShadow />
-                                                        </Border.Shadow>
-
+                                            BorderThickness="0"
+                                            Template="{StaticResource InteractiveCardButtonTemplate}">
                                                         <Grid ColumnSpacing="16">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="Auto" />
@@ -215,32 +199,6 @@
                                                                           Foreground="{ThemeResource SystemAccentColor}" />
                                                             </StackPanel>
                                                         </Grid>
-                                                    </Border>
-
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="PointerOver">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                                    <Setter Target="ShadowBorder.Translation"
-                                                                            Value="0, -2, 8" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Pressed">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
-                                                                    <Setter Target="ShadowBorder.Translation"
-                                                                            Value="0, 0, 2" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

@@ -139,101 +139,64 @@
                                             Command="{Binding DataContext.NavigateToPersonCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
                                             Background="Transparent"
-                                            BorderThickness="0">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid MinHeight="72"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch">
-                                                    <Border x:Name="ShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
-                                                            Translation="0, 0, 4"
-                                                            VerticalAlignment="Stretch">
-                                                        <Border.Shadow>
-                                                            <ThemeShadow />
-                                                        </Border.Shadow>
+                                            BorderThickness="0"
+                                            Template="{StaticResource InteractiveCardButtonTemplate}">
+                                        <Grid ColumnSpacing="16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                                        <Grid ColumnSpacing="16">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
+                                            <!-- Person Icon Placeholder -->
+                                            <Grid Grid.Column="0"
+                                                  Width="48"
+                                                  Height="48"
+                                                  VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE77B;"
+                                                          FontFamily="Segoe MDL2 Assets"
+                                                          FontSize="28"
+                                                          Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                            </Grid>
 
-                                                            <!-- Person Icon Placeholder -->
-                                                            <Grid Grid.Column="0"
-                                                                  Width="48"
-                                                                  Height="48"
-                                                                  VerticalAlignment="Center">
-                                                                <FontIcon Glyph="&#xE77B;"
-                                                                          FontFamily="Segoe MDL2 Assets"
-                                                                          FontSize="28"
-                                                                          Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center" />
-                                                            </Grid>
+                                            <!-- Person Info -->
+                                            <StackPanel Grid.Column="1"
+                                                        Spacing="4"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Stretch">
+                                                <TextBlock Text="{Binding FullName}"
+                                                           FontSize="16"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="6"
+                                                            VerticalAlignment="Center">
+                                                    <FontIcon Glyph="&#xE787;"
+                                                              FontFamily="Segoe MDL2 Assets"
+                                                              FontSize="12"
+                                                              Foreground="{ThemeResource SystemBaseMediumLowColor}" />
+                                                    <TextBlock FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumLowColor}">
+                                                        <Run Text="{Binding BirthYear}" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding CountryOfBirth}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumLowColor}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
 
-                                                            <!-- Person Info -->
-                                                            <StackPanel Grid.Column="1"
-                                                                        Spacing="4"
-                                                                        VerticalAlignment="Center"
-                                                                        HorizontalAlignment="Stretch">
-                                                                <TextBlock Text="{Binding FullName}"
-                                                                           FontSize="16"
-                                                                           FontWeight="SemiBold"
-                                                                           Foreground="{ThemeResource TextControlForeground}"
-                                                                           TextTrimming="CharacterEllipsis" />
-                                                                <StackPanel Orientation="Horizontal"
-                                                                            Spacing="6"
-                                                                            VerticalAlignment="Center">
-                                                                    <FontIcon Glyph="&#xE787;"
-                                                                              FontFamily="Segoe MDL2 Assets"
-                                                                              FontSize="12"
-                                                                              Foreground="{ThemeResource SystemBaseMediumLowColor}" />
-                                                                    <TextBlock FontSize="12"
-                                                                               Foreground="{ThemeResource SystemBaseMediumLowColor}">
-                                                                        <Run Text="{Binding BirthYear}" />
-                                                                    </TextBlock>
-                                                                </StackPanel>
-                                                                <TextBlock Text="{Binding CountryOfBirth}"
-                                                                           FontSize="12"
-                                                                           Foreground="{ThemeResource SystemBaseMediumLowColor}"
-                                                                           TextTrimming="CharacterEllipsis" />
-                                                            </StackPanel>
-
-                                                            <!-- Chevron -->
-                                                            <FontIcon Grid.Column="2"
-                                                                      Glyph="&#xE76C;"
-                                                                      FontFamily="Segoe MDL2 Assets"
-                                                                      FontSize="14"
-                                                                      Foreground="{ThemeResource SystemBaseMediumLowColor}"
-                                                                      VerticalAlignment="Center" />
-                                                        </Grid>
-                                                    </Border>
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="PointerOver">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Pressed">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
+                                            <!-- Chevron -->
+                                            <FontIcon Grid.Column="2"
+                                                      Glyph="&#xE76C;"
+                                                      FontFamily="Segoe MDL2 Assets"
+                                                      FontSize="14"
+                                                      Foreground="{ThemeResource SystemBaseMediumLowColor}"
+                                                      VerticalAlignment="Center" />
+                                        </Grid>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

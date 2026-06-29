@@ -160,112 +160,67 @@
                                             Command="{Binding DataContext.NavigateToSoftwareCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding}"
                                             Background="Transparent"
-                                            BorderThickness="0">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid MinHeight="70"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Stretch">
-                                                    <Border x:Name="ShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
-                                                            Translation="0, 0, 4"
-                                                            VerticalAlignment="Stretch">
-                                                        <Border.Shadow>
-                                                            <ThemeShadow />
-                                                        </Border.Shadow>
+                                            BorderThickness="0"
+                                            Template="{StaticResource InteractiveCardButtonTemplate}">
+                                        <Grid ColumnSpacing="16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                                        <Grid ColumnSpacing="16">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
+                                            <!-- Software Icon -->
+                                            <Grid Grid.Column="0"
+                                                  Width="48"
+                                                  Height="48"
+                                                  VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE74C;"
+                                                          FontSize="28"
+                                                          Foreground="{ThemeResource SystemAccentColor}"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                            </Grid>
 
-                                                            <!-- Software Icon -->
-                                                            <Grid Grid.Column="0"
-                                                                  Width="48"
-                                                                  Height="48"
-                                                                  VerticalAlignment="Center">
-                                                                <FontIcon Glyph="&#xE74C;"
-                                                                          FontSize="28"
-                                                                          Foreground="{ThemeResource SystemAccentColor}"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center" />
-                                                            </Grid>
-
-                                                            <!-- Software Info -->
-                                                            <StackPanel Grid.Column="1"
-                                                                        Spacing="4"
-                                                                        VerticalAlignment="Center"
-                                                                        HorizontalAlignment="Stretch">
-                                                                <TextBlock Text="{Binding Name}"
-                                                                           FontSize="16"
-                                                                           FontWeight="SemiBold"
-                                                                           Foreground="{ThemeResource TextControlForeground}"
-                                                                           TextTrimming="CharacterEllipsis" />
-                                                                <StackPanel Orientation="Horizontal"
-                                                                            Spacing="12">
-                                                                    <Border Background="#9C27B0"
-                                                                            CornerRadius="12"
-                                                                            Padding="10,2"
-                                                                            VerticalAlignment="Center"
-                                                                            Visibility="{Binding IsCompilation, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsCompilationLabel}"
-                                                                                   FontSize="11"
-                                                                                   FontWeight="SemiBold"
-                                                                                   Foreground="White" />
-                                                                    </Border>
-                                                                    <StackPanel Orientation="Horizontal"
-                                                                                Spacing="6"
-                                                                                Visibility="{Binding Family, Converter={StaticResource NullToVisibilityConverter}}">
-                                                                        <FontIcon Glyph="&#xE8F1;"
-                                                                                  FontSize="13"
-                                                                                  Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                                                        <TextBlock Text="{Binding Family}"
-                                                                                   FontSize="13"
-                                                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                                                    </StackPanel>
-                                                                </StackPanel>
-                                                            </StackPanel>
-
-                                                            <!-- Navigation Arrow -->
-                                                            <StackPanel Grid.Column="2"
-                                                                        VerticalAlignment="Center">
-                                                                <FontIcon Glyph="&#xE72A;"
-                                                                          FontSize="18"
-                                                                          Foreground="{ThemeResource SystemAccentColor}" />
-                                                            </StackPanel>
-                                                        </Grid>
+                                            <!-- Software Info -->
+                                            <StackPanel Grid.Column="1"
+                                                        Spacing="4"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Stretch">
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="16"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="12">
+                                                    <Border Style="{StaticResource ChipInfoStyle}"
+                                                            VerticalAlignment="Center"
+                                                            Visibility="{Binding IsCompilation, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsCompilationLabel}"
+                                                                   Style="{StaticResource ChipTextStyle}"
+                                                                   Foreground="{ThemeResource ChipInfoForegroundBrush}" />
                                                     </Border>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Spacing="6"
+                                                                Visibility="{Binding Family, Converter={StaticResource NullToVisibilityConverter}}">
+                                                        <FontIcon Glyph="&#xE8F1;"
+                                                                  FontSize="13"
+                                                                  Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                        <TextBlock Text="{Binding Family}"
+                                                                   FontSize="13"
+                                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </StackPanel>
 
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="PointerOver">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                                    <Setter Target="ShadowBorder.Translation"
-                                                                            Value="0, -2, 8" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Pressed">
-                                                                <VisualState.Setters>
-                                                                    <Setter Target="ShadowBorder.Background"
-                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
-                                                                    <Setter Target="ShadowBorder.Translation"
-                                                                            Value="0, 0, 2" />
-                                                                </VisualState.Setters>
-                                                            </VisualState>
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Button.Template>
+                                            <!-- Navigation Arrow -->
+                                            <StackPanel Grid.Column="2"
+                                                        VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE72A;"
+                                                          FontSize="18"
+                                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                            </StackPanel>
+                                        </Grid>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
