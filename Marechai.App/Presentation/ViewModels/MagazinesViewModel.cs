@@ -84,6 +84,8 @@ public partial class MagazinesViewModel : ObservableObject
 
     private async Task LoadDataAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;

@@ -86,6 +86,8 @@ public partial class SmartphonesViewModel : ObservableObject
 
     private async Task LoadDataAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;

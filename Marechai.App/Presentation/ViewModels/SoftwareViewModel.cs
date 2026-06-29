@@ -106,6 +106,8 @@ public partial class SoftwareViewModel : ObservableObject
 
     private async Task LoadDataAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;

@@ -92,6 +92,8 @@ public partial class PdasViewModel : ObservableObject
     /// </summary>
     private async Task LoadDataAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;

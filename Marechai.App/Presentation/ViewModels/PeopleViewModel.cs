@@ -84,6 +84,8 @@ public partial class PeopleViewModel : ObservableObject
 
     private async Task LoadDataAsync()
     {
+        if(IsLoading) return;
+
         try
         {
             IsLoading    = true;
