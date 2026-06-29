@@ -77,18 +77,6 @@
                         BorderThickness="0"
                         CornerRadius="0" />
 
-                <!-- Advanced Search -->
-                <Button Content="{Binding AdvancedSearchButtonText}"
-                        Command="{Binding NavigateToAdvancedSearchCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
                 <!-- Books -->
                 <Button Content="{Binding BooksButtonText}"
                         Command="{Binding NavigateToBooksCommand}"

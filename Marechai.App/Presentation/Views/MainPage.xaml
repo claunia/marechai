@@ -67,26 +67,49 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <AutoSuggestBox x:Name="GlobalSearchBox"
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
+                        <Grid Grid.Column="0"
+                              ColumnSpacing="8"
+                              VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <AutoSuggestBox x:Name="GlobalSearchBox"
+                                            Grid.Column="0"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Stretch"
+                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=GlobalSearchBox_Placeholder}"
+                                            Text="{Binding GlobalSearchQuery, Mode=TwoWay}"
+                                            ItemsSource="{Binding GlobalSearchSuggestions}"
+                                            QuerySubmitted="OnGlobalSearchQuerySubmitted"
+                                            SuggestionChosen="OnGlobalSearchSuggestionChosen">
+                                <AutoSuggestBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Spacing="8">
+                                            <TextBlock Text="{Binding DisplayName}" />
+                                            <TextBlock Text="{Binding Year}"
+                                                       Opacity="0.6" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </AutoSuggestBox.ItemTemplate>
+                            </AutoSuggestBox>
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding SubmitGlobalSearchCommand}"
+                                    VerticalAlignment="Stretch"
                                     HorizontalAlignment="Stretch"
-                                    PlaceholderText="{Binding Source={StaticResource Strings}, Path=GlobalSearchBox_Placeholder}"
-                                    Text="{Binding GlobalSearchQuery, Mode=TwoWay}"
-                                    ItemsSource="{Binding GlobalSearchSuggestions}"
-                                    QuerySubmitted="OnGlobalSearchQuerySubmitted"
-                                    SuggestionChosen="OnGlobalSearchSuggestionChosen">
-                        <AutoSuggestBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal"
-                                            Spacing="8">
-                                    <TextBlock Text="{Binding DisplayName}" />
-                                    <TextBlock Text="{Binding Year}"
-                                               Opacity="0.6" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </AutoSuggestBox.ItemTemplate>
-                        </AutoSuggestBox>
+                                    MinWidth="40"
+                                    MinHeight="40"
+                                    Margin="-1,0,0,0"
+                                    BorderThickness="1"
+                                    CornerRadius="0,4,4,0"
+                                    ToolTipService.ToolTip="{Binding AdvancedSearchButtonText}"
+                                    AutomationProperties.Name="{Binding AdvancedSearchButtonText}">
+                                <FontIcon Glyph="&#xE721;" />
+                            </Button>
+                        </Grid>
 
                         <Grid Grid.Column="1"
                               VerticalAlignment="Center"
@@ -94,8 +117,8 @@
                               Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Button Command="{Binding NavigateToMessagesCommand}"
                                     Padding="8"
-                                    MinWidth="44"
-                                    MinHeight="44"
+                                    MinWidth="40"
+                                    MinHeight="40"
                                     ToolTipService.ToolTip="Messages">
                                 <FontIcon Glyph="&#xE715;" />
                             </Button>
