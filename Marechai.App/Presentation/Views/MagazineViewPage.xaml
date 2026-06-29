@@ -32,7 +32,7 @@
                     <!-- Native Title -->
                     <StackPanel Visibility="{Binding ShowNativeTitle}" Spacing="8">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineNativeTitleLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding NativeTitle}" FontSize="16" Foreground="{ThemeResource TextControlForeground}" TextWrapping="Wrap" />
                         </Border>
                     </StackPanel>
@@ -41,19 +41,19 @@
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Visibility="{Binding ShowFirstPublication}" Spacing="8">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineFirstPublicationLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12">
+                            <Border Style="{StaticResource MetadataCardStyle}">
                                 <TextBlock Text="{Binding FirstPublicationDisplay}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Visibility="{Binding ShowCountry}" Spacing="8">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineCountryLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12">
+                            <Border Style="{StaticResource MetadataCardStyle}">
                                 <TextBlock Text="{Binding Country}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Visibility="{Binding ShowIssn}" Spacing="8">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineIssnLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12">
+                            <Border Style="{StaticResource MetadataCardStyle}">
                                 <TextBlock Text="{Binding Issn}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" />
                             </Border>
                         </StackPanel>
@@ -61,7 +61,7 @@
                     <!-- Synopsis -->
                     <StackPanel Visibility="{Binding ShowSynopsis}" Spacing="8">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineSynopsisLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding SynopsisText}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" TextWrapping="Wrap" />
                         </Border>
                     </StackPanel>
@@ -81,7 +81,7 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineAuthorsLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
                         <ItemsControl ItemsSource="{Binding People}" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Vertical" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate><DataTemplate><Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource MetadataCardStyle}" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                     <!-- Companies -->
@@ -89,7 +89,7 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineCompaniesLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
                         <ItemsControl ItemsSource="{Binding Companies}" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Vertical" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate><DataTemplate><Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource MetadataCardStyle}" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                     <!-- Machines -->
@@ -97,7 +97,7 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineMachinesLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
                         <ItemsControl ItemsSource="{Binding Machines}" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Vertical" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate><DataTemplate><Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource MetadataCardStyle}" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                     <!-- Machine Families -->
@@ -105,7 +105,7 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazineMachineFamiliesLabel}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
                         <ItemsControl ItemsSource="{Binding MachineFamilies}" HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Vertical" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate><DataTemplate><Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource MetadataCardStyle}" Padding="16,8"><TextBlock Text="{Binding}" FontSize="14" Foreground="{ThemeResource TextControlForeground}" /></Border></DataTemplate></ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                 </StackPanel>

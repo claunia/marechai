@@ -113,11 +113,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding Alias}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -132,11 +128,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding DisplayName}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -151,11 +143,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding BirthDateDisplay}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -170,11 +158,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding DeathDateDisplay}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -189,11 +173,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding CountryOfBirth}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -221,11 +201,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding Twitter}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -240,11 +216,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding Facebook}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -269,11 +241,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,8">
+                                    <Border Style="{StaticResource MetadataCardStyle}" Padding="16,8">
                                         <TextBlock Text="{Binding}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -301,11 +269,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,8">
+                                    <Border Style="{StaticResource MetadataCardStyle}" Padding="16,8">
                                         <TextBlock Text="{Binding}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -333,11 +297,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,8">
+                                    <Border Style="{StaticResource MetadataCardStyle}" Padding="16,8">
                                         <TextBlock Text="{Binding}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -365,11 +325,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,8">
+                                    <Border Style="{StaticResource MetadataCardStyle}" Padding="16,8">
                                         <TextBlock Text="{Binding}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -397,11 +353,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,8">
+                                    <Border Style="{StaticResource MetadataCardStyle}" Padding="16,8">
                                         <TextBlock Text="{Binding}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />

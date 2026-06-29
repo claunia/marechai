@@ -109,14 +109,11 @@
                                        FontWeight="SemiBold"
                                        TextAlignment="Center"
                                        TextWrapping="WrapWholeWords" />
-                            <Border Background="#9C27B0"
-                                    CornerRadius="12"
-                                    Padding="12,4"
+                            <Border Style="{StaticResource ChipInfoStyle}"
                                     HorizontalAlignment="Center">
                                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Compilation}"
-                                           FontSize="12"
-                                           FontWeight="SemiBold"
-                                           Foreground="White" />
+                                           Style="{StaticResource ChipTextStyle}"
+                                           Foreground="{ThemeResource ChipInfoForegroundBrush}" />
                             </Border>
                         </StackPanel>
                     </Border>
@@ -127,11 +124,7 @@
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <StackPanel Spacing="8">
                                 <HyperlinkButton Content="{Binding BundledSoftwareName}"
                                                  Command="{Binding NavigateToBundledSoftwareCommand}"
@@ -168,11 +161,7 @@
                                             Padding="0"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Stretch">
-                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                BorderThickness="1"
-                                                CornerRadius="8"
-                                                Padding="16,12">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
                                             <StackPanel Spacing="4">
                                                 <TextBlock Text="{Binding PlatformDisplay}"
                                                            FontSize="14"
@@ -207,11 +196,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <TextBlock Text="{Binding DisplayText}"
                                                    FontSize="14"
                                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -235,11 +220,7 @@
                                             Padding="0"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Stretch">
-                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                BorderThickness="1"
-                                                CornerRadius="8"
-                                                Padding="16,12">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
                                             <TextBlock Text="{Binding Name}"
                                                        FontSize="14"
                                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -264,11 +245,7 @@
                                             Padding="0"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Stretch">
-                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                BorderThickness="1"
-                                                CornerRadius="8"
-                                                Padding="16,12">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
                                             <TextBlock Text="{Binding Name}"
                                                        FontSize="14"
                                                        Foreground="{ThemeResource TextControlForeground}" />
