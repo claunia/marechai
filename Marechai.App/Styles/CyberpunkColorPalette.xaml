@@ -224,4 +224,16 @@
     <SolidColorBrush x:Key="AccentFillColorTertiaryBrush"
                      Color="#BD00FF" />
 
+    <!-- Modernized UI: hero header + chip semantic colors -->
+    <Color x:Key="HeroGradientStartColor">#FF1493</Color>
+    <Color x:Key="HeroGradientEndColor">#00F0FF</Color>
+    <SolidColorBrush x:Key="HeroForegroundBrush" Color="#0A0014" />
+    <SolidColorBrush x:Key="ChipInfoBackgroundBrush" Color="#00F0FF" />
+    <SolidColorBrush x:Key="ChipInfoForegroundBrush" Color="#0A0014" />
+    <SolidColorBrush x:Key="ChipSuccessBackgroundBrush" Color="#00F0FF" />
+    <SolidColorBrush x:Key="ChipSuccessForegroundBrush" Color="#0A0014" />
+    <SolidColorBrush x:Key="ChipNeutralBackgroundBrush" Color="#1A0033" />
+    <SolidColorBrush x:Key="ChipNeutralForegroundBrush" Color="#F0EFFF" />
+    <SolidColorBrush x:Key="MediaGridItemBackgroundBrush" Color="#1A0033" />
+
 </ResourceDictionary>

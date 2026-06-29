@@ -1253,6 +1253,24 @@
   <data name="MachineSoftwareLabel" xml:space="preserve">
     <value>Logiciels</value>
   </data>
+  <data name="SpecificationsTabHeader" xml:space="preserve">
+    <value>Spécifications</value>
+  </data>
+  <data name="SoftwareTabHeader" xml:space="preserve">
+    <value>Logiciels</value>
+  </data>
+  <data name="MediaTabHeader" xml:space="preserve">
+    <value>Médias</value>
+  </data>
+  <data name="OverviewTabHeader" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="ReleasesTabHeader" xml:space="preserve">
+    <value>Éditions</value>
+  </data>
+  <data name="ReviewsTabHeader" xml:space="preserve">
+    <value>Avis</value>
+  </data>
   <data name="PhotosLabel" xml:space="preserve">
     <value>Photos</value>
   </data>

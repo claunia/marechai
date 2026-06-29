@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="Marechai.App.Presentation.Components.HeroHeader"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Style="{StaticResource HeroHeaderBorderStyle}">
+        <Grid ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Width="72"
+                    Height="72"
+                    CornerRadius="8"
+                    Background="{ThemeResource MediaGridItemBackgroundBrush}"
+                    Visibility="{Binding ShowImage, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Image Source="{Binding HeroImageSource, ElementName=Root}"
+                       Stretch="Uniform" />
+            </Border>
+
+            <StackPanel Grid.Column="1"
+                        Spacing="4"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding HeroTitle, ElementName=Root}"
+                           Style="{StaticResource HeroTitleTextStyle}" />
+                <TextBlock Text="{Binding HeroSubtitle, ElementName=Root}"
+                           Style="{StaticResource HeroSubtitleTextStyle}"
+                           Visibility="{Binding HasSubtitle, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

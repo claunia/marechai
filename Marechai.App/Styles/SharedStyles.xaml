@@ -1,0 +1,172 @@
+<ResourceDictionary x:Class="Marechai.App.Styles.SharedStyles"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Structural styles for the modernized UI. Only ThemeResource references here,
+         no literal colors — palettes override the semantic keys below. -->
+
+    <!-- Fallback defaults for new semantic keys: a palette that does not override
+         them still resolves to something reasonable. Every *ColorPalette.xaml
+         overrides HeroGradientStartColor/EndColor/HeroForegroundBrush explicitly,
+         these literal values only apply if a palette forgets to. -->
+    <Color x:Key="HeroGradientStartColor">#7E57C2</Color>
+    <Color x:Key="HeroGradientEndColor">#42A5F5</Color>
+    <SolidColorBrush x:Key="HeroForegroundBrush" Color="White" />
+
+    <StaticResource x:Key="ChipInfoBackgroundBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+    <SolidColorBrush x:Key="ChipInfoForegroundBrush" Color="White" />
+    <StaticResource x:Key="ChipSuccessBackgroundBrush" ResourceKey="AccentFillColorTertiaryBrush" />
+    <SolidColorBrush x:Key="ChipSuccessForegroundBrush" Color="White" />
+    <StaticResource x:Key="ChipNeutralBackgroundBrush" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <StaticResource x:Key="ChipNeutralForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+
+    <StaticResource x:Key="MediaGridItemBackgroundBrush" ResourceKey="CardBackgroundFillColorSecondaryBrush" />
+
+    <!-- Hero header: gradient/flat banner with title + subtitle, used on landing
+         and detail pages in place of bespoke per-page hardcoded gradients. -->
+    <Style x:Key="HeroHeaderBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="Margin" Value="0,0,0,16" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="{ThemeResource HeroGradientStartColor}" Offset="0" />
+                    <GradientStop Color="{ThemeResource HeroGradientEndColor}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="HeroTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{ThemeResource HeroForegroundBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="HeroSubtitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{ThemeResource HeroForegroundBrush}" />
+        <Setter Property="Opacity" Value="0.85" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- Metadata card: replaces the repeated ad-hoc Border used for every field/collection item. -->
+    <Style x:Key="MetadataCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,12" />
+    </Style>
+
+    <!-- Same as above, with a shadow for use in non-interactive elevated cards (e.g. news feed). -->
+    <Style x:Key="ElevatedCardStyle" TargetType="Border" BasedOn="{StaticResource MetadataCardStyle}">
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <ThemeShadow />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Shared control template for clickable cards (software/video/promo-art list items),
+         replacing the ~60-line hand-rolled ControlTemplate+VisualStateManager duplicated per page. -->
+    <ControlTemplate x:Key="InteractiveCardButtonTemplate" TargetType="Button">
+        <Grid HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <Border x:Name="CardShadowBorder"
+                    Style="{StaticResource MetadataCardStyle}"
+                    Translation="0, 0, 4"
+                    VerticalAlignment="Stretch">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+                <ContentPresenter Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}" />
+            </Border>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Target="CardShadowBorder.Background"
+                                    Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                            <Setter Target="CardShadowBorder.Translation" Value="0, -2, 8" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Target="CardShadowBorder.Background"
+                                    Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                            <Setter Target="CardShadowBorder.Translation" Value="0, 0, 2" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </ControlTemplate>
+
+    <!-- Chips / badges: semantic variants replacing hardcoded-hex Border badges. -->
+    <Style x:Key="ChipBaseStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="12,4" />
+    </Style>
+
+    <Style x:Key="ChipInfoStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource ChipInfoBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="ChipSuccessStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource ChipSuccessBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="ChipWarningStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource WarningFillColorTertiaryBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource WarningBorderColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style x:Key="ChipNeutralStyle" TargetType="Border" BasedOn="{StaticResource ChipBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource ChipNeutralBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="ChipTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- Responsive media grid: covers / screenshots / promo art thumbnail grids. -->
+    <UniformGridLayout x:Key="MediaUniformGridLayout"
+                        MinItemWidth="200"
+                        MinItemHeight="180"
+                        MinColumnSpacing="12"
+                        MinRowSpacing="12" />
+
+    <Style x:Key="MediaGridCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource MediaGridItemBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12" />
+    </Style>
+
+    <!-- Detail-page tabs, mirroring Blazor's MudTabs (all sections rendered upfront,
+         lazy-mount is fine since WinUI TabView keeps inactive TabViewItem content alive).
+         TabView (not Pivot) specifically because its tab strip natively scrolls/overflows
+         on narrow viewports via TabWidthMode + an overflow dropdown — Pivot's header row
+         has no such behavior in WinUI/Uno and silently clips long header sets instead. -->
+    <Style x:Key="DetailTabViewStyle" TargetType="TabView">
+        <Setter Property="IsAddTabButtonVisible" Value="False" />
+        <Setter Property="TabWidthMode" Value="SizeToContent" />
+        <Setter Property="CanReorderTabs" Value="False" />
+        <Setter Property="CanDragTabs" Value="False" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <Style x:Key="DetailTabViewItemStyle" TargetType="TabViewItem">
+        <Setter Property="IsClosable" Value="False" />
+    </Style>
+
+</ResourceDictionary>

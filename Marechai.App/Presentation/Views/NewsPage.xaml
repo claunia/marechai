@@ -21,24 +21,18 @@
 
                     <!-- Welcome Hero Section -->
                     <Border Grid.Row="0"
-                            CornerRadius="16"
-                            Padding="24"
-                            Margin="0,0,0,16"
-                            Background="{ThemeResource SystemAccentColorBrush}">
+                            Style="{StaticResource HeroHeaderBorderStyle}">
                         <StackPanel Spacing="12">
                             <Image Source="ms-appx:///Assets/Icons/marechai_logo.svg"
                                    Height="60"
                                    HorizontalAlignment="Left" />
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=WelcomeHeroTitle}"
-                                       FontSize="28"
-                                       FontWeight="Bold"
-                                       Foreground="White" />
+                                       Style="{StaticResource HeroTitleTextStyle}" />
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=WelcomeHeroLead}"
-                                       FontSize="14"
-                                       Foreground="White"
-                                       TextWrapping="Wrap" />
+                                       Style="{StaticResource HeroSubtitleTextStyle}"
+                                       Opacity="1" />
                             <controls:WrapPanel Orientation="Horizontal"
                                                 HorizontalSpacing="8"
                                                 VerticalSpacing="8">
@@ -133,15 +127,8 @@
                                   Visibility="{Binding HasNewsItems, Converter={StaticResource BoolToVisibilityConverter}}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border CornerRadius="8"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        Padding="16"
+                                <Border Style="{StaticResource ElevatedCardStyle}"
                                         Margin="0,0,0,12">
-                                    <Border.Shadow>
-                                        <ThemeShadow />
-                                    </Border.Shadow>
 
                                     <Grid RowSpacing="12">
                                         <Grid.RowDefinitions>

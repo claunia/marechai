@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="using:Prism.DryIoc"
              xmlns:utu="using:Uno.Toolkit.UI"
+             xmlns:styles="using:Marechai.App.Styles"
              xmlns:local="using:Marechai.App.Presentation.Converters">
 
     <prism:PrismApplication.Resources>
@@ -10,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <utu:ToolkitResources />
+                <styles:SharedStyles />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </prism:PrismApplication.Resources>

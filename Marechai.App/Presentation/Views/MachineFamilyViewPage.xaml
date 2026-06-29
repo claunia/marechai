@@ -62,21 +62,12 @@
                 <StackPanel Visibility="{Binding IsDataLoaded}"
                             Spacing="16">
 
-                    <!-- Header card with gradient, mirrors the Blazor family page -->
-                    <Border CornerRadius="16"
-                            Padding="24">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#7e57c2" Offset="0" />
-                                <GradientStop Color="#42a5f5" Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.Background>
+                    <!-- Header card with shared theme-aware hero gradient, mirrors the Blazor family page -->
+                    <Border Style="{StaticResource HeroHeaderBorderStyle}">
                         <StackPanel Spacing="4">
                             <TextBlock Text="{Binding FamilyName}"
-                                       FontSize="22"
-                                       FontWeight="Bold"
-                                       Foreground="White"
-                                       TextWrapping="Wrap" />
+                                       Style="{StaticResource HeroTitleTextStyle}"
+                                       FontSize="22" />
 
                             <!-- Company as a link -->
                             <HyperlinkButton Visibility="{Binding ShowCompanyLink, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -85,17 +76,15 @@
                                              HorizontalAlignment="Left">
                                 <TextBlock Text="{Binding CompanyName}"
                                            FontSize="16"
-                                           Foreground="White"
+                                           Foreground="{ThemeResource HeroForegroundBrush}"
                                            TextWrapping="Wrap" />
                             </HyperlinkButton>
 
                             <!-- Company as plain text (no company link available) -->
                             <TextBlock Visibility="{Binding ShowCompanyLink, Converter={StaticResource InvertBoolToVisibilityConverter}}"
                                        Text="{Binding CompanyName}"
-                                       FontSize="16"
-                                       Foreground="White"
-                                       Opacity="0.85"
-                                       TextWrapping="Wrap" />
+                                       Style="{StaticResource HeroSubtitleTextStyle}"
+                                       FontSize="16" />
                         </StackPanel>
                     </Border>
 
@@ -137,13 +126,11 @@
                     </StackPanel>
 
                     <!-- Empty State -->
-                    <StackPanel Visibility="{Binding ShowEmptyMachines, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Padding="16"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="8">
+                    <Border Visibility="{Binding ShowEmptyMachines, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Style="{StaticResource MetadataCardStyle}">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=NoMachinesInFamilyText}"
                                    TextWrapping="Wrap" />
-                    </StackPanel>
+                    </Border>
 
                 </StackPanel>
 

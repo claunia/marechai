@@ -87,4 +87,16 @@
     <SolidColorBrush x:Key="ComboBoxForeground" Color="#000000" />
     <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#808080" />
 
+    <!-- Modernized UI: hero header + chip semantic colors -->
+    <Color x:Key="HeroGradientStartColor">#000080</Color>
+    <Color x:Key="HeroGradientEndColor">#000080</Color>
+    <SolidColorBrush x:Key="HeroForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ChipInfoBackgroundBrush" Color="#000066" />
+    <SolidColorBrush x:Key="ChipInfoForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ChipSuccessBackgroundBrush" Color="#008000" />
+    <SolidColorBrush x:Key="ChipSuccessForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ChipNeutralBackgroundBrush" Color="#C0C0C0" />
+    <SolidColorBrush x:Key="ChipNeutralForegroundBrush" Color="#000000" />
+    <SolidColorBrush x:Key="MediaGridItemBackgroundBrush" Color="#C0C0C0" />
+
 </ResourceDictionary>

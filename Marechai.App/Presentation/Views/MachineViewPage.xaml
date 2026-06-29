@@ -7,6 +7,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:wctui="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:components="using:Marechai.App.Presentation.Components"
       NavigationCacheMode="Disabled"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -43,14 +44,10 @@
                         Margin="12,0,0,0"
                         VerticalAlignment="Center">
                 <TextBlock Text="{Binding MachineName}"
-                           FontSize="20"
+                           FontSize="16"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource TextControlForeground}"
                            TextTrimming="CharacterEllipsis" />
-                <TextBlock Text="{Binding CompanyName}"
-                           FontSize="12"
-                           Foreground="{ThemeResource SystemBaseMediumColor}"
-                           Margin="0,4,0,0" />
             </StackPanel>
         </Grid>
 
@@ -95,25 +92,36 @@
             </StackPanel>
 
             <!-- Machine Details -->
-            <ScrollViewer Visibility="{Binding IsDataLoaded}"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
-                <StackPanel Padding="16"
-                            Spacing="24">
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <components:HeroHeader Grid.Row="0"
+                                       Margin="16,16,16,0"
+                                       HeroTitle="{Binding MachineName}"
+                                       HeroSubtitle="{Binding CompanyName}" />
+
+                <TabView Grid.Row="1"
+                         Style="{StaticResource DetailTabViewStyle}">
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SpecificationsTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel Spacing="24"
+                                            Padding="0,16,0,0">
 
                     <!-- Prototype Badge -->
                     <StackPanel Visibility="{Binding IsPrototype}">
-                        <Border Background="{ThemeResource WarningFillColorTertiaryBrush}"
-                                BorderBrush="{ThemeResource WarningBorderColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource ChipWarningStyle}"
+                                Padding="16,12"
+                                HorizontalAlignment="Left">
                             <TextBlock
                                        Text="{Binding Source={StaticResource Strings}, Path=PrototypeBadgeText}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
-                                       TextAlignment="Center" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                         </Border>
                     </StackPanel>
 
@@ -125,11 +133,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding IntroductionDateDisplay}"
                                        FontSize="16"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -152,11 +156,7 @@
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="16,12">
+                            <Border Style="{StaticResource MetadataCardStyle}">
                                 <HyperlinkButton Command="{Binding NavigateToFamilyCommand}"
                                                  Padding="0"
                                                  HorizontalAlignment="Left"
@@ -177,11 +177,7 @@
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="16,12">
+                            <Border Style="{StaticResource MetadataCardStyle}">
                                 <TextBlock Text="{Binding ModelName}"
                                            FontSize="14"
                                            Foreground="{ThemeResource TextControlForeground}"
@@ -208,11 +204,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="8">
                                             <TextBlock Text="{Binding DisplayName}"
                                                        FontSize="14"
@@ -251,11 +243,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="6">
                                             <TextBlock Text="{Binding SizeDisplay}"
                                                        FontSize="14"
@@ -289,11 +277,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="8">
                                             <TextBlock Text="{Binding DisplayName}"
                                                        FontSize="14"
@@ -328,11 +312,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="8">
                                             <TextBlock Text="{Binding DisplayName}"
                                                        FontSize="14"
@@ -368,11 +348,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="6">
                                             <TextBlock Text="{Binding DisplayText}"
                                                        FontSize="13"
@@ -400,8 +376,16 @@
                                   MinHeight="200" />
                     </StackPanel>
 
-                    <!-- Software -->
-                    <StackPanel Visibility="{Binding ShowSoftware}"
+                                </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SoftwareTabHeader}"
+                                 Visibility="{Binding ShowSoftware}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="0,16,0,0"
                                 Spacing="12">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=MachineSoftwareLabel}"
@@ -435,11 +419,7 @@
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Stretch">
                                                     <Border x:Name="SoftwareShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
+                                                            Style="{StaticResource MetadataCardStyle}"
                                                             Translation="0, 0, 4"
                                                             VerticalAlignment="Stretch">
                                                         <Border.Shadow>
@@ -537,6 +517,15 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MediaTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Padding="0,16,0,0"
+                                Spacing="24">
 
                     <!-- Videos -->
                     <StackPanel Visibility="{Binding ShowVideos}"
@@ -573,11 +562,7 @@
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Stretch">
                                                     <Border x:Name="VideoShadowBorder"
-                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                            BorderThickness="1"
-                                                            CornerRadius="8"
-                                                            Padding="16,12"
+                                                            Style="{StaticResource MetadataCardStyle}"
                                                             Translation="0, 0, 4"
                                                             VerticalAlignment="Stretch">
                                                         <Border.Shadow>
@@ -687,11 +672,7 @@
                                        Visibility="{Binding HasPromoArt, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </StackPanel>
 
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12"
+                        <Border Style="{StaticResource MetadataCardStyle}"
                                 Visibility="{Binding HasPromoArt, Converter={StaticResource InvertBoolToVisibilityConverter}}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=NoPromoArtForThisMachineYet}"
                                        FontSize="13"
@@ -734,10 +715,7 @@
                                                             <ControlTemplate TargetType="Button">
                                                                 <Grid HorizontalAlignment="Stretch">
                                                                     <Border x:Name="PromoArtShadowBorder"
-                                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                                            BorderThickness="1"
-                                                                            CornerRadius="8"
+                                                                            Style="{StaticResource MetadataCardStyle}"
                                                                             Padding="12"
                                                                             Translation="0, 0, 4">
                                                                         <Border.Shadow>
@@ -841,8 +819,13 @@
                     <!-- Bottom Spacing -->
                     <Border Height="24" />
 
-                </StackPanel>
-            </ScrollViewer>
+                    </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                </TabView>
+
+            </Grid>
 
         </Grid>
 

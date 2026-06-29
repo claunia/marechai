@@ -1044,6 +1044,14 @@ public class LocalizedStrings
     public string PersonMagazinesLabel => _l["PersonMagazinesLabel"];
     public string PersonSoftwareLabel => _l["PersonSoftwareLabel"];
 
+    // Detail-page tab headers
+    public string SpecificationsTabHeader => _l["SpecificationsTabHeader"];
+    public string SoftwareTabHeader => _l["SoftwareTabHeader"];
+    public string MediaTabHeader => _l["MediaTabHeader"];
+    public string OverviewTabHeader => _l["OverviewTabHeader"];
+    public string ReleasesTabHeader => _l["ReleasesTabHeader"];
+    public string ReviewsTabHeader => _l["ReviewsTabHeader"];
+
     // Software user-facing pages
     public string AllSoftwareButton => _l["AllSoftwareButton"];
     public string RankingsTitle => _l["RankingsTitle"];

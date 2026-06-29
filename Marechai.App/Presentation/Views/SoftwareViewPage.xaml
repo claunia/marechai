@@ -6,6 +6,8 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:components="using:Marechai.App.Presentation.Components"
+      xmlns:wctui="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Disabled"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -40,7 +42,7 @@
                         Margin="12,0,0,0"
                         VerticalAlignment="Center">
                 <TextBlock Text="{Binding SoftwareName}"
-                           FontSize="20"
+                           FontSize="16"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource TextControlForeground}"
                            TextTrimming="CharacterEllipsis" />
@@ -88,123 +90,99 @@
             </StackPanel>
 
             <!-- Software Details -->
-            <ScrollViewer Visibility="{Binding IsDataLoaded}"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
-                <StackPanel Padding="16"
-                            Spacing="24">
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                    <!-- Badges (OS / Game) -->
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="8">
+                <StackPanel Grid.Row="0"
+                            Padding="16,16,16,0"
+                            Spacing="16">
+
+                    <components:HeroHeader HeroTitle="{Binding SoftwareName}"
+                                           HeroSubtitle="{Binding Family}" />
+
+                    <!-- Type Badges -->
+                    <wctui:WrapPanel Orientation="Horizontal"
+                                     HorizontalSpacing="8"
+                                     VerticalSpacing="8">
                         <Border Visibility="{Binding ShowSoftwareBadge}"
-                                Background="#607D8B"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipNeutralStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsSoftwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipNeutralForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowOsBadge}"
-                                Background="{ThemeResource SystemAccentColor}"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipInfoStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsOSLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipInfoForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowGameBadge}"
-                                Background="#E91E63"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipSuccessStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsGameLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipSuccessForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowDlcBadge}"
-                                Background="#FF9800"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipWarningStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsDlcLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowSystemSoftwareBadge}"
-                                Background="#455A64"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipNeutralStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsSystemSoftwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipNeutralForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowApplicationBadge}"
-                                Background="#1976D2"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipInfoStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsApplicationLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipInfoForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowDevelopmentSoftwareBadge}"
-                                Background="#3F51B5"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipInfoStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsDevelopmentSoftwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipInfoForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowServerSoftwareBadge}"
-                                Background="#795548"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipNeutralStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsServerSoftwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipNeutralForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowMiddlewareBadge}"
-                                Background="#00BCD4"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipNeutralStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsMiddlewareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipNeutralForegroundBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowFirmwareBadge}"
-                                Background="#CDDC39"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipWarningStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsFirmwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="Black" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                         </Border>
                         <Border Visibility="{Binding ShowEmbeddedSoftwareBadge}"
-                                Background="#009688"
-                                CornerRadius="12"
-                                Padding="12,4">
+                                Style="{StaticResource ChipNeutralStyle}">
                             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareIsEmbeddedSoftwareLabel}"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="White" />
+                                       Style="{StaticResource ChipTextStyle}"
+                                       Foreground="{ThemeResource ChipNeutralForegroundBrush}" />
                         </Border>
-                    </StackPanel>
+                    </wctui:WrapPanel>
 
                     <!-- Ranking Placements -->
                     <ItemsControl ItemsSource="{Binding RankingPlacements}"
                                   Visibility="{Binding RankingPlacements.Count, Converter={StaticResource CountToVisibilityConverter}}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"
-                                            Spacing="8" />
+                                <wctui:WrapPanel Orientation="Horizontal"
+                                                 HorizontalSpacing="8"
+                                                 VerticalSpacing="8" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
@@ -232,6 +210,18 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
+                </StackPanel>
+
+                <TabView Grid.Row="1"
+                         Style="{StaticResource DetailTabViewStyle}">
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=OverviewTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Spacing="24"
+                                        Padding="16,16,16,16">
+
                     <!-- Description -->
                     <StackPanel Visibility="{Binding ShowDescription}"
                                 Spacing="8">
@@ -250,11 +240,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <TextBlock Text="{Binding Family}"
                                        FontSize="14"
                                        Foreground="{ThemeResource TextControlForeground}" />
@@ -270,11 +256,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <HyperlinkButton Content="{Binding Predecessor}"
                                              Command="{Binding NavigateToPredecessorCommand}"
                                              Padding="0"
@@ -291,11 +273,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <HyperlinkButton Content="{Binding Successor}"
                                              Command="{Binding NavigateToSuccessorCommand}"
                                              Padding="0"
@@ -312,11 +290,7 @@
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="16,12">
+                        <Border Style="{StaticResource MetadataCardStyle}">
                             <HyperlinkButton Content="{Binding BaseSoftware}"
                                              Command="{Binding NavigateToBaseSoftwareCommand}"
                                              Padding="0"
@@ -473,8 +447,9 @@
                                         <ItemsControl ItemsSource="{Binding Genres}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Horizontal"
-                                                                Spacing="8" />
+                                                    <wctui:WrapPanel Orientation="Horizontal"
+                                                                     HorizontalSpacing="8"
+                                                                     VerticalSpacing="8" />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -494,6 +469,17 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SpecificationsTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Spacing="24"
+                                        Padding="16,16,16,16">
 
                     <!-- Specifications -->
                     <StackPanel Visibility="{Binding ShowSpecs}"
@@ -569,33 +555,43 @@
                                       HorizontalAlignment="Stretch">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                Spacing="8" />
+                                    <wctui:WrapPanel Orientation="Horizontal"
+                                                     HorizontalSpacing="8"
+                                                     VerticalSpacing="8" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#FFF0C4"
-                                            CornerRadius="12"
-                                            Padding="12,4">
+                                    <Border Style="{StaticResource ChipWarningStyle}">
                                         <StackPanel Orientation="Horizontal"
                                                     Spacing="4">
                                             <TextBlock Text="{Binding System}"
                                                        FontSize="12"
                                                        FontWeight="SemiBold"
-                                                       Foreground="#5D4037" />
+                                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                                             <TextBlock Text=":"
                                                        FontSize="12"
-                                                       Foreground="#5D4037" />
+                                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                                             <TextBlock Text="{Binding Rating}"
                                                        FontSize="12"
-                                                       Foreground="#5D4037" />
+                                                       Foreground="{ThemeResource WarningForegroundColorDefaultBrush}" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=ReleasesTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Spacing="24"
+                                        Padding="16,16,16,16">
 
                     <!-- Versions and Releases -->
                     <StackPanel Visibility="{Binding ShowVersions}"
@@ -615,11 +611,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="8"
-                                            Padding="16,12">
+                                    <Border Style="{StaticResource MetadataCardStyle}">
                                         <StackPanel Spacing="8">
                                             <!-- Version Header -->
                                             <StackPanel Orientation="Horizontal"
@@ -703,6 +695,17 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=MediaTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Spacing="24"
+                                        Padding="16,16,16,16">
 
                     <!-- Covers -->
                     <StackPanel Visibility="{Binding ShowCovers}"
@@ -1078,6 +1081,17 @@
                         </ItemsControl>
                     </StackPanel>
 
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=ReviewsTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Spacing="24"
+                                        Padding="16,16,16,16">
+
                     <!-- Critic Reviews -->
                     <StackPanel Visibility="{Binding ShowCriticReviews}"
                                 Spacing="12">
@@ -1101,8 +1115,9 @@
                         <ItemsControl ItemsSource="{Binding CriticReviewsByPlatform}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                Spacing="8" />
+                                    <wctui:WrapPanel Orientation="Horizontal"
+                                                     HorizontalSpacing="8"
+                                                     VerticalSpacing="8" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -1412,8 +1427,13 @@
                         </ItemsControl>
                     </StackPanel>
 
-                </StackPanel>
-            </ScrollViewer>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                </TabView>
+
+            </Grid>
 
         </Grid>
 
