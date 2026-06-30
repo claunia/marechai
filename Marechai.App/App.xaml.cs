@@ -126,6 +126,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<Client>(() =>
         {
             var tokenService = Container.Resolve<ITokenService>();
+            var appConfiguration = Container.Resolve<IConfiguration>();
 
             var authHandler = new HttpAuthHandler(tokenService);
 
@@ -139,7 +140,7 @@ public partial class App : PrismApplication
 
             var httpClient = new HttpClient(authHandler)
             {
-                BaseAddress = new Uri("http://localhost:5023")
+                BaseAddress = new Uri(appConfiguration.GetValue<string>("ApiClient:Url") ?? "http://localhost:5023")
             };
 
             var authProvider              = new AnonymousAuthenticationProvider();
