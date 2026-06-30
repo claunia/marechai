@@ -91,6 +91,13 @@
                                                             Style="{StaticResource AdminGridActionButtonStyle}">
                                                         <SymbolIcon Symbol="Page" />
                                                     </Button>
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SoftwareReleaseManagementButton}"
+                                                            Command="{Binding DataContext.OpenReleasesCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <FontIcon Glyph="&#xE019;"
+                                                                  FontFamily="ms-appx:///Assets/Fonts/MaterialIcons-Regular.ttf#Material Icons"
+                                                                  FontSize="18" />
+                                                    </Button>
                                                     <Button Content="&#xE91B;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=PromoArtButton}"
                                                             Command="{Binding DataContext.OpenPromoArtCommand, ElementName=PageRoot}" CommandParameter="{Binding}"

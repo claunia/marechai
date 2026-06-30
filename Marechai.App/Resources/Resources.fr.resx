@@ -2743,6 +2743,7 @@
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Modifier la sortie de logiciel</value></data>
 
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versions pour : {0}</value></data>
+  <data name="SoftwareReleasesForTitle" xml:space="preserve"><value>Sorties pour : {0}</value></data>
 
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>

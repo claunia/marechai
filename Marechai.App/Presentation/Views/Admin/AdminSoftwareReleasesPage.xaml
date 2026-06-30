@@ -8,8 +8,19 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="16,12">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareReleaseManagementTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Content="&#xE72B;"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource TextBlockButtonStyle}"
+                    Padding="8,4"
+                    VerticalAlignment="Center"
+                    Margin="0,0,12,0" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="{Binding PageTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareReleaseManagementSubtitle}" FontSize="12" Foreground="{ThemeResource SystemBaseMediumColor}" Margin="0,4,0,0" />
             </StackPanel>
         </Grid>

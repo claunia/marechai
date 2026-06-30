@@ -2639,6 +2639,7 @@
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Software-Veröffentlichung bearbeiten</value></data>
 
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versionen für: {0}</value></data>
+  <data name="SoftwareReleasesForTitle" xml:space="preserve"><value>Veröffentlichungen für: {0}</value></data>
 
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Softwareplattformen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Softwareplattform konnte nicht gelöscht werden.</value></data>

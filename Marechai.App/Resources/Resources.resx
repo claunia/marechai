@@ -3117,6 +3117,7 @@
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Edit Software Release</value></data>
 
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versions for: {0}</value></data>
+  <data name="SoftwareReleasesForTitle" xml:space="preserve"><value>Releases for: {0}</value></data>
 
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Failed to load software platforms.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Failed to delete software platform.</value></data>

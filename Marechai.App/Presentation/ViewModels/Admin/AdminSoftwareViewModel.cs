@@ -127,6 +127,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         AddSimilarSoftwareCommand   = new AsyncRelayCommand(AddSimilarSoftwareAsync);
         RemoveSimilarSoftwareCommand = new AsyncRelayCommand<SoftwareSimilarToDto>(RemoveSimilarSoftwareAsync);
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
+        OpenReleasesCommand = new RelayCommand<SoftwareDto>(OpenReleases);
         OpenPromoArtCommand = new RelayCommand<SoftwareDto>(OpenPromoArt);
         OpenVideosCommand   = new RelayCommand<SoftwareDto>(OpenVideos);
         OpenDescriptionCommand     = new RelayCommand<SoftwareDto>(OpenDescription);
@@ -154,6 +155,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand                              AddSimilarSoftwareCommand    { get; }
     public IAsyncRelayCommand<SoftwareSimilarToDto>        RemoveSimilarSoftwareCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
+    public IRelayCommand<SoftwareDto>        OpenReleasesCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenPromoArtCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVideosCommand { get; }
     public IRelayCommand<SoftwareDto>                   OpenDescriptionCommand   { get; }
@@ -412,6 +414,17 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
         };
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVersionsPage), parameters);
+    }
+
+    private void OpenReleases(SoftwareDto? item)
+    {
+        if(item?.Id == null) return;
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, item.Id.Value },
+            { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
+        };
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareReleasesPage), parameters);
     }
 
     private void OpenPromoArt(SoftwareDto? item)

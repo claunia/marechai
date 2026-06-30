@@ -730,7 +730,13 @@ public partial class AdminSoftwareCoversViewModel : ObservableObject, IRegionAwa
 
     void CancelEdit() => IsEditing = false;
 
-    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareReleasesPage));
+    void GoBack()
+    {
+        if(_regionManager.Regions[RegionNames.Content].NavigationService.Journal.CanGoBack)
+            _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+        else
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareReleasesPage));
+    }
 
     async Task<Microsoft.UI.Xaml.Media.ImageSource?> CreateImageSourceFromDataUrlAsync(string? dataUrl)
     {

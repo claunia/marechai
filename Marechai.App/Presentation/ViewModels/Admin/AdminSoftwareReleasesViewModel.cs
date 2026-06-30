@@ -43,6 +43,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private bool _isEditing;
     [ObservableProperty] private bool _isEditingExisting;
     [ObservableProperty] private string _editPanelTitle = string.Empty;
+    [ObservableProperty] private string _pageTitle = string.Empty;
 
     // Form - pickers
     [ObservableProperty] private SoftwareVersionDto? _selectedVersion;
@@ -114,6 +115,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
     private int? _editingId;
     private int? _editingCompilationId;
+    private int  _parentSoftwareId;
+    private string _parentSoftwareName = string.Empty;
     private List<SoftwareVersionDto>? _allVersions;
     private List<SoftwarePlatformDto>? _allPlatforms;
     private List<UnM49Dto>? _allRegions;
@@ -149,6 +152,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         DeleteCommand     = new AsyncRelayCommand<SoftwareReleaseDto>(DeleteAsync);
         SaveCommand       = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand = new RelayCommand(CancelEdit);
+        GoBackCommand     = new RelayCommand(GoBack);
 
         AddBarcodeCommand          = new AsyncRelayCommand(AddBarcodeAsync);
         RemoveBarcodeCommand       = new AsyncRelayCommand<string>(RemoveBarcodeByDisplayAsync);
@@ -177,6 +181,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<SoftwareReleaseDto>    DeleteCommand     { get; }
     public IAsyncRelayCommand                        SaveCommand       { get; }
     public IRelayCommand                             CancelEditCommand { get; }
+    public IRelayCommand                             GoBackCommand     { get; }
 
     public IAsyncRelayCommand         AddBarcodeCommand           { get; }
     public IAsyncRelayCommand<string> RemoveBarcodeCommand        { get; }
@@ -209,9 +214,33 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public async void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
+
+        int previousSoftwareId = _parentSoftwareId;
+
+        _parentSoftwareId = 0;
+        _parentSoftwareName = string.Empty;
+        PageTitle = _localizer["SoftwareReleaseManagementTitle"];
+
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SoftwareId, out int softwareId))
+            _parentSoftwareId = softwareId;
+
+        if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.SoftwareName, out string? softwareName))
+            _parentSoftwareName = softwareName ?? string.Empty;
+
+        if(_parentSoftwareId > 0 && !string.IsNullOrWhiteSpace(_parentSoftwareName))
+            PageTitle = string.Format(_localizer["SoftwareReleasesForTitle"], _parentSoftwareName);
+
         if(IsAdmin)
         {
             await LoadPickerDataAsync();
+
+            if(previousSoftwareId != _parentSoftwareId)
+            {
+                CurrentPage = 1;
+                FilterText = string.Empty;
+                CancelEdit();
+            }
+
             _ = LoadCommand.ExecuteAsync(null);
         }
     }
@@ -236,7 +265,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             IsLoading = true; HasError = false;
             Releases.Clear();
             string? search = NullIfWhiteSpace(FilterText);
-            TotalCount = await _service.GetCountAsync(search);
+            TotalCount = _parentSoftwareId > 0
+                             ? await _service.GetCountBySoftwareAsync(_parentSoftwareId, search)
+                             : await _service.GetCountAsync(search);
 
             int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
 
@@ -244,7 +275,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 CurrentPage = maxPage;
 
             int skip = (CurrentPage - 1) * PageSize;
-            List<SoftwareReleaseDto> response = await _service.GetPagedAsync(skip, PageSize, search);
+            List<SoftwareReleaseDto> response = _parentSoftwareId > 0
+                                                    ? await _service.GetPagedBySoftwareAsync(_parentSoftwareId, skip, PageSize, search)
+                                                    : await _service.GetPagedAsync(skip, PageSize, search);
 
             // Enrich SoftwareVersion display with software name
             if(_allVersions != null)
@@ -271,7 +304,12 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
     public async Task LoadPickerDataAsync()
     {
-        try { _allVersions = await _versionsService.GetAllAsync(); }
+        try
+        {
+            _allVersions = _parentSoftwareId > 0
+                               ? await _versionsService.GetBySoftwareAsync(_parentSoftwareId)
+                               : await _versionsService.GetAllAsync();
+        }
         catch(Exception ex) { _logger.LogError(ex, "Error loading versions for picker"); }
 
         try
@@ -305,6 +343,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         EditPanelTitle = _localizer["AddSoftwareReleaseDialog_Title"];
         IsEditingExisting = false;
         ClearForm();
+        ApplySoftwareContext();
         UpdateVersionSuggestions(string.Empty);
         UpdateRegionSuggestions(string.Empty);
         UpdateLanguageSuggestions(string.Empty);
@@ -340,6 +379,15 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         Title             = item.Title ?? string.Empty;
         IsCompilation     = item.SoftwareCompilationId is not null;
         _editingCompilationId = item.SoftwareCompilationId;
+        SelectedSoftware  = item.SoftwareId.HasValue
+                                ? new SoftwareDto
+                                  {
+                                      Id = item.SoftwareId.Value,
+                                      Name = item.Software ?? _parentSoftwareName
+                                  }
+                                : _parentSoftwareId > 0
+                                    ? new SoftwareDto { Id = _parentSoftwareId, Name = _parentSoftwareName }
+                                    : null;
 
         // Version picker
         if(item.SoftwareVersionId.HasValue && _allVersions != null)
@@ -420,6 +468,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     {
         try
         {
+            if(_parentSoftwareId > 0)
+                ApplySoftwareContext();
+
             if(SelectedVersion == null && !IsCompilation && SelectedSoftware == null)
             {
                 ErrorMessage = _localizer["SoftwareIsRequired"]; HasError = true; return;
@@ -466,6 +517,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         HasError = false; ErrorMessage = string.Empty;
     }
 
+    private void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePage));
+
     public void ApplyFilter()
     {
         _ = ReloadFromFirstPageAsync();
@@ -476,6 +529,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         VersionSuggestions.Clear();
         if(_allVersions == null) return;
         IEnumerable<SoftwareVersionDto> source = _allVersions;
+        if(_parentSoftwareId > 0)
+            source = source.Where(v => v.SoftwareId == _parentSoftwareId);
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(v =>
                 (v.VersionString != null && v.VersionString.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
@@ -1033,6 +1088,18 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
         foreach(SoftwareDto match in source)
             SoftwareSuggestions.Add(match);
+    }
+
+    private void ApplySoftwareContext()
+    {
+        if(_parentSoftwareId <= 0) return;
+
+        SelectedSoftware = new SoftwareDto
+        {
+            Id = _parentSoftwareId,
+            Name = _parentSoftwareName
+        };
+        SoftwareSearchText = _parentSoftwareName;
     }
 
     partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
