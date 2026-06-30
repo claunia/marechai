@@ -64,8 +64,8 @@ public sealed partial class AdminWwpcImportReviewPage : Page
     private async void OpenScreenshotSource_Click(object sender, RoutedEventArgs e)
     {
         if((sender as HyperlinkButton)?.CommandParameter is not WwpcScreenshotDecisionItem item) return;
-        if(string.IsNullOrWhiteSpace(item.ImageUrl)) return;
-        if(Uri.TryCreate(item.ImageUrl, UriKind.Absolute, out Uri? uri))
+        if(string.IsNullOrWhiteSpace(item.SourcePageUrl)) return;
+        if(Uri.TryCreate(item.SourcePageUrl, UriKind.Absolute, out Uri? uri))
             await Launcher.LaunchUriAsync(uri);
     }
 }

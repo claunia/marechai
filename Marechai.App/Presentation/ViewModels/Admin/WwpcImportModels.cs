@@ -79,10 +79,24 @@ public sealed partial class WwpcScreenshotDecisionItem : ObservableObject
     public string ImageUrl { get; init; } = string.Empty;
     public string OriginalCaption { get; init; } = string.Empty;
 
+    public string ThumbnailUrl => AbsoluteWwpcUrl(ImageUrl);
+    public string SourcePageUrl => AbsoluteWwpcUrl(SourceUrl);
+    public bool HasThumbnail => !string.IsNullOrWhiteSpace(ThumbnailUrl);
+
     [ObservableProperty] private bool _include;
     [ObservableProperty] private string _captionOverride = string.Empty;
     [ObservableProperty] private SoftwarePlatformDto? _platform;
     [ObservableProperty] private WwpcVersionDecisionItem? _linkedVersion;
+
+    private static string AbsoluteWwpcUrl(string? url)
+    {
+        if(string.IsNullOrWhiteSpace(url)) return string.Empty;
+        if(url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+           url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return url;
+
+        return "https://winworldpc.com" + (url.StartsWith('/') ? url : "/" + url);
+    }
 }
 
 public sealed partial class WwpcGenreChipItem : ObservableObject

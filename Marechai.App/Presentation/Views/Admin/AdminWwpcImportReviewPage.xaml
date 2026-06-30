@@ -419,6 +419,30 @@
                                         </controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=WwpcMajorReleaseColumn}" Binding="{Binding MajorRelease}" Width="*" />
+                                    <controls:DataGridTemplateColumn Header="Thumbnail" Width="Auto">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Width="160" Height="90">
+                                                    <Border Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="6">
+                                                        <Image Source="{Binding ThumbnailUrl}"
+                                                               Stretch="UniformToFill"
+                                                               Visibility="{Binding HasThumbnail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareScreenshotsPreviewUnavailable}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               TextAlignment="Center"
+                                                               TextWrapping="Wrap"
+                                                               Margin="8"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                               Visibility="{Binding HasThumbnail, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
                                     <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=CaptionLabel}" Width="2*">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
