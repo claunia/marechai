@@ -10,6 +10,8 @@ public sealed partial class AdminWwpcImportsPage : Page
 {
     public AdminWwpcImportsPage() => InitializeComponent();
 
+    AdminWwpcImportsViewModel? ViewModel => DataContext as AdminWwpcImportsViewModel;
+
     private async void Reject_Click(object sender, RoutedEventArgs e)
     {
         if((sender as Button)?.CommandParameter is not WwpcQueueItemViewModel item ||
@@ -63,5 +65,13 @@ public sealed partial class AdminWwpcImportsPage : Page
         string url = vm.AbsoluteWwpcUrl(item.SourceUrl);
         if(Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
             await Launcher.LaunchUriAsync(uri);
+    }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(ViewModel == null) return;
+
+        ViewModel.CurrentPage = 1;
+        await ViewModel.LoadCommand.ExecuteAsync(null);
     }
 }
