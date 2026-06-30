@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Marechai.App.Navigation;
@@ -30,6 +31,7 @@ namespace Marechai.App;
 
 public partial class App : PrismApplication
 {
+    static readonly Lazy<IConfigurationRoot> SharedConfiguration = new(BuildConfiguration);
     private Window _mainWindow;
 
     public App()
@@ -49,9 +51,7 @@ public partial class App : PrismApplication
         builder
            .ConfigureAppConfiguration((context, config) =>
             {
-                config.SetBasePath(AppContext.BaseDirectory)
-                      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-                      .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false);
+                config.AddConfiguration(SharedConfiguration.Value);
             })
            .UseSerilog((context, config) =>
             {
@@ -81,23 +81,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterInstance<ILoggerFactory>(loggerFactory);
         containerRegistry.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-#if __ANDROID__
-        var a = Assembly.GetExecutingAssembly();
-        using var stream = a.GetManifestResourceStream("Marechai.App.appsettings.json");
-
-        var configuration = new ConfigurationBuilder()
-			.AddJsonStream(stream)
-			.Build();
-#else
-        // Configuration — build from appsettings files so services can resolve IConfiguration
-        System.Diagnostics.Debug.WriteLine($"[App] AppContext.BaseDirectory={AppContext.BaseDirectory}");
-        System.Diagnostics.Debug.WriteLine($"[App] appsettings.json exists={System.IO.File.Exists(System.IO.Path.Combine(AppContext.BaseDirectory, "appsettings.json"))}");
-        var configuration = new ConfigurationBuilder()
-                           .SetBasePath(AppContext.BaseDirectory)
-                           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-                           .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false)
-                           .Build();
-#endif
+        var configuration = SharedConfiguration.Value;
 
         foreach(var kvp in configuration.AsEnumerable())
             System.Diagnostics.Debug.WriteLine($"[App] Config: {kvp.Key} = {kvp.Value}");
@@ -126,7 +110,9 @@ public partial class App : PrismApplication
         containerRegistry.RegisterInstance(localizedStrings);
         Resources["Strings"] = localizedStrings;
 
-        containerRegistry.RegisterInstance<IOptions<AppConfig>>(Options.Create(new AppConfig()));
+        containerRegistry.RegisterInstance<IOptions<AppConfig>>(Options.Create(configuration.GetSection(nameof(AppConfig))
+                                                                                           .Get<AppConfig>() ??
+                                                                                       new AppConfig()));
 
         // HTTP client + Kiota ApiClient
         containerRegistry.RegisterSingleton<HttpAuthHandler>();
@@ -508,5 +494,40 @@ public partial class App : PrismApplication
         {
             // Theme initialization is optional
         }
+    }
+
+    static IConfigurationRoot BuildConfiguration()
+    {
+        var configurationBuilder = new ConfigurationBuilder();
+        var appSettingsPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+        var developmentSettingsPath = Path.Combine(AppContext.BaseDirectory, "appsettings.development.json");
+
+        System.Diagnostics.Debug.WriteLine($"[App] AppContext.BaseDirectory={AppContext.BaseDirectory}");
+        System.Diagnostics.Debug.WriteLine($"[App] appsettings.json exists={File.Exists(appSettingsPath)}");
+        System.Diagnostics.Debug.WriteLine($"[App] appsettings.development.json exists={File.Exists(developmentSettingsPath)}");
+
+        configurationBuilder.SetBasePath(AppContext.BaseDirectory)
+                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                            .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false);
+
+#if __ANDROID__
+        // Android packaging can make copied content files unavailable early in startup,
+        // so keep the embedded appsettings as a fallback without creating a second config instance.
+        if(!File.Exists(appSettingsPath))
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using Stream? stream = assembly.GetManifestResourceStream("Marechai.App.appsettings.json");
+
+            if(stream is not null)
+            {
+                var memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                memoryStream.Position = 0;
+                configurationBuilder.AddJsonStream(memoryStream);
+            }
+        }
+#endif
+
+        return configurationBuilder.Build();
     }
 }
