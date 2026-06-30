@@ -27,8 +27,12 @@ public sealed partial class AdminProcessorsPage : Page
 
     private void FilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if(DataContext is AdminProcessorsViewModel vm)
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
+           DataContext is AdminProcessorsViewModel vm)
+        {
+            vm.FilterText = sender.Text;
             vm.ApplyFilter();
+        }
     }
 
     private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

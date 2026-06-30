@@ -270,10 +270,11 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
             Gpus.Clear();
 
             string? filter = NullIfWhiteSpace(FilterText);
+            string[]? filters = BuildNameFilters(filter);
             TotalCount = await _apiClient.Gpus.Count.GetAsync(config =>
             {
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             }) ?? 0;
 
             int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
@@ -288,8 +289,8 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
                 config.QueryParameters.Skip = skip;
                 config.QueryParameters.Take = PageSize;
 
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             if(response != null)
@@ -777,6 +778,9 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         CurrentPage = 1;
         await LoadGpusAsync();
     }
+
+    private static string[]? BuildNameFilters(string? filter) =>
+        string.IsNullOrWhiteSpace(filter) ? null : [$"Name||contains||{filter.Trim()}"];
 
     private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 

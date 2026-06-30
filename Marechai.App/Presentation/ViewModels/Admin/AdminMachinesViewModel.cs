@@ -267,10 +267,11 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             Machines.Clear();
             string? filter = NullIfWhiteSpace(FilterText);
+            string[]? filters = BuildNameFilters(filter);
             TotalCount = await _apiClient.Machines.Count.GetAsync(config =>
             {
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             }) ?? 0;
             int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
             if(CurrentPage > maxPage)
@@ -280,8 +281,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             {
                 config.QueryParameters.Skip = skip;
                 config.QueryParameters.Take = PageSize;
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
             if(response != null) foreach(MachineDto m in response) Machines.Add(m);
             ReplaceFilteredMachines(Machines);
@@ -695,6 +696,9 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         CurrentPage = 1;
         await LoadItemsAsync();
     }
+
+    private static string[]? BuildNameFilters(string? filter) =>
+        string.IsNullOrWhiteSpace(filter) ? null : [$"Name||contains||{filter.Trim()}"];
 
     private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 

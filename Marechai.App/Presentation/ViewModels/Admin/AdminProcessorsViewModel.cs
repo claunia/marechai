@@ -317,10 +317,11 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
             Processors.Clear();
 
             string? filter = NullIfWhiteSpace(FilterText);
+            string[]? filters = BuildNameFilters(filter);
             TotalCount = await _apiClient.Processors.Count.GetAsync(config =>
             {
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             }) ?? 0;
 
             int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
@@ -335,8 +336,8 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
                 config.QueryParameters.Skip = skip;
                 config.QueryParameters.Take = PageSize;
 
-                if(filter != null)
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             if(response != null)
@@ -816,6 +817,9 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         CurrentPage = 1;
         await LoadProcessorsAsync();
     }
+
+    private static string[]? BuildNameFilters(string? filter) =>
+        string.IsNullOrWhiteSpace(filter) ? null : [$"Name||contains||{filter.Trim()}"];
 
     private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 

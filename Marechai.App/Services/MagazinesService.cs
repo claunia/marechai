@@ -230,13 +230,14 @@ public class MagazinesService
     {
         try
         {
+            string[]? filters = BuildTitleFilters(filter);
             List<MagazineDto>? magazines = await _apiClient.Magazines.GetAsync(config =>
             {
                 config.QueryParameters.Skip = skip;
                 config.QueryParameters.Take = take;
 
-                if(!string.IsNullOrWhiteSpace(filter))
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             return magazines ?? [];
@@ -253,10 +254,11 @@ public class MagazinesService
     {
         try
         {
+            string[]? filters = BuildTitleFilters(filter);
             int? result = await _apiClient.Magazines.Count.GetAsync(config =>
             {
-                if(!string.IsNullOrWhiteSpace(filter))
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             return result ?? 0;
@@ -268,6 +270,9 @@ public class MagazinesService
             return 0;
         }
     }
+
+    static string[]? BuildTitleFilters(string? filter) =>
+        string.IsNullOrWhiteSpace(filter) ? null : [$"Title||contains||{filter.Trim()}"];
 
     // --- CRUD ---
 

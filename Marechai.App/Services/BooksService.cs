@@ -169,13 +169,14 @@ public class BooksService
     {
         try
         {
+            string[]? filters = BuildTitleFilters(filter);
             List<BookDto>? books = await _apiClient.Books.GetAsync(config =>
             {
                 config.QueryParameters.Skip = skip;
                 config.QueryParameters.Take = take;
 
-                if(!string.IsNullOrWhiteSpace(filter))
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             return books ?? [];
@@ -192,10 +193,11 @@ public class BooksService
     {
         try
         {
+            string[]? filters = BuildTitleFilters(filter);
             int? result = await _apiClient.Books.Count.GetAsync(config =>
             {
-                if(!string.IsNullOrWhiteSpace(filter))
-                    config.QueryParameters.Filters = [filter];
+                if(filters != null)
+                    config.QueryParameters.Filters = filters;
             });
 
             return result ?? 0;
@@ -207,6 +209,9 @@ public class BooksService
             return 0;
         }
     }
+
+    static string[]? BuildTitleFilters(string? filter) =>
+        string.IsNullOrWhiteSpace(filter) ? null : [$"Title||contains||{filter.Trim()}"];
 
     public async Task<List<BookDto>> GetAllBooksAsync()
     {

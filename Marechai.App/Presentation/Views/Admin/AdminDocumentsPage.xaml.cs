@@ -20,8 +20,12 @@ public sealed partial class AdminDocumentsPage : Page
 
     private void FilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if(DataContext is AdminDocumentsViewModel vm)
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
+           DataContext is AdminDocumentsViewModel vm)
+        {
+            vm.FilterText = sender.Text;
             vm.ApplyFilter();
+        }
     }
 
     private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
