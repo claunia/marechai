@@ -860,6 +860,7 @@ public class LocalizedStrings
     public string BookCountryColumn => _l["BookCountryColumn"];
     public string EditBookButton => _l["EditBookButton"];
     public string DeleteBookButton => _l["DeleteBookButton"];
+    public string IssuesButton => _l["IssuesButton"];
     public string SynopsisButton => _l["SynopsisButton"];
     public string BookTitleLabel => _l["BookTitleLabel"];
     public string BookNativeTitleLabel => _l["BookNativeTitleLabel"];
