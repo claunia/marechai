@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data;
@@ -42,6 +43,27 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class SoftwareCompilationsController(MarechaiContext context) : ControllerBase
 {
+    static readonly Expression<Func<SoftwareCompilation, SoftwareCompilationDto>> _projectToDto = c => new SoftwareCompilationDto
+    {
+        Id               = c.Id,
+        Name             = c.Name,
+        SoftwareId       = c.SoftwareId,
+        Software         = c.Software != null ? c.Software.Name : null,
+        MachineId        = c.MachineId,
+        Machine          = c.Machine != null ? c.Machine.Name : null,
+        PredecessorId    = c.PredecessorId,
+        Predecessor      = c.Predecessor != null ? c.Predecessor.Name : null,
+        RelationshipType = c.RelationshipType,
+        Successors       = c.Successors
+                            .Select(x => new SoftwareCompilationSuccessorDto
+                            {
+                                Id               = x.Id,
+                                Name             = x.Name,
+                                RelationshipType = x.RelationshipType
+                            })
+                            .ToList()
+    };
+
     [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -69,33 +91,14 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
         if(skip.HasValue) query = query.Skip(skip.Value);
         if(take.HasValue) query = query.Take(take.Value);
 
-        return query.Select(c => ProjectToDto(c)).ToListAsync();
+        return query.Select(_projectToDto).ToListAsync();
     }
 
     [HttpGet("{id:ulong}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<SoftwareCompilationDto> GetAsync(ulong id) =>
-        context.SoftwareCompilations.Where(c => c.Id == id).Select(c => ProjectToDto(c)).FirstOrDefaultAsync();
-
-    static SoftwareCompilationDto ProjectToDto(SoftwareCompilation c) => new()
-    {
-        Id               = c.Id,
-        Name             = c.Name,
-        SoftwareId       = c.SoftwareId,
-        Software         = c.Software.Name,
-        MachineId        = c.MachineId,
-        Machine          = c.Machine.Name,
-        PredecessorId    = c.PredecessorId,
-        Predecessor      = c.Predecessor.Name,
-        RelationshipType = c.RelationshipType,
-        Successors = c.Successors.Select(x => new SoftwareCompilationSuccessorDto
-        {
-            Id               = x.Id,
-            Name             = x.Name,
-            RelationshipType = x.RelationshipType
-        }).ToList()
-    };
+        context.SoftwareCompilations.Where(c => c.Id == id).Select(_projectToDto).FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -558,7 +561,8 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
         context.SoftwareCompilationBySoftwareCompilation
                .Where(x => x.ParentCompilationId == id)
                .OrderBy(x => x.ChildCompilation.Name)
-               .Select(x => ProjectToDto(x.ChildCompilation))
+               .Select(x => x.ChildCompilation)
+               .Select(_projectToDto)
                .ToListAsync();
 
     [HttpPost("{id:ulong}/compilations/{childId:ulong}")]
