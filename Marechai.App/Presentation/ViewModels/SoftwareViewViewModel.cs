@@ -20,6 +20,7 @@ using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media;
 using Windows.System;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -219,11 +220,20 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private ImageSource? _heroImageSource;
+
     public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+    public bool HasHeroImage   => HeroImageSource is not null;
 
     partial void OnDescriptionHtmlChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
+    }
+
+    partial void OnHeroImageSourceChanged(ImageSource? value)
+    {
+        OnPropertyChanged(nameof(HasHeroImage));
     }
 
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
@@ -451,6 +461,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             IsDataLoaded = false;
             HasError     = false;
             ErrorMessage = string.Empty;
+            HeroImageSource = null;
             Companies.Clear();
             Versions.Clear();
             CreditGroups.Clear();
@@ -765,6 +776,14 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             if(covers.Count == 0) return;
 
+            List<SoftwareCoverDto> frontCovers = covers.Where(cover => cover.Id.HasValue && cover.Type == 0).ToList();
+
+            if(frontCovers.Count > 0)
+            {
+                SoftwareCoverDto heroCover = frontCovers[Random.Shared.Next(frontCovers.Count)];
+                _ = LoadHeroCoverAsync(heroCover.Id!.Value);
+            }
+
             var byGroup = new Dictionary<string, List<CoverDisplayItem>>();
 
             foreach(SoftwareCoverDto cover in covers)
@@ -801,6 +820,19 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading covers for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private async Task LoadHeroCoverAsync(Guid coverId)
+    {
+        try
+        {
+            Stream stream = await _coverCache.GetCoverAsync(coverId);
+            HeroImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading hero cover {Id}", coverId);
         }
     }
 

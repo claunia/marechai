@@ -101,7 +101,9 @@
                             Spacing="16">
 
                     <components:HeroHeader HeroTitle="{Binding SoftwareName}"
-                                           HeroSubtitle="{Binding Family}" />
+                                           HeroSubtitle="{Binding Family}"
+                                           HeroImageSource="{Binding HeroImageSource}"
+                                           ShowImage="{Binding HasHeroImage}" />
 
                     <!-- Type Badges -->
                     <wctui:WrapPanel Orientation="Horizontal"
