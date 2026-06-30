@@ -10,6 +10,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -22,6 +23,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private readonly ProcessorsService               _processorsService;
     private readonly IRegionManager                  _regionManager;
     private readonly ITokenService                   _tokenService;
+    private readonly DispatcherQueue?                _dispatcherQueue;
 
     // --- List state ---
     [ObservableProperty]
@@ -205,11 +207,12 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         _processorsService = processorsService;
         _localizer         = localizer;
         _regionManager     = regionManager;
+        _dispatcherQueue   = DispatcherQueue.GetForCurrentThread();
 
         LoadProcessorsCommand    = new AsyncRelayCommand(LoadProcessorsAsync);
         OpenAddProcessorCommand  = new RelayCommand(OpenAddProcessor);
         OpenEditProcessorCommand = new RelayCommand<ProcessorDto>(OpenEditProcessor);
-        OpenDescriptionCommand   = new AsyncRelayCommand<ProcessorDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand   = new RelayCommand<ProcessorDto>(OpenDescription);
         OpenPhotosCommand        = new RelayCommand<ProcessorDto>(OpenPhotos);
         OpenVideosCommand        = new RelayCommand<ProcessorDto>(OpenVideos);
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
@@ -230,7 +233,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand               LoadProcessorsCommand    { get; }
     public IRelayCommand                    OpenAddProcessorCommand  { get; }
     public IRelayCommand<ProcessorDto>      OpenEditProcessorCommand { get; }
-    public IAsyncRelayCommand<ProcessorDto> OpenDescriptionCommand   { get; }
+    public IRelayCommand<ProcessorDto>      OpenDescriptionCommand   { get; }
     public IRelayCommand<ProcessorDto>      OpenPhotosCommand        { get; }
     public IRelayCommand<ProcessorDto>      OpenVideosCommand        { get; }
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
@@ -579,41 +582,83 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         }
     }
 
+    private void OpenDescription(ProcessorDto? processor) => _ = OpenDescriptionAsync(processor);
+
     private async Task OpenDescriptionAsync(ProcessorDto? proc)
     {
         if(proc?.Id == null) return;
 
         try
         {
-            HasError               = false;
-            ErrorMessage           = string.Empty;
-            DescriptionProcessorId = proc.Id;
-            DescriptionMarkdown    = string.Empty;
-            IsEditing              = false;
-            ExistingTranslations.Clear();
+            await RunOnUiThreadAsync(() =>
+            {
+                HasError               = false;
+                ErrorMessage           = string.Empty;
+                DescriptionProcessorId = proc.Id;
+                DescriptionMarkdown    = string.Empty;
+                IsEditing              = false;
+                ExistingTranslations.Clear();
+            });
             await ReloadDescriptionTranslationsAsync(proc.Id.Value);
-            SelectedLanguage       = GetDefaultDescriptionLanguage();
-            IsEditingDescription   = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                SelectedLanguage     = GetDefaultDescriptionLanguage();
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading descriptions for processor {Id}", proc.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
     }
 
     private async Task ReloadDescriptionTranslationsAsync(int processorId)
     {
-        ExistingTranslations.Clear();
-
         List<ProcessorDescriptionDto> translations = await _processorsService.GetDescriptionsAsync(processorId);
 
-        foreach(ProcessorDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        await RunOnUiThreadAsync(() =>
         {
-            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
-            ExistingTranslations.Add(translation);
+            ExistingTranslations.Clear();
+
+            foreach(ProcessorDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+            {
+                translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+                ExistingTranslations.Add(translation);
+            }
+        });
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
         }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     private LanguageItem GetDefaultDescriptionLanguage()

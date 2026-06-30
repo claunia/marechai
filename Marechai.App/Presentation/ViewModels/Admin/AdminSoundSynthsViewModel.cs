@@ -12,6 +12,7 @@ using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -24,6 +25,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     private readonly IRegionManager                 _regionManager;
     private readonly SoundSynthsService             _soundSynthsService;
     private readonly ITokenService                  _tokenService;
+    private readonly DispatcherQueue?               _dispatcherQueue;
 
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynths = [];
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _filteredSoundSynths = [];
@@ -98,11 +100,12 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         _localizer          = localizer;
         _regionManager      = regionManager;
         _soundSynthsService = soundSynthsService;
+        _dispatcherQueue    = DispatcherQueue.GetForCurrentThread();
 
         LoadItemsCommand         = new AsyncRelayCommand(LoadItemsAsync);
         OpenAddCommand           = new RelayCommand(OpenAdd);
         OpenEditCommand          = new RelayCommand<SoundSynthDto>(OpenEdit);
-        OpenDescriptionCommand   = new AsyncRelayCommand<SoundSynthDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand   = new RelayCommand<SoundSynthDto>(OpenDescription);
         OpenPhotosCommand        = new RelayCommand<SoundSynthDto>(OpenPhotos);
         OpenVideosCommand        = new RelayCommand<SoundSynthDto>(OpenVideos);
         DeleteCommand            = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
@@ -120,7 +123,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand LoadItemsCommand { get; }
     public IRelayCommand OpenAddCommand { get; }
     public IRelayCommand<SoundSynthDto> OpenEditCommand { get; }
-    public IAsyncRelayCommand<SoundSynthDto> OpenDescriptionCommand { get; }
+    public IRelayCommand<SoundSynthDto> OpenDescriptionCommand { get; }
     public IRelayCommand<SoundSynthDto> OpenPhotosCommand { get; }
     public IRelayCommand<SoundSynthDto> OpenVideosCommand { get; }
     public IAsyncRelayCommand<SoundSynthDto> DeleteCommand { get; }
@@ -396,41 +399,83 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
     }
 
+    private void OpenDescription(SoundSynthDto? item) => _ = OpenDescriptionAsync(item);
+
     private async Task OpenDescriptionAsync(SoundSynthDto? item)
     {
         if(item?.Id == null) return;
 
         try
         {
-            HasError                = false;
-            ErrorMessage            = string.Empty;
-            DescriptionSoundSynthId = item.Id;
-            DescriptionMarkdown     = string.Empty;
-            IsEditing               = false;
-            ExistingTranslations.Clear();
+            await RunOnUiThreadAsync(() =>
+            {
+                HasError                = false;
+                ErrorMessage            = string.Empty;
+                DescriptionSoundSynthId = item.Id;
+                DescriptionMarkdown     = string.Empty;
+                IsEditing               = false;
+                ExistingTranslations.Clear();
+            });
             await ReloadDescriptionTranslationsAsync(item.Id.Value);
-            SelectedLanguage       = GetDefaultDescriptionLanguage();
-            IsEditingDescription   = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                SelectedLanguage     = GetDefaultDescriptionLanguage();
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading descriptions for sound synth {Id}", item.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
     }
 
     private async Task ReloadDescriptionTranslationsAsync(int soundSynthId)
     {
-        ExistingTranslations.Clear();
-
         List<SoundSynthDescriptionDto> translations = await _soundSynthsService.GetDescriptionsAsync(soundSynthId);
 
-        foreach(SoundSynthDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        await RunOnUiThreadAsync(() =>
         {
-            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
-            ExistingTranslations.Add(translation);
+            ExistingTranslations.Clear();
+
+            foreach(SoundSynthDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+            {
+                translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+                ExistingTranslations.Add(translation);
+            }
+        });
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
         }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     private LanguageItem GetDefaultDescriptionLanguage()

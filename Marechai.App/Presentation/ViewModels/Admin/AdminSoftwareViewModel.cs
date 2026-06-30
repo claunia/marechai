@@ -12,6 +12,7 @@ using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -26,6 +27,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     private readonly ILogger<AdminSoftwareViewModel>    _logger;
     private readonly ITokenService                      _tokenService;
     private readonly IRegionManager                     _regionManager;
+    private readonly DispatcherQueue?                   _dispatcherQueue;
 
     [ObservableProperty] private ObservableCollection<SoftwareDto> _softwareItems = [];
     [ObservableProperty] private ObservableCollection<SoftwareDto> _filteredSoftware = [];
@@ -102,6 +104,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         _logger                = logger;
         _localizer             = localizer;
         _regionManager         = regionManager;
+        _dispatcherQueue       = DispatcherQueue.GetForCurrentThread();
 
         LoadCommand         = new AsyncRelayCommand(LoadAsync);
         OpenAddCommand      = new RelayCommand(OpenAdd);
@@ -118,7 +121,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         OpenVersionsCommand = new RelayCommand<SoftwareDto>(OpenVersions);
         OpenPromoArtCommand = new RelayCommand<SoftwareDto>(OpenPromoArt);
         OpenVideosCommand   = new RelayCommand<SoftwareDto>(OpenVideos);
-        OpenDescriptionCommand     = new AsyncRelayCommand<SoftwareDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand     = new RelayCommand<SoftwareDto>(OpenDescription);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
         DeleteTranslationCommand   = new AsyncRelayCommand<SoftwareDescriptionDto>(DeleteTranslationAsync);
@@ -143,7 +146,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IRelayCommand<SoftwareDto>        OpenVersionsCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenPromoArtCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVideosCommand { get; }
-    public IAsyncRelayCommand<SoftwareDto>              OpenDescriptionCommand   { get; }
+    public IRelayCommand<SoftwareDto>                   OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
     public IRelayCommand                                CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<SoftwareDescriptionDto>   DeleteTranslationCommand { get; }
@@ -576,42 +579,78 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         SelectedLanguage = AvailableLanguages[0];
     }
 
+    private void OpenDescription(SoftwareDto? software) => _ = OpenDescriptionAsync(software);
+
     private async Task OpenDescriptionAsync(SoftwareDto? software)
     {
         if(software?.Id == null) return;
 
         try
         {
-            DescriptionSoftwareId = software.Id;
-            DescriptionMarkdown   = string.Empty;
-            IsEditing             = false;
-            ExistingTranslations.Clear();
-
             List<SoftwareDescriptionDto>? translations =
                 await _apiClient.Software[software.Id.Value].Descriptions.GetAsync();
 
-            if(translations != null)
-                foreach(SoftwareDescriptionDto t in translations)
-                    ExistingTranslations.Add(t);
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionSoftwareId = software.Id;
+                DescriptionMarkdown   = string.Empty;
+                IsEditing             = false;
+                ExistingTranslations.Clear();
 
-            SelectedLanguage = AvailableLanguages.FirstOrDefault(l =>
-                                   ExistingTranslations.All(t => t.LanguageCode != l.Code)) ??
-                               AvailableLanguages[0];
+                if(translations != null)
+                    foreach(SoftwareDescriptionDto t in translations)
+                        ExistingTranslations.Add(t);
 
-            SoftwareDescriptionDto? existing =
-                ExistingTranslations.FirstOrDefault(t => t.LanguageCode == SelectedLanguage.Code);
+                SelectedLanguage = AvailableLanguages.FirstOrDefault(l =>
+                                       ExistingTranslations.All(t => t.LanguageCode != l.Code)) ??
+                                   AvailableLanguages[0];
 
-            if(existing != null)
-                DescriptionMarkdown = existing.Markdown ?? string.Empty;
+                SoftwareDescriptionDto? existing =
+                    ExistingTranslations.FirstOrDefault(t => t.LanguageCode == SelectedLanguage.Code);
 
-            IsEditingDescription = true;
+                if(existing != null)
+                    DescriptionMarkdown = existing.Markdown ?? string.Empty;
+
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading description for software {Id}", software.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
+        }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     partial void OnSelectedLanguageChanged(LanguageItem? value)

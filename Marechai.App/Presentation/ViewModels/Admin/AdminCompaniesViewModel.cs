@@ -9,6 +9,7 @@ using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -20,6 +21,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     private readonly ILogger<AdminCompaniesViewModel> _logger;
     private readonly IRegionManager                   _regionManager;
     private readonly ITokenService                    _tokenService;
+    private readonly DispatcherQueue?                 _dispatcherQueue;
 
     // --- List state ---
     [ObservableProperty]
@@ -238,6 +240,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         _logger       = logger;
         _localizer    = localizer;
         _regionManager = regionManager;
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         StatusItems =
         [
@@ -256,7 +259,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         DeleteCompanyCommand       = new AsyncRelayCommand<CompanyDto>(DeleteCompanyAsync);
         SaveCompanyCommand         = new AsyncRelayCommand(SaveCompanyAsync);
         CancelEditCommand          = new RelayCommand(CancelEdit);
-        OpenDescriptionCommand     = new AsyncRelayCommand<CompanyDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand     = new RelayCommand<CompanyDto>(OpenDescription);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
         DeleteTranslationCommand   = new AsyncRelayCommand<CompanyDescriptionDto>(DeleteTranslationAsync);
@@ -283,7 +286,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<CompanyDto> DeleteCompanyCommand     { get; }
     public IAsyncRelayCommand             SaveCompanyCommand       { get; }
     public IRelayCommand                  CancelEditCommand        { get; }
-    public IAsyncRelayCommand<CompanyDto>             OpenDescriptionCommand   { get; }
+    public IRelayCommand<CompanyDto>                  OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                        SaveDescriptionCommand   { get; }
     public IRelayCommand                             CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<CompanyDescriptionDto> DeleteTranslationCommand { get; }
@@ -513,28 +516,39 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         SelectedLanguage = AvailableLanguages[0]; // Default to English
     }
 
+    private void OpenDescription(CompanyDto? company) => _ = OpenDescriptionAsync(company);
+
     private async Task OpenDescriptionAsync(CompanyDto? company)
     {
         if(company?.Id == null) return;
 
         try
         {
-            HasError            = false;
-            ErrorMessage        = string.Empty;
-            DescriptionCompanyId = company.Id;
-            DescriptionMarkdown  = string.Empty;
-            IsEditing            = false;
-            IsMerging            = false;
-            ExistingTranslations.Clear();
+            await RunOnUiThreadAsync(() =>
+            {
+                HasError             = false;
+                ErrorMessage         = string.Empty;
+                DescriptionCompanyId = company.Id;
+                DescriptionMarkdown  = string.Empty;
+                IsEditing            = false;
+                IsMerging            = false;
+                ExistingTranslations.Clear();
+            });
             await ReloadDescriptionTranslationsAsync(company.Id.Value);
-            SelectedLanguage = GetDefaultDescriptionLanguage();
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                SelectedLanguage     = GetDefaultDescriptionLanguage();
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading description for company {Id}", company.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
     }
 
@@ -559,18 +573,49 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
     async Task ReloadDescriptionTranslationsAsync(int companyId)
     {
-        ExistingTranslations.Clear();
-
         List<CompanyDescriptionDto>? translations =
             await _apiClient.Companies[companyId].Descriptions.GetAsync();
 
-        if(translations == null) return;
-
-        foreach(CompanyDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        await RunOnUiThreadAsync(() =>
         {
-            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
-            ExistingTranslations.Add(translation);
+            ExistingTranslations.Clear();
+
+            if(translations == null) return;
+
+            foreach(CompanyDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+            {
+                translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+                ExistingTranslations.Add(translation);
+            }
+        });
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
         }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     LanguageItem GetDefaultDescriptionLanguage()

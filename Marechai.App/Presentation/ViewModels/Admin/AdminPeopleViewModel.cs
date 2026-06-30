@@ -9,6 +9,7 @@ using Marechai.ApiClient.Models;
 using Marechai.App.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -20,6 +21,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     private readonly ILogger<AdminPeopleViewModel>    _logger;
     private readonly PeopleService                    _peopleService;
     private readonly ITokenService                    _tokenService;
+    private readonly DispatcherQueue?                 _dispatcherQueue;
 
     [ObservableProperty]
     private ObservableCollection<PersonDto> _people = [];
@@ -136,6 +138,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         LoadPeopleCommand         = new AsyncRelayCommand(LoadPeopleAsync);
         OpenAddCommand            = new RelayCommand(OpenAdd);
@@ -143,7 +146,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         DeleteCommand             = new AsyncRelayCommand<PersonDto>(DeleteAsync);
         SaveCommand               = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand         = new RelayCommand(CancelEdit);
-        OpenDescriptionCommand    = new AsyncRelayCommand<PersonDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand    = new RelayCommand<PersonDto>(OpenDescription);
         SaveDescriptionCommand    = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand  = new RelayCommand(CancelDescription);
         DeleteTranslationCommand  = new AsyncRelayCommand<PersonDescriptionDto>(DeleteTranslationAsync);
@@ -160,7 +163,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<PersonDto>            DeleteCommand            { get; }
     public IAsyncRelayCommand                       SaveCommand              { get; }
     public IRelayCommand                            CancelEditCommand        { get; }
-    public IAsyncRelayCommand<PersonDto>            OpenDescriptionCommand   { get; }
+    public IRelayCommand<PersonDto>                 OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                       SaveDescriptionCommand   { get; }
     public IRelayCommand                            CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<PersonDescriptionDto> DeleteTranslationCommand { get; }
@@ -381,41 +384,83 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 
     partial void OnDescriptionPersonIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
 
+    private void OpenDescription(PersonDto? person) => _ = OpenDescriptionAsync(person);
+
     private async Task OpenDescriptionAsync(PersonDto? person)
     {
         if(person?.Id == null) return;
 
         try
         {
-            HasError             = false;
-            ErrorMessage         = string.Empty;
-            DescriptionPersonId  = person.Id;
-            DescriptionMarkdown  = string.Empty;
-            IsEditing            = false;
-            ExistingTranslations.Clear();
+            await RunOnUiThreadAsync(() =>
+            {
+                HasError             = false;
+                ErrorMessage         = string.Empty;
+                DescriptionPersonId  = person.Id;
+                DescriptionMarkdown  = string.Empty;
+                IsEditing            = false;
+                ExistingTranslations.Clear();
+            });
             await ReloadDescriptionTranslationsAsync(person.Id.Value);
-            SelectedLanguage     = GetDefaultDescriptionLanguage();
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                SelectedLanguage     = GetDefaultDescriptionLanguage();
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading descriptions for person {Id}", person.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
     }
 
     private async Task ReloadDescriptionTranslationsAsync(int personId)
     {
-        ExistingTranslations.Clear();
-
         List<PersonDescriptionDto> translations = await _peopleService.GetDescriptionsAsync(personId);
 
-        foreach(PersonDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        await RunOnUiThreadAsync(() =>
         {
-            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
-            ExistingTranslations.Add(translation);
+            ExistingTranslations.Clear();
+
+            foreach(PersonDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+            {
+                translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+                ExistingTranslations.Add(translation);
+            }
+        });
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
         }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     LanguageItem GetDefaultDescriptionLanguage()

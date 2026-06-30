@@ -10,6 +10,7 @@ using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Microsoft.UI.Dispatching;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -22,6 +23,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private readonly ILogger<AdminGpusViewModel>  _logger;
     private readonly IRegionManager                _regionManager;
     private readonly ITokenService                _tokenService;
+    private readonly DispatcherQueue?             _dispatcherQueue;
 
     // --- List state ---
     [ObservableProperty]
@@ -156,11 +158,12 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         _logger       = logger;
         _localizer    = localizer;
         _regionManager = regionManager;
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         LoadGpusCommand       = new AsyncRelayCommand(LoadGpusAsync);
         OpenAddGpuCommand     = new RelayCommand(OpenAddGpu);
         OpenEditGpuCommand    = new RelayCommand<GpuDto>(OpenEditGpu);
-        OpenDescriptionCommand = new AsyncRelayCommand<GpuDto>(OpenDescriptionAsync);
+        OpenDescriptionCommand = new RelayCommand<GpuDto>(OpenDescription);
         OpenPhotosCommand     = new RelayCommand<GpuDto>(OpenPhotos);
         OpenVideosCommand     = new RelayCommand<GpuDto>(OpenVideos);
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
@@ -182,7 +185,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand          LoadGpusCommand    { get; }
     public IRelayCommand               OpenAddGpuCommand  { get; }
     public IRelayCommand<GpuDto>       OpenEditGpuCommand { get; }
-    public IAsyncRelayCommand<GpuDto>  OpenDescriptionCommand { get; }
+    public IRelayCommand<GpuDto>       OpenDescriptionCommand { get; }
     public IRelayCommand<GpuDto>       OpenPhotosCommand { get; }
     public IRelayCommand<GpuDto>       OpenVideosCommand { get; }
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
@@ -444,41 +447,83 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 
     partial void OnDescriptionGpuIdChanged(int? value) => OnPropertyChanged(nameof(CanSaveDescription));
 
+    private void OpenDescription(GpuDto? gpu) => _ = OpenDescriptionAsync(gpu);
+
     private async Task OpenDescriptionAsync(GpuDto? gpu)
     {
         if(gpu?.Id == null) return;
 
         try
         {
-            HasError            = false;
-            ErrorMessage        = string.Empty;
-            DescriptionGpuId    = gpu.Id;
-            DescriptionMarkdown = string.Empty;
-            IsEditing           = false;
-            ExistingTranslations.Clear();
+            await RunOnUiThreadAsync(() =>
+            {
+                HasError            = false;
+                ErrorMessage        = string.Empty;
+                DescriptionGpuId    = gpu.Id;
+                DescriptionMarkdown = string.Empty;
+                IsEditing           = false;
+                ExistingTranslations.Clear();
+            });
             await ReloadDescriptionTranslationsAsync(gpu.Id.Value);
-            SelectedLanguage     = GetDefaultDescriptionLanguage();
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                SelectedLanguage     = GetDefaultDescriptionLanguage();
+                IsEditingDescription = true;
+            });
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading descriptions for GPU {Id}", gpu.Id);
-            DescriptionMarkdown  = string.Empty;
-            IsEditingDescription = true;
+            await RunOnUiThreadAsync(() =>
+            {
+                DescriptionMarkdown  = string.Empty;
+                IsEditingDescription = true;
+            });
         }
     }
 
     private async Task ReloadDescriptionTranslationsAsync(int gpuId)
     {
-        ExistingTranslations.Clear();
-
         List<GpuDescriptionDto> translations = await _gpusService.GetDescriptionsAsync(gpuId);
 
-        foreach(GpuDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+        await RunOnUiThreadAsync(() =>
         {
-            translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
-            ExistingTranslations.Add(translation);
+            ExistingTranslations.Clear();
+
+            foreach(GpuDescriptionDto translation in translations.OrderBy(t => GetLanguageDisplayName(t.LanguageCode)))
+            {
+                translation.Language ??= GetLanguageDisplayName(translation.LanguageCode);
+                ExistingTranslations.Add(translation);
+            }
+        });
+    }
+
+    private Task RunOnUiThreadAsync(Action action)
+    {
+        if(_dispatcherQueue is null || _dispatcherQueue.HasThreadAccess)
+        {
+            action();
+
+            return Task.CompletedTask;
         }
+
+        var tcs = new TaskCompletionSource();
+
+        if(!_dispatcherQueue.TryEnqueue(() =>
+           {
+               try
+               {
+                   action();
+                   tcs.SetResult();
+               }
+               catch(Exception ex)
+               {
+                   tcs.SetException(ex);
+               }
+           }))
+            tcs.SetException(new InvalidOperationException("Unable to enqueue work on the UI thread."));
+
+        return tcs.Task;
     }
 
     private LanguageItem GetDefaultDescriptionLanguage()
