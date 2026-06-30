@@ -676,39 +676,39 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                                                       [FromQuery] SoftwareKind? kind = null,
                                                       CancellationToken cancellationToken = default)
     {
-        IQueryable<Database.Models.Software> baseQuery = context.Softwares;
+        IQueryable<Database.Models.Software> baseQuery = context.Softwares.AsNoTracking();
 
         if(!string.IsNullOrWhiteSpace(search)) baseQuery = baseQuery.Where(s => s.Name.Contains(search));
 
         if(kind.HasValue) baseQuery = baseQuery.Where(s => s.Kind == kind.Value);
 
-        IQueryable<SoftwareDto> projected = baseQuery.Select(s => new SoftwareDto
+        IQueryable<Database.Models.Software> ordered = sortBy switch
         {
-            Id            = s.Id,
-            Name          = s.Name,
-            FamilyId      = s.FamilyId,
-            Family        = s.Family.Name,
-            Kind          = s.Kind,
-            IsCompilation = false,
-            FrontCoverId  = null
-        });
-
-        IQueryable<SoftwareDto> ordered = sortBy switch
-        {
-            "Name"   => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))
-                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
-            "Family" => sortDescending ? projected.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family))
-                                       : projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family)),
-            "Kind"   => sortDescending ? projected.OrderByDescending(s => s.Kind)
-                                       : projected.OrderBy(s => s.Kind),
-            _        => projected.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
+            "Name"   => sortDescending ? baseQuery.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Name))
+                                       : baseQuery.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name)),
+            "Family" => sortDescending
+                            ? baseQuery.OrderByDescending(s => MarechaiContext.NaturalSortKey(s.Family != null ? s.Family.Name : null))
+                            : baseQuery.OrderBy(s => MarechaiContext.NaturalSortKey(s.Family != null ? s.Family.Name : null)),
+            "Kind"   => sortDescending ? baseQuery.OrderByDescending(s => s.Kind)
+                                       : baseQuery.OrderBy(s => s.Kind),
+            _        => baseQuery.OrderBy(s => MarechaiContext.NaturalSortKey(s.Name))
         };
 
         if(skip.HasValue) ordered = ordered.Skip(skip.Value);
 
         if(take.HasValue) ordered = ordered.Take(take.Value);
 
-        return ordered.ToListAsync(cancellationToken);
+        return ordered.Select(s => new SoftwareDto
+                      {
+                          Id            = s.Id,
+                          Name          = s.Name,
+                          FamilyId      = s.FamilyId,
+                          Family        = s.Family != null ? s.Family.Name : null,
+                          Kind          = s.Kind,
+                          IsCompilation = false,
+                          FrontCoverId  = null
+                      })
+                     .ToListAsync(cancellationToken);
     }
 
     /// <summary>
