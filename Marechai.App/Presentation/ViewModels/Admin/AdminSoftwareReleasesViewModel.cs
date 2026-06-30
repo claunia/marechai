@@ -36,6 +36,10 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private bool _hasError;
     [ObservableProperty] private string _errorMessage = string.Empty;
     [ObservableProperty] private bool _isAdmin;
+    [ObservableProperty] private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
     [ObservableProperty] private bool _isEditing;
     [ObservableProperty] private bool _isEditingExisting;
     [ObservableProperty] private string _editPanelTitle = string.Empty;
@@ -107,11 +111,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private SoftwareDto? _selectedSoftware;
     [ObservableProperty] private string _softwareSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareDto> _softwareSuggestions = [];
-    private List<SoftwareDto>? _allSoftware;
 
     private int? _editingId;
     private int? _editingCompilationId;
-    private List<SoftwareReleaseDto>? _allReleases;
     private List<SoftwareVersionDto>? _allVersions;
     private List<SoftwarePlatformDto>? _allPlatforms;
     private List<UnM49Dto>? _allRegions;
@@ -162,6 +164,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         RemoveRegionCommand          = new AsyncRelayCommand<string>(RemoveRegionByDisplayAsync);
         AddLanguageCommand           = new AsyncRelayCommand(AddLanguageAsync);
         RemoveLanguageCommand        = new AsyncRelayCommand<string>(RemoveLanguageByDisplayAsync);
+        NextPageCommand              = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand          = new AsyncRelayCommand(PreviousPageAsync);
 
         CheckAdminRole();
     }
@@ -188,6 +192,16 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<string> RemoveRegionCommand          { get; }
     public IAsyncRelayCommand         AddLanguageCommand           { get; }
     public IAsyncRelayCommand<string> RemoveLanguageCommand        { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -221,8 +235,16 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         {
             IsLoading = true; HasError = false;
             Releases.Clear();
-            List<SoftwareReleaseDto> response = await _service.GetAllAsync();
-            _allReleases = response;
+            string? search = NullIfWhiteSpace(FilterText);
+            TotalCount = await _service.GetCountAsync(search);
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<SoftwareReleaseDto> response = await _service.GetPagedAsync(skip, PageSize, search);
 
             // Enrich SoftwareVersion display with software name
             if(_allVersions != null)
@@ -235,7 +257,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                     }
 
             foreach(SoftwareReleaseDto item in response) Releases.Add(item);
-            ApplyFilter();
+            ReplaceFilteredReleases(Releases);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -275,8 +297,6 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         try { _allSoundSynths = await _apiClient.SoundSynths.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading sound synths for picker"); }
 
-        try { _allSoftware = await _apiClient.Software.GetAsync(); }
-        catch(Exception ex) { _logger.LogError(ex, "Error loading software for picker"); }
     }
 
     private void OpenAdd()
@@ -448,16 +468,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
     public void ApplyFilter()
     {
-        FilteredReleases.Clear();
-        IEnumerable<SoftwareReleaseDto> source = (IEnumerable<SoftwareReleaseDto>?)_allReleases ?? Releases;
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(r =>
-                (r.Title != null && r.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (r.SoftwareVersion != null && r.SoftwareVersion.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (r.Platform != null && r.Platform.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (r.Regions != null && r.Regions.Any(rg => rg.RegionName != null && rg.RegionName.Contains(FilterText, StringComparison.OrdinalIgnoreCase))) ||
-                (r.Publisher != null && r.Publisher.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-        foreach(SoftwareReleaseDto item in source) FilteredReleases.Add(item);
+        _ = ReloadFromFirstPageAsync();
     }
 
     public void UpdateVersionSuggestions(string query)
@@ -1005,11 +1016,67 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private void UpdateSoftwareSuggestions(string query)
     {
         SoftwareSuggestions.Clear();
-        if(_allSoftware == null) return;
-        IEnumerable<SoftwareDto> source = _allSoftware;
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(s =>
-                s.Name != null && s.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(SoftwareDto match in source) SoftwareSuggestions.Add(match);
+        _ = UpdateSoftwareSuggestionsAsync(query);
+    }
+
+    private async Task UpdateSoftwareSuggestionsAsync(string query)
+    {
+        List<SoftwareDto>? source = await _apiClient.Software.Admin.GetAsync(config =>
+        {
+            config.QueryParameters.Take   = 50;
+            config.QueryParameters.Search = string.IsNullOrWhiteSpace(query) ? null : query;
+        });
+
+        SoftwareSuggestions.Clear();
+
+        if(source == null) return;
+
+        foreach(SoftwareDto match in source)
+            SoftwareSuggestions.Add(match);
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredReleases(IEnumerable<SoftwareReleaseDto> items)
+    {
+        FilteredReleases.Clear();
+
+        foreach(SoftwareReleaseDto item in items)
+            FilteredReleases.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

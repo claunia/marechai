@@ -33,12 +33,22 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private ObservableCollection<GpuDto> _filteredGpus = [];
 
     [ObservableProperty]
+    private List<int> _pageSizeOptions = [10, 25, 50, 100];
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 25;
+
+    [ObservableProperty]
+    private int _totalCount;
+
+    [ObservableProperty]
     private string _filterText = string.Empty;
 
     [ObservableProperty]
     private GpuDto? _selectedGpu;
-
-    private List<GpuDto>? _allGpus;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -167,6 +177,8 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         OpenPhotosCommand     = new RelayCommand<GpuDto>(OpenPhotos);
         OpenVideosCommand     = new RelayCommand<GpuDto>(OpenVideos);
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
+        NextPageCommand       = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand   = new AsyncRelayCommand(PreviousPageAsync);
         SaveGpuCommand        = new AsyncRelayCommand(SaveGpuAsync);
         CancelEditCommand     = new RelayCommand(CancelEdit);
         AddResolutionCommand  = new AsyncRelayCommand(AddResolutionAsync);
@@ -189,6 +201,8 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IRelayCommand<GpuDto>       OpenPhotosCommand { get; }
     public IRelayCommand<GpuDto>       OpenVideosCommand { get; }
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
+    public IAsyncRelayCommand          NextPageCommand { get; }
+    public IAsyncRelayCommand          PreviousPageCommand { get; }
     public IAsyncRelayCommand          SaveGpuCommand     { get; }
     public IRelayCommand               CancelEditCommand  { get; }
     public IAsyncRelayCommand          AddResolutionCommand    { get; }
@@ -198,6 +212,11 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IRelayCommand               CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<GpuDescriptionDto> DeleteTranslationCommand { get; }
     public IRelayCommand<GpuDescriptionDto> EditTranslationCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? "0 items"
+                                     : $"{((CurrentPage - 1) * PageSize) + 1}-{Math.Min(CurrentPage * PageSize, TotalCount)} of {TotalCount}";
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -250,14 +269,34 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
             ErrorMessage = string.Empty;
             Gpus.Clear();
 
-            List<GpuDto>? response = await _apiClient.Gpus.GetAsync();
-            _allGpus = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.Gpus.Count.GetAsync(config =>
+            {
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            }) ?? 0;
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+
+            List<GpuDto>? response = await _apiClient.Gpus.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = PageSize;
+
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            });
 
             if(response != null)
                 foreach(GpuDto gpu in response)
                     Gpus.Add(gpu);
 
-            ApplyFilter();
+            ReplaceFilteredGpus(Gpus);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -643,20 +682,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
-        FilteredGpus.Clear();
-
-        IEnumerable<GpuDto> source = (IEnumerable<GpuDto>?)_allGpus ?? Gpus;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(g => (g.Name != null &&
-                                        g.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (g.Company != null &&
-                                        g.Company.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (g.ModelCode != null &&
-                                        g.ModelCode.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(GpuDto gpu in source)
-            FilteredGpus.Add(gpu);
+        _ = ReloadFromFirstPageAsync();
     }
 
     // --- Company search ---
@@ -722,6 +748,51 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         }
 
         RefreshAvailableResolutions();
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+
+        CurrentPage++;
+        await LoadGpusAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+
+        CurrentPage--;
+        await LoadGpusAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadGpusAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void ReplaceFilteredGpus(IEnumerable<GpuDto> items)
+    {
+        FilteredGpus.Clear();
+
+        foreach(GpuDto item in items)
+            FilteredGpus.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     private string FormatResolutionDisplay(ResolutionByGpuDto rel)

@@ -20,6 +20,46 @@ public class SoftwareService
 
     // --- CRUD ---
 
+    public async Task<List<SoftwareDto>> GetPagedAsync(int skip, int take, string? search = null)
+    {
+        try
+        {
+            List<SoftwareDto>? items = await _apiClient.Software.Admin.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = search;
+            });
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software page");
+
+            return [];
+        }
+    }
+
+    public async Task<int> GetCountAsync(string? search = null)
+    {
+        try
+        {
+            int? count = await _apiClient.Software.Admin.Count.GetAsync(config =>
+            {
+                config.QueryParameters.Search = search;
+            });
+
+            return count ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software count");
+
+            return 0;
+        }
+    }
+
     public async Task<List<SoftwareDto>> GetAllAsync()
     {
         try
@@ -31,6 +71,26 @@ public class SoftwareService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error fetching software");
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareDto>> SearchForPickerAsync(string? search, int take = 50)
+    {
+        try
+        {
+            List<SoftwareDto>? items = await _apiClient.Software.Admin.GetAsync(config =>
+            {
+                config.QueryParameters.Take   = take;
+                config.QueryParameters.Search = string.IsNullOrWhiteSpace(search) ? null : search;
+            });
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error searching software picker results");
 
             return [];
         }

@@ -29,9 +29,12 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynths = [];
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _filteredSoundSynths = [];
+    [ObservableProperty] private List<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
     [ObservableProperty] private string _filterText = string.Empty;
     [ObservableProperty] private SoundSynthDto? _selectedSoundSynth;
-    private List<SoundSynthDto>? _allSoundSynths;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _isDataLoaded;
@@ -109,6 +112,8 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         OpenPhotosCommand        = new RelayCommand<SoundSynthDto>(OpenPhotos);
         OpenVideosCommand        = new RelayCommand<SoundSynthDto>(OpenVideos);
         DeleteCommand            = new AsyncRelayCommand<SoundSynthDto>(DeleteAsync);
+        NextPageCommand          = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand      = new AsyncRelayCommand(PreviousPageAsync);
         SaveCommand              = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
         SaveDescriptionCommand   = new AsyncRelayCommand(SaveDescriptionAsync);
@@ -127,12 +132,19 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     public IRelayCommand<SoundSynthDto> OpenPhotosCommand { get; }
     public IRelayCommand<SoundSynthDto> OpenVideosCommand { get; }
     public IAsyncRelayCommand<SoundSynthDto> DeleteCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
     public IAsyncRelayCommand SaveCommand { get; }
     public IRelayCommand CancelEditCommand { get; }
     public IAsyncRelayCommand SaveDescriptionCommand { get; }
     public IRelayCommand CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<SoundSynthDescriptionDto> DeleteTranslationCommand { get; }
     public IRelayCommand<SoundSynthDescriptionDto> EditTranslationCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? "0 items"
+                                     : $"{((CurrentPage - 1) * PageSize) + 1}-{Math.Min(CurrentPage * PageSize, TotalCount)} of {TotalCount}";
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -174,15 +186,29 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         {
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             SoundSynths.Clear();
-
-            List<SoundSynthDto>? response = await _apiClient.SoundSynths.GetAsync();
-            _allSoundSynths = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.SoundSynths.Count.GetAsync(config =>
+            {
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            }) ?? 0;
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+            int skip = (CurrentPage - 1) * PageSize;
+            List<SoundSynthDto>? response = await _apiClient.SoundSynths.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = PageSize;
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            });
 
             if(response != null)
                 foreach(SoundSynthDto item in response)
                     SoundSynths.Add(item);
 
-            ApplyFilter();
+            ReplaceFilteredSoundSynths(SoundSynths);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -361,20 +387,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
 
     public void ApplyFilter()
     {
-        FilteredSoundSynths.Clear();
-
-        IEnumerable<SoundSynthDto> source = (IEnumerable<SoundSynthDto>?)_allSoundSynths ?? SoundSynths;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(s => (s.Name != null &&
-                                        s.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (s.Company != null &&
-                                        s.Company.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (s.ModelCode != null &&
-                                        s.ModelCode.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(SoundSynthDto item in source)
-            FilteredSoundSynths.Add(item);
+        _ = ReloadFromFirstPageAsync();
     }
 
     public void UpdateCompanySuggestions(string query)
@@ -644,5 +657,48 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
             CompanySearchText = string.Empty;
             SelectedCompany   = null;
         }
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+        CurrentPage++;
+        await LoadItemsAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+        CurrentPage--;
+        await LoadItemsAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadItemsAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void ReplaceFilteredSoundSynths(IEnumerable<SoundSynthDto> items)
+    {
+        FilteredSoundSynths.Clear();
+
+        foreach(SoundSynthDto item in items)
+            FilteredSoundSynths.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

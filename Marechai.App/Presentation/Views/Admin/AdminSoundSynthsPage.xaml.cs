@@ -30,4 +30,12 @@ public sealed partial class AdminSoundSynthsPage : Page
         if(DataContext is AdminSoundSynthsViewModel vm)
             vm.ApplyFilter();
     }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminSoundSynthsViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadItemsCommand.ExecuteAsync(null);
+    }
 }

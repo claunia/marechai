@@ -36,8 +36,6 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private CompanyDto? _selectedCompany;
 
-    private List<CompanyDto>? _allCompanies;
-
     [ObservableProperty]
     private bool _isLoading;
 
@@ -52,6 +50,18 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private bool _isAdmin;
+
+    [ObservableProperty]
+    private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 25;
+
+    [ObservableProperty]
+    private int _totalCount;
 
     // --- Edit panel state ---
     [ObservableProperty]
@@ -273,6 +283,8 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         OpenMergeCommand           = new RelayCommand<CompanyDto>(OpenMerge);
         ConfirmMergeCommand        = new AsyncRelayCommand(ConfirmMergeAsync);
         CancelMergeCommand         = new RelayCommand(CancelMerge);
+        NextPageCommand            = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand        = new AsyncRelayCommand(PreviousPageAsync);
 
         InitializeLanguages();
 
@@ -300,11 +312,21 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IRelayCommand<CompanyDto>                 OpenMergeCommand         { get; }
     public IAsyncRelayCommand                        ConfirmMergeCommand      { get; }
     public IRelayCommand                             CancelMergeCommand       { get; }
+    public IAsyncRelayCommand                        NextPageCommand          { get; }
+    public IAsyncRelayCommand                        PreviousPageCommand      { get; }
 
     public string MergeConfirmDialogTitle   => _localizer["MergeConfirmDialogTitle"];
     public string MergeConfirmDialogMessage => _localizer["MergeConfirmDialogMessage"];
     public string MergeButtonText           => _localizer["MergeButton"];
     public string CancelButtonText          => _localizer["CancelButton"];
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -357,8 +379,21 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
             ErrorMessage = string.Empty;
             Companies.Clear();
 
-            List<CompanyDto>? response = await _apiClient.Companies.GetAsync();
-            _allCompanies = response;
+            string? search = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.Companies.Count.GetAsync(config => config.QueryParameters.Search = search) ?? 0;
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<CompanyDto>? response = await _apiClient.Companies.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = PageSize;
+                config.QueryParameters.Search = search;
+            });
 
             // Also use as search source so we don't need a second API call
             _allCompaniesForSearch ??= response;
@@ -375,7 +410,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
                 }
             }
 
-            ApplyFilter();
+            ReplaceFilteredCompanies(Companies);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -729,20 +764,52 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
+        _ = ReloadFromFirstPageAsync();
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadCompaniesAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadCompaniesAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadCompaniesAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredCompanies(IEnumerable<CompanyDto> items)
+    {
         FilteredCompanies.Clear();
 
-        IEnumerable<CompanyDto> source = (IEnumerable<CompanyDto>?)_allCompanies ?? Companies;
+        foreach(CompanyDto item in items)
+            FilteredCompanies.Add(item);
+    }
 
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(c => (c.Name != null &&
-                                        c.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (c.LegalName != null &&
-                                        c.LegalName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (c.Country != null &&
-                                        c.Country.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(CompanyDto company in source)
-            FilteredCompanies.Add(company);
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     // --- SoldTo search ---

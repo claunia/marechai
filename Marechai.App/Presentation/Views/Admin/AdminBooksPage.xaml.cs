@@ -24,6 +24,14 @@ public sealed partial class AdminBooksPage : Page
             vm.ApplyFilter();
     }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminBooksViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadBooksCommand.ExecuteAsync(null);
+    }
+
     private void PreviousBookFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&

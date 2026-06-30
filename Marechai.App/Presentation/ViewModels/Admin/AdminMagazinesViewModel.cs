@@ -26,7 +26,10 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private ObservableCollection<MagazineDto> _filteredMagazines = [];
     [ObservableProperty] private string _filterText = string.Empty;
     [ObservableProperty] private MagazineDto? _selectedMagazine;
-    private List<MagazineDto>? _allMagazines;
+    [ObservableProperty] private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _isDataLoaded;
@@ -136,6 +139,8 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         RemoveMachineCommand         = new AsyncRelayCommand<string>(RemoveMachineByDisplayAsync);
         AddMachineFamilyCommand      = new AsyncRelayCommand(AddMachineFamilyAsync);
         RemoveMachineFamilyCommand   = new AsyncRelayCommand<string>(RemoveMachineFamilyByDisplayAsync);
+        NextPageCommand              = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand          = new AsyncRelayCommand(PreviousPageAsync);
 
         InitializeLanguages();
         CheckAdminRole();
@@ -164,6 +169,16 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveMachineCommand       { get; }
     public IAsyncRelayCommand         AddMachineFamilyCommand    { get; }
     public IAsyncRelayCommand<string> RemoveMachineFamilyCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -200,10 +215,18 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         {
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             Magazines.Clear();
-            List<MagazineDto> response = await _magazinesService.GetAllMagazinesAsync();
-            _allMagazines = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _magazinesService.GetMagazinesCountAsync(filter);
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<MagazineDto> response = await _magazinesService.GetMagazinesPageAsync(skip, PageSize, filter);
             foreach(MagazineDto m in response) Magazines.Add(m);
-            ApplyFilter();
+            ReplaceFilteredMagazines(Magazines);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -758,17 +781,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
-        FilteredMagazines.Clear();
-        IEnumerable<MagazineDto> source = (IEnumerable<MagazineDto>?)_allMagazines ?? Magazines;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(m =>
-                (m.Title != null      && m.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (m.NativeTitle != null && m.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (m.SortTitle != null  && m.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (m.Issn != null       && m.Issn.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(MagazineDto m in source) FilteredMagazines.Add(m);
+        _ = ReloadFromFirstPageAsync();
     }
 
     // --- Load picker data ---
@@ -877,5 +890,50 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         SelectedCountry = magazine.CountryId.HasValue
                               ? Countries.FirstOrDefault(c => c.Id == magazine.CountryId.Value)
                               : null;
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadMagazinesAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadMagazinesAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadMagazinesAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredMagazines(IEnumerable<MagazineDto> items)
+    {
+        FilteredMagazines.Clear();
+
+        foreach(MagazineDto item in items)
+            FilteredMagazines.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

@@ -32,6 +32,14 @@ public sealed partial class AdminCompaniesPage : Page
             vm.ApplyFilter();
     }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminCompaniesViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadCompaniesCommand.ExecuteAsync(null);
+    }
+
     private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&

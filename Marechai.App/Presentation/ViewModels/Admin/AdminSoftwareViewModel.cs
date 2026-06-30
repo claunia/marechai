@@ -38,6 +38,10 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private bool                               _hasError;
     [ObservableProperty] private string                            _errorMessage = string.Empty;
     [ObservableProperty] private bool                               _isAdmin;
+    [ObservableProperty] private ObservableCollection<int>         _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int                               _currentPage = 1;
+    [ObservableProperty] private int                               _pageSize = 25;
+    [ObservableProperty] private int                               _totalCount;
     [ObservableProperty] private bool                               _isEditing;
     [ObservableProperty] private bool                               _isEditingExisting;
     [ObservableProperty] private string                            _editPanelTitle = string.Empty;
@@ -71,11 +75,15 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string                                    _similarSoftwareSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareDto>          _similarSoftwareSuggestions = [];
 
-    private int?                        _editingId;
-    private List<SoftwareDto>?          _allSoftware;
-    private List<SoftwareFamilyDto>?    _allFamilies;
-    private List<CompanyDto>?           _allCompanies;
-    private List<ExternalSiteDto>?      _allExternalSites;
+    private int?                     _editingId;
+    private List<SoftwareFamilyDto>? _allFamilies;
+    private List<CompanyDto>?        _allCompanies;
+    private List<ExternalSiteDto>?   _allExternalSites;
+    private readonly object          _loadSync = new();
+    private Task?                    _activeLoadTask;
+    private Task?                    _activePickerLoadTask;
+    private bool                     _hasNavigatedLoadStarted;
+    private bool                     _pickerDataLoaded;
 
     // Description editing
     [ObservableProperty] private bool                                             _isEditingDescription;
@@ -106,7 +114,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         _regionManager         = regionManager;
         _dispatcherQueue       = DispatcherQueue.GetForCurrentThread();
 
-        LoadCommand         = new AsyncRelayCommand(LoadAsync);
+        LoadCommand         = new AsyncRelayCommand(() => EnsureLoadAsync(force: true));
         OpenAddCommand      = new RelayCommand(OpenAdd);
         OpenEditCommand     = new RelayCommand<SoftwareDto>(OpenEdit);
         DeleteCommand       = new AsyncRelayCommand<SoftwareDto>(DeleteAsync);
@@ -126,6 +134,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
         DeleteTranslationCommand   = new AsyncRelayCommand<SoftwareDescriptionDto>(DeleteTranslationAsync);
         EditTranslationCommand     = new RelayCommand<SoftwareDescriptionDto>(EditTranslation);
+        NextPageCommand            = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand        = new AsyncRelayCommand(PreviousPageAsync);
 
         CheckAdminRole();
         InitializeLanguages();
@@ -151,6 +161,16 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IRelayCommand                                CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<SoftwareDescriptionDto>   DeleteTranslationCommand { get; }
     public IRelayCommand<SoftwareDescriptionDto>        EditTranslationCommand   { get; }
+    public IAsyncRelayCommand                           NextPageCommand          { get; }
+    public IAsyncRelayCommand                           PreviousPageCommand      { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -158,11 +178,15 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin)
+        if(!IsAdmin) return;
+
+        if(!_hasNavigatedLoadStarted || !IsDataLoaded)
         {
-            _ = LoadCommand.ExecuteAsync(null);
-            _ = LoadPickerDataAsync();
+            _hasNavigatedLoadStarted = true;
+            _ = EnsureLoadAsync();
         }
+
+        _ = EnsurePickerDataLoadedAsync();
     }
 
     private void CheckAdminRole()
@@ -178,16 +202,37 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         catch { IsAdmin = false; }
     }
 
-    private async Task LoadAsync()
+    private Task EnsureLoadAsync(bool force = false)
+    {
+        lock(_loadSync)
+        {
+            if(!force && _activeLoadTask is { IsCompleted: false })
+                return _activeLoadTask;
+
+            _activeLoadTask = LoadAsyncCore();
+
+            return _activeLoadTask;
+        }
+    }
+
+    private async Task LoadAsyncCore()
     {
         try
         {
             IsLoading = true; HasError = false;
             SoftwareItems.Clear();
-            List<SoftwareDto> response = await _service.GetAllAsync();
-            _allSoftware = response;
+            string? search = NullIfWhiteSpace(FilterText);
+            TotalCount = await _service.GetCountAsync(search);
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<SoftwareDto> response = await _service.GetPagedAsync(skip, PageSize, search);
             foreach(SoftwareDto item in response) SoftwareItems.Add(item);
-            ApplyFilter();
+            ReplaceFilteredSoftware(SoftwareItems);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -199,7 +244,31 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         finally { IsLoading = false; }
     }
 
+    private Task EnsurePickerDataLoadedAsync(bool force = false)
+    {
+        lock(_loadSync)
+        {
+            if(!force)
+            {
+                if(_pickerDataLoaded)
+                    return Task.CompletedTask;
+
+                if(_activePickerLoadTask is { IsCompleted: false })
+                    return _activePickerLoadTask;
+            }
+
+            _activePickerLoadTask = LoadPickerDataAsyncCore();
+
+            return _activePickerLoadTask;
+        }
+    }
+
     public async Task LoadPickerDataAsync()
+    {
+        await EnsurePickerDataLoadedAsync(force: true);
+    }
+
+    private async Task LoadPickerDataAsyncCore()
     {
         try
         {
@@ -222,6 +291,8 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             foreach(ExternalSiteDto s in _allExternalSites) ExternalSites.Add(s);
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading external sites for picker"); }
+
+        _pickerDataLoaded = true;
     }
 
     private void OpenAdd()
@@ -274,7 +345,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         try
         {
             await _service.DeleteAsync(item.Id.Value);
-            await LoadAsync();
+            await EnsureLoadAsync(force: true);
         }
         catch(Exception ex)
         {
@@ -314,7 +385,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
 
             IsEditing = false;
             ClearForm();
-            await LoadAsync();
+            await EnsureLoadAsync(force: true);
         }
         catch(Exception ex)
         {
@@ -367,12 +438,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
 
     public void ApplyFilter()
     {
-        FilteredSoftware.Clear();
-        IEnumerable<SoftwareDto> source = (IEnumerable<SoftwareDto>?)_allSoftware ?? SoftwareItems;
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(s => (s.Name != null && s.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (s.Family != null && s.Family.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-        foreach(SoftwareDto item in source) FilteredSoftware.Add(item);
+        _ = ReloadFromFirstPageAsync();
     }
 
     public void UpdateFamilySuggestions(string query)
@@ -498,19 +564,18 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         catch(Exception ex) { _logger.LogError(ex, "Error loading similar software for software {Id}", softwareId); }
     }
 
-    public void UpdateSimilarSoftwareSuggestions(string query)
+    public async Task UpdateSimilarSoftwareSuggestionsAsync(string query)
     {
         SimilarSoftwareSuggestions.Clear();
-        if(_allSoftware == null) return;
 
-        IEnumerable<SoftwareDto> source = _allSoftware.Where(
+        List<SoftwareDto> source = await _service.SearchForPickerAsync(query);
+
+        IEnumerable<SoftwareDto> matches = source.Where(
             s => s.Id != _editingId &&
                  SimilarSoftware.All(r => r.SimilarSoftwareId != s.Id));
 
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(s => s.Name != null && s.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-
-        foreach(SoftwareDto match in source.Take(50)) SimilarSoftwareSuggestions.Add(match);
+        foreach(SoftwareDto match in matches.Take(50))
+            SimilarSoftwareSuggestions.Add(match);
     }
 
     private async Task AddSimilarSoftwareAsync()
@@ -731,5 +796,50 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         DescriptionSoftwareId = null;
         DescriptionMarkdown   = string.Empty;
         ExistingTranslations.Clear();
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return EnsureLoadAsync(force: true);
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return EnsureLoadAsync(force: true);
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await EnsureLoadAsync(force: true);
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredSoftware(IEnumerable<SoftwareDto> items)
+    {
+        FilteredSoftware.Clear();
+
+        foreach(SoftwareDto item in items)
+            FilteredSoftware.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

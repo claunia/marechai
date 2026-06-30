@@ -39,6 +39,14 @@ public sealed partial class UsersPage : Page
 
     private void UsersPage_Loaded(object sender, RoutedEventArgs e) { }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not UsersViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadUsersCommand.ExecuteAsync(null);
+    }
+
     private async void OnShowDialogRequested(object sender, string dialogType)
     {
         // Close any currently open dialog first

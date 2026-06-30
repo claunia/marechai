@@ -30,4 +30,12 @@ public sealed partial class AdminMachinesPage : Page
         if(DataContext is AdminMachinesViewModel vm)
             vm.ApplyFilter();
     }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminMachinesViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadItemsCommand.ExecuteAsync(null);
+    }
 }

@@ -28,9 +28,12 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     // --- List state ---
     [ObservableProperty] private ObservableCollection<MachineDto> _machines = [];
     [ObservableProperty] private ObservableCollection<MachineDto> _filteredMachines = [];
+    [ObservableProperty] private List<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
     [ObservableProperty] private string _filterText = string.Empty;
     [ObservableProperty] private MachineDto? _selectedMachine;
-    private List<MachineDto>? _allMachines;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _isDataLoaded;
@@ -160,6 +163,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         OpenAddCommand         = new RelayCommand(OpenAdd);
         OpenEditCommand        = new RelayCommand<MachineDto>(OpenEdit);
         DeleteCommand          = new AsyncRelayCommand<MachineDto>(DeleteAsync);
+        NextPageCommand        = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand    = new AsyncRelayCommand(PreviousPageAsync);
         SaveCommand            = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand      = new RelayCommand(CancelEdit);
 
@@ -196,6 +201,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IRelayCommand OpenAddCommand { get; }
     public IRelayCommand<MachineDto> OpenEditCommand { get; }
     public IAsyncRelayCommand<MachineDto> DeleteCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
     public IAsyncRelayCommand SaveCommand { get; }
     public IRelayCommand CancelEditCommand { get; }
 
@@ -221,6 +228,11 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IRelayCommand<MachineDto> OpenPhotosCommand { get; }
     public IRelayCommand<MachineDto> OpenVideosCommand { get; }
     public IRelayCommand<MachineDto> OpenPromoArtCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? "0 items"
+                                     : $"{((CurrentPage - 1) * PageSize) + 1}-{Math.Min(CurrentPage * PageSize, TotalCount)} of {TotalCount}";
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -254,10 +266,25 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         {
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             Machines.Clear();
-            List<MachineDto>? response = await _apiClient.Machines.GetAsync();
-            _allMachines = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.Machines.Count.GetAsync(config =>
+            {
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            }) ?? 0;
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+            int skip = (CurrentPage - 1) * PageSize;
+            List<MachineDto>? response = await _apiClient.Machines.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = PageSize;
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            });
             if(response != null) foreach(MachineDto m in response) Machines.Add(m);
-            ApplyFilter();
+            ReplaceFilteredMachines(Machines);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -586,13 +613,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
 
     public void ApplyFilter()
     {
-        FilteredMachines.Clear();
-        IEnumerable<MachineDto> source = (IEnumerable<MachineDto>?)_allMachines ?? Machines;
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(m => (m.Name != null && m.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (m.Company != null && m.Company.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (m.Model != null && m.Model.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-        foreach(MachineDto m in source) FilteredMachines.Add(m);
+        _ = ReloadFromFirstPageAsync();
     }
 
     public void UpdateCompanySuggestions(string query)
@@ -647,6 +668,47 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             LoadMachineStorageAsync(machineId),
             LoadMachineSoftwarePlatformsAsync(machineId)
         );
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+        CurrentPage++;
+        await LoadItemsAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+        CurrentPage--;
+        await LoadItemsAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadItemsAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void ReplaceFilteredMachines(IEnumerable<MachineDto> items)
+    {
+        FilteredMachines.Clear();
+        foreach(MachineDto item in items) FilteredMachines.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     // --- GPUs ---

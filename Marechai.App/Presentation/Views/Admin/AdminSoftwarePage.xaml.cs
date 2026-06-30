@@ -9,18 +9,20 @@ public sealed partial class AdminSoftwarePage : Page
     public AdminSoftwarePage()
     {
         InitializeComponent();
-        DataContextChanged += OnDataContextChanged;
-    }
-
-    private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-    {
-        if(DataContext is AdminSoftwareViewModel vm && vm.IsAdmin)
-            _ = vm.LoadPickerDataAsync();
     }
 
     private void FilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if(DataContext is AdminSoftwareViewModel vm) vm.ApplyFilter();
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareViewModel vm)
+            vm.ApplyFilter();
+    }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminSoftwareViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadCommand.ExecuteAsync(null);
     }
 
     private void FamilyFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -29,9 +31,9 @@ public sealed partial class AdminSoftwarePage : Page
             vm.UpdateFamilySuggestions(sender.Text);
     }
 
-    private void SimilarSoftwareFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private async void SimilarSoftwareFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareViewModel vm)
-            vm.UpdateSimilarSoftwareSuggestions(sender.Text);
+            await vm.UpdateSimilarSoftwareSuggestionsAsync(sender.Text);
     }
 }

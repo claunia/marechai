@@ -30,4 +30,12 @@ public sealed partial class AdminProcessorsPage : Page
         if(DataContext is AdminProcessorsViewModel vm)
             vm.ApplyFilter();
     }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminProcessorsViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadProcessorsCommand.ExecuteAsync(null);
+    }
 }

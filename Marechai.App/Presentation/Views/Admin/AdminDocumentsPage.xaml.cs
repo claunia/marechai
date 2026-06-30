@@ -24,6 +24,14 @@ public sealed partial class AdminDocumentsPage : Page
             vm.ApplyFilter();
     }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminDocumentsViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadDocumentsCommand.ExecuteAsync(null);
+    }
+
     private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&

@@ -35,8 +35,6 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private PersonDto? _selectedPerson;
 
-    private List<PersonDto>? _allPeople;
-
     [ObservableProperty]
     private bool _isLoading;
 
@@ -51,6 +49,18 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private bool _isAdmin;
+
+    [ObservableProperty]
+    private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 25;
+
+    [ObservableProperty]
+    private int _totalCount;
 
     [ObservableProperty]
     private bool _isEditing;
@@ -151,6 +161,8 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         CancelDescriptionCommand  = new RelayCommand(CancelDescription);
         DeleteTranslationCommand  = new AsyncRelayCommand<PersonDescriptionDto>(DeleteTranslationAsync);
         EditTranslationCommand    = new RelayCommand<PersonDescriptionDto>(EditTranslation);
+        NextPageCommand           = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand       = new AsyncRelayCommand(PreviousPageAsync);
 
         InitializeLanguages();
 
@@ -168,6 +180,16 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     public IRelayCommand                            CancelDescriptionCommand { get; }
     public IAsyncRelayCommand<PersonDescriptionDto> DeleteTranslationCommand { get; }
     public IRelayCommand<PersonDescriptionDto>      EditTranslationCommand   { get; }
+    public IAsyncRelayCommand                       NextPageCommand          { get; }
+    public IAsyncRelayCommand                       PreviousPageCommand      { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -216,14 +238,27 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
             ErrorMessage = string.Empty;
             People.Clear();
 
-            List<PersonDto>? response = await _apiClient.People.GetAsync();
-            _allPeople = response;
+            string? search = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.People.Count.GetAsync(config => config.QueryParameters.Search = search) ?? 0;
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<PersonDto>? response = await _apiClient.People.GetAsync(config =>
+            {
+                config.QueryParameters.Skip   = skip;
+                config.QueryParameters.Take   = PageSize;
+                config.QueryParameters.Search = search;
+            });
 
             if(response != null)
                 foreach(PersonDto item in response)
                     People.Add(item);
 
-            ApplyFilter();
+            ReplaceFilteredPeople(People);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -579,25 +614,52 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 
     public void ApplyFilter()
     {
+        _ = ReloadFromFirstPageAsync();
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadPeopleAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadPeopleAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadPeopleAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredPeople(IEnumerable<PersonDto> items)
+    {
         FilteredPeople.Clear();
 
-        IEnumerable<PersonDto> source = (IEnumerable<PersonDto>?)_allPeople ?? People;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(p =>
-                (p.Name != null &&
-                 p.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (p.Surname != null &&
-                 p.Surname.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (p.Alias != null &&
-                 p.Alias.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (p.DisplayName != null &&
-                 p.DisplayName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (p.Country != null &&
-                 p.Country.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(PersonDto item in source)
+        foreach(PersonDto item in items)
             FilteredPeople.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     public async Task LoadPickerDataAsync()

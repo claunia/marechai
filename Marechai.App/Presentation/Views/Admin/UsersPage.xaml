@@ -99,7 +99,7 @@
                 <Grid Visibility="{Binding IsDataLoaded, Converter={StaticResource BoolToVisibilityConverter}}"
                       Canvas.ZIndex="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" /> <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!-- Command Bar -->
@@ -190,6 +190,37 @@
                             </controls:DataGridTemplateColumn>
                         </controls:DataGrid.Columns>
                     </controls:DataGrid>
+
+                    <Grid Grid.Row="2"
+                          Margin="16,0,16,16"
+                          ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                Content="Previous"
+                                Command="{Binding PreviousPageCommand}"
+                                IsEnabled="{Binding CanGoPrevious}" />
+                        <Button Grid.Column="1"
+                                Content="Next"
+                                Command="{Binding NextPageCommand}"
+                                IsEnabled="{Binding CanGoNext}" />
+                        <TextBlock Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding PageSummary}" />
+                        <TextBlock Grid.Column="3"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding Source={StaticResource Strings}, Path=SoftwareAttributesPageSizeLabel}" />
+                        <ComboBox Grid.Column="4"
+                                  Width="96"
+                                  ItemsSource="{Binding PageSizeOptions}"
+                                  SelectedItem="{Binding PageSize, Mode=TwoWay}"
+                                  SelectionChanged="PageSizeCombo_SelectionChanged" />
+                    </Grid>
                 </Grid>
 
             </Grid>

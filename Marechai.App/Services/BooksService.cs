@@ -165,6 +165,49 @@ public class BooksService
 
     // --- CRUD ---
 
+    public async Task<List<BookDto>> GetBooksPageAsync(int skip, int take, string? filter = null)
+    {
+        try
+        {
+            List<BookDto>? books = await _apiClient.Books.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return books ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching books page");
+
+            return [];
+        }
+    }
+
+    public async Task<int> GetBooksCountAsync(string? filter)
+    {
+        try
+        {
+            int? result = await _apiClient.Books.Count.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching filtered books count");
+
+            return 0;
+        }
+    }
+
     public async Task<List<BookDto>> GetAllBooksAsync()
     {
         try

@@ -23,4 +23,12 @@ public sealed partial class AdminPeoplePage : Page
         if(DataContext is AdminPeopleViewModel vm)
             vm.ApplyFilter();
     }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminPeopleViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadPeopleCommand.ExecuteAsync(null);
+    }
 }

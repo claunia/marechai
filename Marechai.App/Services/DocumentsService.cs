@@ -116,6 +116,49 @@ public class DocumentsService
 
     // --- CRUD ---
 
+    public async Task<List<DocumentDto>> GetDocumentsPageAsync(int skip, int take, string? filter = null)
+    {
+        try
+        {
+            List<DocumentDto>? documents = await _apiClient.Documents.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return documents ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching documents page");
+
+            return [];
+        }
+    }
+
+    public async Task<int> GetDocumentsCountAsync(string? filter)
+    {
+        try
+        {
+            int? result = await _apiClient.Documents.Count.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching filtered documents count");
+
+            return 0;
+        }
+    }
+
     public async Task<List<DocumentDto>> GetAllDocumentsAsync()
     {
         try

@@ -25,7 +25,10 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private ObservableCollection<DocumentDto> _filteredDocuments = [];
     [ObservableProperty] private string _filterText = string.Empty;
     [ObservableProperty] private DocumentDto? _selectedDocument;
-    private List<DocumentDto>? _allDocuments;
+    [ObservableProperty] private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _isDataLoaded;
@@ -129,6 +132,8 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         RemoveMachineCommand         = new AsyncRelayCommand<string>(RemoveMachineByDisplayAsync);
         AddMachineFamilyCommand      = new AsyncRelayCommand(AddMachineFamilyAsync);
         RemoveMachineFamilyCommand   = new AsyncRelayCommand<string>(RemoveMachineFamilyByDisplayAsync);
+        NextPageCommand              = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand          = new AsyncRelayCommand(PreviousPageAsync);
 
         InitializeLanguages();
         CheckAdminRole();
@@ -156,6 +161,16 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveMachineCommand       { get; }
     public IAsyncRelayCommand         AddMachineFamilyCommand    { get; }
     public IAsyncRelayCommand<string> RemoveMachineFamilyCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -192,10 +207,18 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         {
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             Documents.Clear();
-            List<DocumentDto> response = await _documentsService.GetAllDocumentsAsync();
-            _allDocuments = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _documentsService.GetDocumentsCountAsync(filter);
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<DocumentDto> response = await _documentsService.GetDocumentsPageAsync(skip, PageSize, filter);
             foreach(DocumentDto d in response) Documents.Add(d);
-            ApplyFilter();
+            ReplaceFilteredDocuments(Documents);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -732,16 +755,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
-        FilteredDocuments.Clear();
-        IEnumerable<DocumentDto> source = (IEnumerable<DocumentDto>?)_allDocuments ?? Documents;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(d =>
-                (d.Title != null      && d.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (d.NativeTitle != null && d.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (d.SortTitle != null  && d.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(DocumentDto d in source) FilteredDocuments.Add(d);
+        _ = ReloadFromFirstPageAsync();
     }
 
     // --- Load picker data ---
@@ -844,5 +858,50 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         SelectedCountry = document.CountryId.HasValue
                               ? Countries.FirstOrDefault(c => c.Id == document.CountryId.Value)
                               : null;
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadDocumentsAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadDocumentsAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadDocumentsAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredDocuments(IEnumerable<DocumentDto> items)
+    {
+        FilteredDocuments.Clear();
+
+        foreach(DocumentDto item in items)
+            FilteredDocuments.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

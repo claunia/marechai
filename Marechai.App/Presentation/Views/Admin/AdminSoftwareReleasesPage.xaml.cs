@@ -23,6 +23,14 @@ public sealed partial class AdminSoftwareReleasesPage : Page
         if(DataContext is AdminSoftwareReleasesViewModel vm) vm.ApplyFilter();
     }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminSoftwareReleasesViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadCommand.ExecuteAsync(null);
+    }
+
     private void VersionFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)

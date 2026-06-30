@@ -32,6 +32,10 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _filterText = string.Empty;
     [ObservableProperty] private BookDto? _selectedBook;
     private List<BookDto>? _allBooks;
+    [ObservableProperty] private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _isDataLoaded;
@@ -160,6 +164,8 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         // Cover commands
         UploadCoverCommand           = new AsyncRelayCommand(UploadCoverAsync);
         DeleteCoverCommand           = new AsyncRelayCommand(DeleteCoverAsync);
+        NextPageCommand              = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand          = new AsyncRelayCommand(PreviousPageAsync);
 
         InitializeLanguages();
         CheckAdminRole();
@@ -190,6 +196,16 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
 
     public IAsyncRelayCommand UploadCoverCommand { get; }
     public IAsyncRelayCommand DeleteCoverCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -226,10 +242,18 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         {
             IsLoading = true; HasError = false; ErrorMessage = string.Empty;
             Books.Clear();
-            List<BookDto> response = await _booksService.GetAllBooksAsync();
-            _allBooks = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _booksService.GetBooksCountAsync(filter);
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<BookDto> response = await _booksService.GetBooksPageAsync(skip, PageSize, filter);
             foreach(BookDto b in response) Books.Add(b);
-            ApplyFilter();
+            ReplaceFilteredBooks(Books);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -791,17 +815,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
-        FilteredBooks.Clear();
-        IEnumerable<BookDto> source = (IEnumerable<BookDto>?)_allBooks ?? Books;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(b =>
-                (b.Title != null      && b.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (b.NativeTitle != null && b.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (b.SortTitle != null  && b.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (b.Isbn != null       && b.Isbn.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(BookDto b in source) FilteredBooks.Add(b);
+        _ = ReloadFromFirstPageAsync();
     }
 
     // --- Book search pickers ---
@@ -852,6 +866,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             foreach(DocumentRoleDto r in _allRolesList) AvailableRoles.Add(r);
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading document roles"); }
+
+        try { _allBooks = await _booksService.GetAllBooksAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading books for suggestions"); }
 
         try { _allPeopleList = await _apiClient.People.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading people"); }
@@ -1085,5 +1102,50 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             ErrorMessage = _localizer["FailedToDeleteCover"];
             HasError     = true;
         }
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private Task NextPageAsync()
+    {
+        if(!CanGoNext) return Task.CompletedTask;
+
+        CurrentPage++;
+
+        return LoadBooksAsync();
+    }
+
+    private Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return Task.CompletedTask;
+
+        CurrentPage--;
+
+        return LoadBooksAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadBooksAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private void ReplaceFilteredBooks(IEnumerable<BookDto> items)
+    {
+        FilteredBooks.Clear();
+
+        foreach(BookDto item in items)
+            FilteredBooks.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }

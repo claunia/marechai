@@ -73,6 +73,18 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ObservableCollection<UserDto> _users = [];
 
+    [ObservableProperty]
+    private List<int> _pageSizeOptions = [10, 25, 50, 100];
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 25;
+
+    [ObservableProperty]
+    private int _totalCount;
+
     public UsersViewModel(Client               apiClient, IJwtService      jwtService, ITokenService tokenService,
                           ILogger<UsersViewModel> logger,    IStringLocalizer localizer)
     {
@@ -93,6 +105,8 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
         SavePasswordCommand             = new AsyncRelayCommand(SavePasswordAsync);
         AddRoleCommand                  = new AsyncRelayCommand(AddRoleAsync);
         RemoveRoleCommand               = new AsyncRelayCommand<string>(RemoveRoleAsync);
+        NextPageCommand                 = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand             = new AsyncRelayCommand(PreviousPageAsync);
         CloseDialogCommand              = new RelayCommand(CloseDialog);
 
         // Check role immediately
@@ -132,9 +146,16 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand          SavePasswordCommand             { get; }
     public IAsyncRelayCommand          AddRoleCommand                  { get; }
     public IAsyncRelayCommand<string>  RemoveRoleCommand               { get; }
+    public IAsyncRelayCommand          NextPageCommand                 { get; }
+    public IAsyncRelayCommand          PreviousPageCommand             { get; }
     public IRelayCommand               CloseDialogCommand              { get; }
 
     public event EventHandler<string>? ShowDialogRequested;
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? "0 items"
+                                     : $"{((CurrentPage - 1) * PageSize) + 1}-{Math.Min(CurrentPage * PageSize, TotalCount)} of {TotalCount}";
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
 
@@ -159,8 +180,16 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
             HasError     = false;
             ErrorMessage = string.Empty;
             Users.Clear();
-
-            List<UserDto>? usersResponse = await _apiClient.Users.GetAsync();
+            TotalCount = await _apiClient.Users.Count.GetAsync() ?? 0;
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+            int skip = (CurrentPage - 1) * PageSize;
+            List<UserDto>? usersResponse = await _apiClient.Users.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = PageSize;
+            });
 
             if(usersResponse != null)
             {
@@ -179,6 +208,35 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
         {
             IsLoading = false;
         }
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+
+        CurrentPage++;
+        await LoadUsersAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+
+        CurrentPage--;
+        await LoadUsersAsync();
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     private async Task DeleteUserAsync(UserDto? user)

@@ -24,6 +24,14 @@ public sealed partial class AdminMagazinesPage : Page
             vm.ApplyFilter();
     }
 
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminMagazinesViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadMagazinesCommand.ExecuteAsync(null);
+    }
+
     private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&

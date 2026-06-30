@@ -30,4 +30,12 @@ public sealed partial class AdminGpusPage : Page
         if(DataContext is AdminGpusViewModel vm)
             vm.ApplyFilter();
     }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not AdminGpusViewModel vm) return;
+
+        vm.CurrentPage = 1;
+        await vm.LoadGpusCommand.ExecuteAsync(null);
+    }
 }

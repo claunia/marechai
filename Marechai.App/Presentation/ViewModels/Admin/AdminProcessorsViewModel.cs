@@ -33,12 +33,22 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private ObservableCollection<ProcessorDto> _filteredProcessors = [];
 
     [ObservableProperty]
+    private List<int> _pageSizeOptions = [10, 25, 50, 100];
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _pageSize = 25;
+
+    [ObservableProperty]
+    private int _totalCount;
+
+    [ObservableProperty]
     private string _filterText = string.Empty;
 
     [ObservableProperty]
     private ProcessorDto? _selectedProcessor;
-
-    private List<ProcessorDto>? _allProcessors;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -216,6 +226,8 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         OpenPhotosCommand        = new RelayCommand<ProcessorDto>(OpenPhotos);
         OpenVideosCommand        = new RelayCommand<ProcessorDto>(OpenVideos);
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
+        NextPageCommand          = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand      = new AsyncRelayCommand(PreviousPageAsync);
         SaveProcessorCommand     = new AsyncRelayCommand(SaveProcessorAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
         SaveDescriptionCommand   = new AsyncRelayCommand(SaveDescriptionAsync);
@@ -237,6 +249,8 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IRelayCommand<ProcessorDto>      OpenPhotosCommand        { get; }
     public IRelayCommand<ProcessorDto>      OpenVideosCommand        { get; }
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
+    public IAsyncRelayCommand               NextPageCommand { get; }
+    public IAsyncRelayCommand               PreviousPageCommand { get; }
     public IAsyncRelayCommand               SaveProcessorCommand     { get; }
     public IRelayCommand                    CancelEditCommand        { get; }
     public IAsyncRelayCommand               SaveDescriptionCommand   { get; }
@@ -245,6 +259,11 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IRelayCommand<ProcessorDescriptionDto> EditTranslationCommand { get; }
     public IAsyncRelayCommand               AddExtensionCommand      { get; }
     public IAsyncRelayCommand<InstructionSetExtensionByProcessorDto> RemoveExtensionCommand { get; }
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? "0 items"
+                                     : $"{((CurrentPage - 1) * PageSize) + 1}-{Math.Min(CurrentPage * PageSize, TotalCount)} of {TotalCount}";
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -297,14 +316,34 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
             ErrorMessage = string.Empty;
             Processors.Clear();
 
-            List<ProcessorDto>? response = await _apiClient.Processors.GetAsync();
-            _allProcessors = response;
+            string? filter = NullIfWhiteSpace(FilterText);
+            TotalCount = await _apiClient.Processors.Count.GetAsync(config =>
+            {
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            }) ?? 0;
+
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+
+            List<ProcessorDto>? response = await _apiClient.Processors.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = PageSize;
+
+                if(filter != null)
+                    config.QueryParameters.Filters = [filter];
+            });
 
             if(response != null)
                 foreach(ProcessorDto proc in response)
                     Processors.Add(proc);
 
-            ApplyFilter();
+            ReplaceFilteredProcessors(Processors);
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -479,20 +518,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     // --- Filtering ---
     public void ApplyFilter()
     {
-        FilteredProcessors.Clear();
-
-        IEnumerable<ProcessorDto> source = (IEnumerable<ProcessorDto>?)_allProcessors ?? Processors;
-
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            source = source.Where(p => (p.Name != null &&
-                                        p.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (p.Company != null &&
-                                        p.Company.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                                       (p.ModelCode != null &&
-                                        p.ModelCode.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
-
-        foreach(ProcessorDto proc in source)
-            FilteredProcessors.Add(proc);
+        _ = ReloadFromFirstPageAsync();
     }
 
     private void InitializeLanguages()
@@ -761,6 +787,51 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
             ErrorMessage = _localizer["FailedToDeleteTranslation"];
             HasError     = true;
         }
+    }
+
+    partial void OnCurrentPageChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnPageSizeChanged(int value) => NotifyPaginationStateChanged();
+
+    partial void OnTotalCountChanged(int value) => NotifyPaginationStateChanged();
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+
+        CurrentPage++;
+        await LoadProcessorsAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+
+        CurrentPage--;
+        await LoadProcessorsAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadProcessorsAsync();
+    }
+
+    private static string? NullIfWhiteSpace(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void ReplaceFilteredProcessors(IEnumerable<ProcessorDto> items)
+    {
+        FilteredProcessors.Clear();
+
+        foreach(ProcessorDto item in items)
+            FilteredProcessors.Add(item);
+    }
+
+    private void NotifyPaginationStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 
     private void CancelDescription()

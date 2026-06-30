@@ -226,6 +226,49 @@ public class MagazinesService
         }
     }
 
+    public async Task<List<MagazineDto>> GetMagazinesPageAsync(int skip, int take, string? filter = null)
+    {
+        try
+        {
+            List<MagazineDto>? magazines = await _apiClient.Magazines.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return magazines ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching magazines page");
+
+            return [];
+        }
+    }
+
+    public async Task<int> GetMagazinesCountAsync(string? filter)
+    {
+        try
+        {
+            int? result = await _apiClient.Magazines.Count.GetAsync(config =>
+            {
+                if(!string.IsNullOrWhiteSpace(filter))
+                    config.QueryParameters.Filters = [filter];
+            });
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching filtered magazines count");
+
+            return 0;
+        }
+    }
+
     // --- CRUD ---
 
     public async Task<List<MagazineDto>> GetAllMagazinesAsync()
