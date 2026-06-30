@@ -11,55 +11,38 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid utu:SafeArea.Insets="VisibleBounds">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="SidebarColumn"
-                              Width="280" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Sidebar -->
-        <Grid x:Name="SidebarWrapper"
-              Grid.Row="0"
-              Grid.RowSpan="2"
-              Grid.Column="0"
-              Width="280"
-              HorizontalAlignment="Left">
-            <components:Sidebar x:Name="SidebarPanel"
-                                DataContext="{Binding}"
-                                VerticalAlignment="Stretch"
-                                Visibility="{Binding IsAdminSidebarActive, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
-            <admin:AdminSidebar x:Name="AdminSidebarPanel"
-                                DataContext="{Binding}"
-                                VerticalAlignment="Stretch"
-                                Visibility="{Binding IsAdminSidebarActive, Converter={StaticResource BoolToVisibilityConverter}}" />
-        </Grid>
-
-        <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           Grid.Column="1"
                            HorizontalContentAlignment="Stretch">
-            <utu:NavigationBar.MainCommand>
-                <AppBarButton Icon="GlobalNavigationButton"
-                              Command="{Binding ToggleSidebarCommand}"
-                              Label="Toggle Sidebar"
-                              AutomationProperties.Name="Toggle sidebar visibility" />
-            </utu:NavigationBar.MainCommand>
             <utu:NavigationBar.Content>
                 <Grid HorizontalAlignment="Stretch"
                       ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0"
+                    <Button Grid.Column="0"
+                            Command="{Binding ToggleSidebarCommand}"
+                            Padding="8"
+                            MinWidth="40"
+                            MinHeight="40"
+                            ToolTipService.ToolTip="Toggle sidebar"
+                            AutomationProperties.Name="Toggle sidebar visibility"
+                            VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE700;" />
+                    </Button>
+
+                    <TextBlock Grid.Column="1"
                                Text="{Binding Title}"
                                VerticalAlignment="Center" />
 
-                    <Grid Grid.Column="1"
+                    <Grid Grid.Column="2"
                           HorizontalAlignment="Stretch"
                           ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
@@ -138,11 +121,45 @@
             </utu:NavigationBar.Content>
         </utu:NavigationBar>
 
-        <!-- Content Region for Navigation -->
-        <ContentControl Grid.Row="1"
-                        Grid.Column="1"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        prism:RegionManager.RegionName="ContentRegion" />
+        <Grid x:Name="BodyGrid"
+              Grid.Row="1">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="LayoutStates"
+                                  CurrentStateChanged="OnLayoutStateChanged">
+                    <VisualState x:Name="Narrow" />
+                    <VisualState x:Name="Wide">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="760" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="DesktopSidebarHost.Visibility" Value="Visible" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="SidebarColumn"
+                                  Width="0" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="DesktopSidebarHost"
+                  Grid.Column="0"
+                  Visibility="Collapsed">
+                <components:Sidebar DataContext="{Binding}"
+                                    VerticalAlignment="Stretch"
+                                    Visibility="{Binding IsAdminSidebarActive, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
+                <admin:AdminSidebar DataContext="{Binding}"
+                                    VerticalAlignment="Stretch"
+                                    Visibility="{Binding IsAdminSidebarActive, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </Grid>
+
+            <ContentControl x:Name="ContentHost"
+                            Grid.Column="1"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            prism:RegionManager.RegionName="ContentRegion" />
+        </Grid>
     </Grid>
 </Page>

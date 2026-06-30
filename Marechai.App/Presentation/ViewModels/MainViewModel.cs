@@ -106,9 +106,12 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _sidebarContentVisible = true;
     [ObservableProperty]
+    private bool _isCompactLayout;
+    [ObservableProperty]
     private bool _isAuthenticatedUser;
     [ObservableProperty]
     private int _unreadMessagesCount;
+    private bool _wideLayoutSidebarOpen = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, IRegionManager regionManager,
                          NewsViewModel newsViewModel, SearchService searchService,
@@ -184,6 +187,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdvancedSearchCommand            = new RelayCommand(() => NavigateToAdvancedSearch(null));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
+        CloseSidebarCommand                       = new RelayCommand(() => IsSidebarOpen = false);
         SwitchToAdminSidebarCommand               = new RelayCommand(() => IsAdminSidebarActive = true);
         SwitchToMainSidebarCommand                = new RelayCommand(() => IsAdminSidebarActive = false);
         NavigateToSearchResultCommand              = new RelayCommand<SearchResultDto>(NavigateToSearchResult);
@@ -261,10 +265,34 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdvancedSearchCommand           { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
+    public ICommand CloseSidebarCommand                       { get; }
     public ICommand SwitchToAdminSidebarCommand               { get; }
     public ICommand SwitchToMainSidebarCommand                { get; }
     public ICommand NavigateToSearchResultCommand              { get; }
     public ICommand SubmitGlobalSearchCommand                  { get; }
+
+    public bool ShowsCompactSidebarRail => !IsCompactLayout && !IsSidebarOpen;
+
+    public void ApplyResponsiveLayout(double width)
+    {
+        if(width <= 0) return;
+
+        bool isCompact = width < 760;
+
+        if(isCompact == IsCompactLayout) return;
+
+        if(isCompact)
+        {
+            _wideLayoutSidebarOpen = IsSidebarOpen;
+            IsCompactLayout        = true;
+            IsSidebarOpen          = false;
+
+            return;
+        }
+
+        IsCompactLayout = false;
+        IsSidebarOpen   = _wideLayoutSidebarOpen;
+    }
 
     private async void UpdateLoginLogoutButtonText()
     {
@@ -343,6 +371,7 @@ public partial class MainViewModel : ObservableObject
     private void NavigateTo(string viewName)
     {
         _regionManager.RequestNavigate(RegionNames.Content, viewName);
+        CloseSidebarIfCompact();
     }
 
     void OnUnreadCountChanged(object? sender, int count) => UnreadMessagesCount = count;
@@ -395,6 +424,7 @@ public partial class MainViewModel : ObservableObject
 
         SearchResultNavigator.NavigateTo(_regionManager, result);
         GlobalSearchQuery = string.Empty;
+        CloseSidebarIfCompact();
     }
 
     private void NavigateToAdvancedSearch(string? query)
@@ -405,7 +435,28 @@ public partial class MainViewModel : ObservableObject
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdvancedSearchPage), parameters);
         GlobalSearchQuery = string.Empty;
+        CloseSidebarIfCompact();
     }
 
     public Task InitializeMessagingAsync() => _messageNotificationStateService.InitializeAsync();
+
+    partial void OnIsSidebarOpenChanged(bool value)
+    {
+        SidebarContentVisible = value;
+
+        if(!IsCompactLayout) _wideLayoutSidebarOpen = value;
+
+        OnPropertyChanged(nameof(ShowsCompactSidebarRail));
+    }
+
+    partial void OnIsCompactLayoutChanged(bool value)
+    {
+        SidebarContentVisible = IsSidebarOpen;
+        OnPropertyChanged(nameof(ShowsCompactSidebarRail));
+    }
+
+    void CloseSidebarIfCompact()
+    {
+        if(IsCompactLayout) IsSidebarOpen = false;
+    }
 }

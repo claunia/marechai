@@ -13,30 +13,56 @@
     <UserControl.Resources>
         <local:CollapseExpandIconConverter x:Key="CollapseExpandIconConverter" />
         <local:CollapseExpandTooltipConverter x:Key="CollapseExpandTooltipConverter" />
-        <SolidColorBrush x:Key="AdminSidebarBackground"
-                         Color="#6B1C1C" />
-        <SolidColorBrush x:Key="AdminSidebarForeground"
-                         Color="#F0F0F0" />
-        <SolidColorBrush x:Key="AdminSidebarDivider"
-                         Color="#8B3030" />
+        <SolidColorBrush x:Key="AdminSidebarBackground" Color="#6B1C1C" />
+        <SolidColorBrush x:Key="AdminSidebarForeground" Color="#F0F0F0" />
+        <SolidColorBrush x:Key="AdminSidebarDivider" Color="#8B3030" />
+        <FontFamily x:Key="MaterialIconsFontFamily">ms-appx:///Assets/Fonts/MaterialIcons-Regular.ttf#Material Icons</FontFamily>
+
+        <Style x:Key="AdminSidebarNavButtonStyle" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="16,10,16,10" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource AdminSidebarForeground}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
+        <Style x:Key="AdminSidebarCompactButtonStyle" TargetType="Button" BasedOn="{StaticResource AdminSidebarNavButtonStyle}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0,10,0,10" />
+            <Setter Property="MinWidth" Value="60" />
+        </Style>
+
+        <Style x:Key="AdminSidebarMaterialIconStyle" TargetType="FontIcon">
+            <Setter Property="FontFamily" Value="{StaticResource MaterialIconsFontFamily}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="{StaticResource AdminSidebarForeground}" />
+        </Style>
+
+        <Style x:Key="AdminSidebarButtonTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource AdminSidebarForeground}" />
+        </Style>
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource AdminSidebarBackground}"
-          RowSpacing="0">
+    <Grid Background="{StaticResource AdminSidebarBackground}" RowSpacing="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Sidebar Header with Collapse/Expand Button -->
         <Grid Grid.Row="0"
-              Padding="8,8,8,8"
+              Padding="8"
               BorderBrush="{StaticResource AdminSidebarDivider}"
               BorderThickness="0,0,0,1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Sidebar Title - Hidden when collapsed -->
             <TextBlock Grid.Column="0"
                        Text="{Binding AdminSidebarTitleText}"
                        FontSize="16"
@@ -44,15 +70,14 @@
                        Foreground="{StaticResource AdminSidebarForeground}"
                        VerticalAlignment="Center"
                        Padding="4,0,0,0"
-                       Visibility="{Binding SidebarContentVisible}" />
+                       Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-            <!-- Collapse/Expand Button - Always visible -->
             <Button Grid.Column="1"
                     Content="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandIconConverter}}"
                     Command="{Binding ToggleSidebarCommand}"
                     Background="Transparent"
                     Foreground="{StaticResource AdminSidebarForeground}"
-                    Padding="8,8,8,8"
+                    Padding="8"
                     CornerRadius="4"
                     ToolTipService.ToolTip="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandTooltipConverter}}"
                     FontSize="14"
@@ -61,429 +86,105 @@
                     HorizontalAlignment="Center" />
         </Grid>
 
-        <!-- Scrollable Navigation Items - Hidden when collapsed -->
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
-                      Padding="0"
-                      Visibility="{Binding SidebarContentVisible}">
-            <StackPanel Orientation="Vertical"
-                        Spacing="0"
-                        Padding="0">
-                <!-- User Management -->
-                <Button Content="{Binding UserManagementButtonText}"
-                        Command="{Binding NavigateToUsersCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Company Management -->
-                <Button Content="{Binding CompanyManagementButtonText}"
-                        Command="{Binding NavigateToAdminCompaniesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- GPU Management -->
-                <Button Content="{Binding GpuManagementButtonText}"
-                        Command="{Binding NavigateToAdminGpusCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Processor Management -->
-                <Button Content="{Binding ProcessorManagementButtonText}"
-                        Command="{Binding NavigateToAdminProcessorsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Instruction Set Management -->
-                <Button Content="{Binding InstructionSetManagementButtonText}"
-                        Command="{Binding NavigateToAdminInstructionSetsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- ISA Extension Management -->
-                <Button Content="{Binding ISExtensionManagementButtonText}"
-                        Command="{Binding NavigateToAdminISExtensionsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Resolution Management -->
-                <Button Content="{Binding ResolutionManagementButtonText}"
-                        Command="{Binding NavigateToAdminResolutionsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Sound Synth Management -->
-                <Button Content="{Binding SoundSynthManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoundSynthsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Screen Management -->
-                <Button Content="{Binding ScreenManagementButtonText}"
-                        Command="{Binding NavigateToAdminScreensCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Machine Management -->
-                <Button Content="{Binding MachineManagementButtonText}"
-                        Command="{Binding NavigateToAdminMachinesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Machine Family Management -->
-                <Button Content="{Binding MachineFamilyManagementButtonText}"
-                        Command="{Binding NavigateToAdminMachineFamiliesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- People Management -->
-                <Button Content="{Binding PeopleManagementButtonText}"
-                        Command="{Binding NavigateToAdminPeopleCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Book Management -->
-                <Button Content="{Binding BookManagementButtonText}"
-                        Command="{Binding NavigateToAdminBooksCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Document Management -->
-                <Button Content="{Binding DocumentManagementButtonText}"
-                        Command="{Binding NavigateToAdminDocumentsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Magazine Management -->
-                <Button Content="{Binding MagazineManagementButtonText}"
-                        Command="{Binding NavigateToAdminMagazinesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Management -->
-                <Button Content="{Binding SoftwareAdminManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Message Reports -->
-                <Button Content="{Binding MessageReportsManagementButtonText}"
-                        Command="{Binding NavigateToAdminMessageReportsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Invitation Codes -->
-                <Button Content="{Binding InvitationCodesManagementButtonText}"
-                        Command="{Binding NavigateToAdminInvitationCodesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Review Reports -->
-                <Button Content="{Binding ReviewReportsManagementButtonText}"
-                        Command="{Binding NavigateToAdminReviewReportsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Suggestions Queue -->
-                <Button Content="{Binding SuggestionsManagementButtonText}"
-                        Command="{Binding NavigateToAdminSuggestionsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Release Management -->
-                <Button Content="{Binding SoftwareReleaseManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareReleasesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <Button Content="{Binding SoftwareAttributesManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareAttributesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Screenshot Management -->
-                <Button Content="{Binding SoftwareScreenshotManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareScreenshotsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Platform Management -->
-                <Button Content="{Binding SoftwarePlatformManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwarePlatformsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- External Site Management -->
-                <Button Content="{Binding ExternalSiteManagementButtonText}"
-                        Command="{Binding NavigateToAdminExternalSitesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Family Management -->
-                <Button Content="{Binding SoftwareFamilyManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareFamiliesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Duplicates Management -->
-                <Button Content="{Binding SoftwareDuplicatesManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareDuplicatesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Orphan Add-ons Management -->
-                <Button Content="{Binding SoftwareOrphanAddonsManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareOrphanAddonsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Compilations Management -->
-                <Button Content="{Binding SoftwareCompilationManagementButtonText}"
-                        Command="{Binding NavigateToAdminSoftwareCompilationsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <Button Content="{Binding WwpcImportsManagementButtonText}"
-                        Command="{Binding NavigateToAdminWwpcImportsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <Button Content="{Binding OldDosImportsManagementButtonText}"
-                        Command="{Binding NavigateToAdminOldDosImportsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
+                      Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToUsersCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF3D;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding UserManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminInvitationCodesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE8F6;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding InvitationCodesManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminReviewReportsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE153;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ReviewReportsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminMessageReportsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE160;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding MessageReportsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSuggestionsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE560;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SuggestionsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminOldDosImportsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE1A1;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding OldDosImportsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminWwpcImportsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE2C0;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding WwpcImportsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminCompaniesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE0AF;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding CompanyManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminMachinesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE30A;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding MachineManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminMachineFamiliesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE97A;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding MachineFamilyManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminGpusCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE322;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding GpuManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminProcessorsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE30D;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ProcessorManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminInstructionSetsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE4FD;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding InstructionSetManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminISExtensionsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE87B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ISExtensionManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminResolutionsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE85B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ResolutionManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminScreensCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF5B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ScreenManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoundSynthsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE405;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoundSynthManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminPeopleCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE7FB;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding PeopleManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminBooksCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEA19;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding BookManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminDocumentsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF42;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding DocumentManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminMagazinesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE666;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding MagazineManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE5C3;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareAdminManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareDuplicatesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEAEB;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareDuplicatesManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareOrphanAddonsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE87B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareOrphanAddonsManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareFamiliesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE617;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareFamilyManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwarePlatformsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE1B1;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwarePlatformManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminExternalSitesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE80B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ExternalSiteManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareReleasesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE019;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareReleaseManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareCompilationsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareCompilationManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareAttributesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE429;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareAttributesManagementButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareScreenshotsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareScreenshotManagementButtonText}" /></StackPanel></Button>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Bottom Fixed Items - Hidden when collapsed -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Visibility="{Binding ShowsCompactSidebarRail, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToUsersCommand}" ToolTipService.ToolTip="{Binding UserManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF3D;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminInvitationCodesCommand}" ToolTipService.ToolTip="{Binding InvitationCodesManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE8F6;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminReviewReportsCommand}" ToolTipService.ToolTip="{Binding ReviewReportsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE153;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminMessageReportsCommand}" ToolTipService.ToolTip="{Binding MessageReportsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE160;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSuggestionsCommand}" ToolTipService.ToolTip="{Binding SuggestionsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE560;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminOldDosImportsCommand}" ToolTipService.ToolTip="{Binding OldDosImportsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE1A1;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminWwpcImportsCommand}" ToolTipService.ToolTip="{Binding WwpcImportsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE2C0;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminCompaniesCommand}" ToolTipService.ToolTip="{Binding CompanyManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE0AF;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminMachinesCommand}" ToolTipService.ToolTip="{Binding MachineManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE30A;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminMachineFamiliesCommand}" ToolTipService.ToolTip="{Binding MachineFamilyManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE97A;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminGpusCommand}" ToolTipService.ToolTip="{Binding GpuManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE322;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminProcessorsCommand}" ToolTipService.ToolTip="{Binding ProcessorManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE30D;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminInstructionSetsCommand}" ToolTipService.ToolTip="{Binding InstructionSetManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE4FD;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminISExtensionsCommand}" ToolTipService.ToolTip="{Binding ISExtensionManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE87B;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminResolutionsCommand}" ToolTipService.ToolTip="{Binding ResolutionManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE85B;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminScreensCommand}" ToolTipService.ToolTip="{Binding ScreenManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF5B;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoundSynthsCommand}" ToolTipService.ToolTip="{Binding SoundSynthManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE405;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminPeopleCommand}" ToolTipService.ToolTip="{Binding PeopleManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE7FB;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminBooksCommand}" ToolTipService.ToolTip="{Binding BookManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEA19;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminDocumentsCommand}" ToolTipService.ToolTip="{Binding DocumentManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEF42;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminMagazinesCommand}" ToolTipService.ToolTip="{Binding MagazineManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE666;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareCommand}" ToolTipService.ToolTip="{Binding SoftwareAdminManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE5C3;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareDuplicatesCommand}" ToolTipService.ToolTip="{Binding SoftwareDuplicatesManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xEAEB;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareOrphanAddonsCommand}" ToolTipService.ToolTip="{Binding SoftwareOrphanAddonsManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE87B;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareFamiliesCommand}" ToolTipService.ToolTip="{Binding SoftwareFamilyManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE617;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwarePlatformsCommand}" ToolTipService.ToolTip="{Binding SoftwarePlatformManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE1B1;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminExternalSitesCommand}" ToolTipService.ToolTip="{Binding ExternalSiteManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE80B;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareReleasesCommand}" ToolTipService.ToolTip="{Binding SoftwareReleaseManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE019;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareCompilationsCommand}" ToolTipService.ToolTip="{Binding SoftwareCompilationManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareAttributesCommand}" ToolTipService.ToolTip="{Binding SoftwareAttributesManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE429;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareScreenshotsCommand}" ToolTipService.ToolTip="{Binding SoftwareScreenshotManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /></Button>
+            </StackPanel>
+        </ScrollViewer>
+
         <Grid Grid.Row="2"
               BorderBrush="{StaticResource AdminSidebarDivider}"
               BorderThickness="0,1,0,0"
               Padding="0"
-              Visibility="{Binding IsSidebarOpen}">
-            <StackPanel Orientation="Vertical"
-                        Spacing="0">
-                <!-- Back to Navigation -->
-                <Button Content="{Binding BackToMainButtonText}"
-                        Command="{Binding SwitchToMainSidebarCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
+              Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding SwitchToMainSidebarCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE5C4;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding BackToMainButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding LoginLogoutCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE897;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding LoginLogoutButtonText}" /></StackPanel></Button>
+                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToSettingsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE8B8;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SettingsButtonText}" /></StackPanel></Button>
+            </StackPanel>
+        </Grid>
 
-                <!-- Login/Logout -->
-                <Button Content="{Binding LoginLogoutButtonText}"
-                        Command="{Binding LoginLogoutCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Settings -->
-                <Button Content="{Binding SettingsButtonText}"
-                        Command="{Binding NavigateToSettingsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{StaticResource AdminSidebarForeground}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
+        <Grid Grid.Row="2"
+              BorderBrush="{StaticResource AdminSidebarDivider}"
+              BorderThickness="0,1,0,0"
+              Padding="0"
+              Visibility="{Binding ShowsCompactSidebarRail, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding SwitchToMainSidebarCommand}" ToolTipService.ToolTip="{Binding BackToMainButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE5C4;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding LoginLogoutCommand}" ToolTipService.ToolTip="{Binding LoginLogoutButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE897;" /></Button>
+                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToSettingsCommand}" ToolTipService.ToolTip="{Binding SettingsButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE8B8;" /></Button>
             </StackPanel>
         </Grid>
     </Grid>

@@ -14,24 +14,54 @@
     <UserControl.Resources>
         <local:CollapseExpandIconConverter x:Key="CollapseExpandIconConverter" />
         <local:CollapseExpandTooltipConverter x:Key="CollapseExpandTooltipConverter" />
+        <FontFamily x:Key="MaterialIconsFontFamily">ms-appx:///Assets/Fonts/MaterialIcons-Regular.ttf#Material Icons</FontFamily>
+
+        <Style x:Key="SidebarNavButtonStyle" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="16,10,16,10" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
+        <Style x:Key="SidebarCompactButtonStyle" TargetType="Button" BasedOn="{StaticResource SidebarNavButtonStyle}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0,10,0,10" />
+            <Setter Property="MinWidth" Value="60" />
+        </Style>
+
+        <Style x:Key="SidebarMaterialIconStyle" TargetType="FontIcon">
+            <Setter Property="FontFamily" Value="{StaticResource MaterialIconsFontFamily}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        </Style>
+
+        <Style x:Key="SidebarButtonTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        </Style>
     </UserControl.Resources>
 
-    <!-- Grid container - naturally responds to parent column width -->
-    <Grid RowSpacing="0">
+    <Grid Background="{ThemeResource NavigationViewDefaultPaneBackground}"
+          RowSpacing="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Sidebar Header with Collapse/Expand Button -->
         <Grid Grid.Row="0"
-              Padding="8,8,8,8"
+              Padding="8"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
               BorderThickness="0,0,0,1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Sidebar Title - Hidden when collapsed -->
             <TextBlock Grid.Column="0"
                        Text="{Binding SidebarTitleText}"
                        FontSize="16"
@@ -39,15 +69,14 @@
                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                        VerticalAlignment="Center"
                        Padding="4,0,0,0"
-                       Visibility="{Binding SidebarContentVisible}" />
+                       Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-            <!-- Collapse/Expand Button - Always visible -->
             <Button Grid.Column="1"
                     Content="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandIconConverter}}"
                     Command="{Binding ToggleSidebarCommand}"
                     Background="Transparent"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Padding="8,8,8,8"
+                    Padding="8"
                     CornerRadius="4"
                     ToolTipService.ToolTip="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandTooltipConverter}}"
                     FontSize="14"
@@ -56,302 +85,211 @@
                     HorizontalAlignment="Center" />
         </Grid>
 
-        <!-- Scrollable Navigation Items - Hidden when collapsed -->
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Padding="0"
-                      Visibility="{Binding SidebarContentVisible}">
+                      Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Orientation="Vertical"
                         Spacing="0"
                         Padding="0">
-                <!-- News -->
-                <Button Content="{Binding NewsButtonText}"
-                        Command="{Binding NavigateToNewsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Books -->
-                <Button Content="{Binding BooksButtonText}"
-                        Command="{Binding NavigateToBooksCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Companies -->
-                <Button Content="{Binding CompaniesButtonText}"
-                        Command="{Binding NavigateToCompaniesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Computers -->
-                <Button Content="{Binding ComputersButtonText}"
-                        Command="{Binding NavigateToComputersCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Consoles -->
-                <Button Content="{Binding ConsolesButtonText}"
-                        Command="{Binding NavigateToConsolesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Smartphones -->
-                <Button Content="{Binding SmartphonesButtonText}"
-                        Command="{Binding NavigateToSmartphonesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Pdas -->
-                <Button Content="{Binding PdasButtonText}"
-                        Command="{Binding NavigateToPdasCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Tablets -->
-                <Button Content="{Binding TabletsButtonText}"
-                        Command="{Binding NavigateToTabletsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Documents -->
-                <Button Content="{Binding DocumentsButtonText}"
-                        Command="{Binding NavigateToDocumentsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Dumps -->
-                <Button Content="{Binding DumpsButtonText}"
-                        Command="{Binding NavigateToDumpsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Graphical Processing Units -->
-                <Button Content="{Binding GpuButtonText}"
-                        Command="{Binding NavigateToGraphicalProcessingUnitsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Magazines -->
-                <Button Content="{Binding MagazinesButtonText}"
-                        Command="{Binding NavigateToMagazinesCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- People -->
-                <Button Content="{Binding PeopleButtonText}"
-                        Command="{Binding NavigateToPeopleCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Processors -->
-                <Button Content="{Binding ProcessorsButtonText}"
-                        Command="{Binding NavigateToProcessorsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software -->
-                <Button Content="{Binding SoftwareButtonText}"
-                        Command="{Binding NavigateToSoftwareCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Software Rankings -->
-                <Button Content="{Binding RankingsButtonText}"
-                        Command="{Binding NavigateToRankingsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Sound Synthesizers -->
-                <Button Content="{Binding SoundSynthesizersButtonText}"
-                        Command="{Binding NavigateToSoundSynthesizersCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Messages -->
-                <Button Content="{Binding MessagesButtonText}"
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToNewsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEB81;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding NewsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToBooksCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE865;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding BooksButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToCompaniesCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE0AF;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding CompaniesButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToComputersCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE30A;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding ComputersButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToConsolesCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA28;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding ConsolesButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToSmartphonesCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE32C;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding SmartphonesButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToPdasCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE1B1;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding PdasButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToTabletsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE32F;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding TabletsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToDocumentsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEF42;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding DocumentsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToDumpsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE1A1;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding DumpsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToGraphicalProcessingUnitsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE333;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding GpuButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToMagazinesCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA19;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding MagazinesButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToPeopleCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE7FB;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding PeopleButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToProcessorsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE322;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding ProcessorsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToSoftwareCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE5C3;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding SoftwareButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToRankingsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA23;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding RankingsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToSoundSynthesizersCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE405;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding SoundSynthesizersButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}"
                         Command="{Binding NavigateToMessagesCommand}"
-                        Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
+                        Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE158;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding MessagesButtonText}" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Bottom Fixed Items - Hidden when collapsed -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Visibility="{Binding ShowsCompactSidebarRail, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToNewsCommand}" ToolTipService.ToolTip="{Binding NewsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEB81;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToBooksCommand}" ToolTipService.ToolTip="{Binding BooksButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE865;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToCompaniesCommand}" ToolTipService.ToolTip="{Binding CompaniesButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE0AF;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToComputersCommand}" ToolTipService.ToolTip="{Binding ComputersButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE30A;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToConsolesCommand}" ToolTipService.ToolTip="{Binding ConsolesButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA28;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToSmartphonesCommand}" ToolTipService.ToolTip="{Binding SmartphonesButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE32C;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToPdasCommand}" ToolTipService.ToolTip="{Binding PdasButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE1B1;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToTabletsCommand}" ToolTipService.ToolTip="{Binding TabletsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE32F;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToDocumentsCommand}" ToolTipService.ToolTip="{Binding DocumentsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEF42;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToDumpsCommand}" ToolTipService.ToolTip="{Binding DumpsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE1A1;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToGraphicalProcessingUnitsCommand}" ToolTipService.ToolTip="{Binding GpuButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE333;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToMagazinesCommand}" ToolTipService.ToolTip="{Binding MagazinesButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA19;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToPeopleCommand}" ToolTipService.ToolTip="{Binding PeopleButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE7FB;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToProcessorsCommand}" ToolTipService.ToolTip="{Binding ProcessorsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE322;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToSoftwareCommand}" ToolTipService.ToolTip="{Binding SoftwareButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE5C3;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToRankingsCommand}" ToolTipService.ToolTip="{Binding RankingsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEA23;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToSoundSynthesizersCommand}" ToolTipService.ToolTip="{Binding SoundSynthesizersButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE405;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}"
+                        Command="{Binding NavigateToMessagesCommand}"
+                        ToolTipService.ToolTip="{Binding MessagesButtonText}"
+                        Visibility="{Binding IsAuthenticatedUser, Converter={StaticResource BoolToVisibilityConverter}}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE158;" /></Button>
+            </StackPanel>
+        </ScrollViewer>
+
         <Grid Grid.Row="2"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
               BorderThickness="0,1,0,0"
               Padding="0"
-              Visibility="{Binding IsSidebarOpen}">
-            <StackPanel Orientation="Vertical"
-                        Spacing="0">
-                <!-- Administration (Admin/UberAdmin only) -->
-                <Button Content="{Binding AdminSwitchButtonText}"
+              Visibility="{Binding SidebarContentVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource SidebarNavButtonStyle}"
                         Command="{Binding SwitchToAdminSidebarCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0"
-                        Visibility="{Binding IsAdminUser, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding IsAdminUser, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEF3D;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding AdminSwitchButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding LoginLogoutCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE897;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding LoginLogoutButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToSettingsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE8B8;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding SettingsButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToAboutCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE88E;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding AboutButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SidebarNavButtonStyle}" Command="{Binding NavigateToContactCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE0D0;" />
+                        <TextBlock Style="{StaticResource SidebarButtonTextStyle}" Text="{Binding ContactButtonText}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
 
-                <!-- Login/Logout -->
-                <Button Content="{Binding LoginLogoutButtonText}"
-                        Command="{Binding LoginLogoutCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Settings -->
-                <Button Content="{Binding SettingsButtonText}"
-                        Command="{Binding NavigateToSettingsCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- About -->
-                <Button Content="{Binding AboutButtonText}"
-                        Command="{Binding NavigateToAboutCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
-
-                <!-- Contact -->
-                <Button Content="{Binding ContactButtonText}"
-                        Command="{Binding NavigateToContactCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="16,10,16,10"
-                        FontSize="13"
-                        Background="Transparent"
-                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                        BorderThickness="0"
-                        CornerRadius="0" />
+        <Grid Grid.Row="2"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0"
+              Padding="0"
+              Visibility="{Binding ShowsCompactSidebarRail, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Vertical" Spacing="0">
+                <Button Style="{StaticResource SidebarCompactButtonStyle}"
+                        Command="{Binding SwitchToAdminSidebarCommand}"
+                        ToolTipService.ToolTip="{Binding AdminSwitchButtonText}"
+                        Visibility="{Binding IsAdminUser, Converter={StaticResource BoolToVisibilityConverter}}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xEF3D;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding LoginLogoutCommand}" ToolTipService.ToolTip="{Binding LoginLogoutButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE897;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToSettingsCommand}" ToolTipService.ToolTip="{Binding SettingsButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE8B8;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToAboutCommand}" ToolTipService.ToolTip="{Binding AboutButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE88E;" /></Button>
+                <Button Style="{StaticResource SidebarCompactButtonStyle}" Command="{Binding NavigateToContactCommand}" ToolTipService.ToolTip="{Binding ContactButtonText}"><FontIcon Style="{StaticResource SidebarMaterialIconStyle}" Glyph="&#xE0D0;" /></Button>
             </StackPanel>
         </Grid>
     </Grid>

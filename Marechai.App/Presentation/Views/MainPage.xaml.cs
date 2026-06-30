@@ -1,101 +1,101 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Marechai.ApiClient.Models;
 using Marechai.App.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 
 namespace Marechai.App.Presentation.Views;
 
 public sealed partial class MainPage : Page
 {
-    private PropertyChangedEventHandler _sidebarPropertyChangedHandler;
+    private const double ExpandedSidebarWidth = 280;
+    private const double CompactSidebarWidth  = 60;
+
+    private INotifyPropertyChanged? _observedViewModel;
+    private bool _isWideLayout;
 
     public MainPage()
     {
         InitializeComponent();
         DataContextChanged += MainPage_DataContextChanged;
         Loaded             += MainPage_Loaded;
+        SizeChanged        += MainPage_SizeChanged;
     }
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
         if(DataContext is not MainViewModel viewModel) return;
 
-        SidebarWrapper.Width = viewModel.IsSidebarOpen ? 280 : 60;
         _ = viewModel.InitializeMessagingAsync();
-
-        if(_sidebarPropertyChangedHandler != null) return;
-
-        _sidebarPropertyChangedHandler = (_, propArgs) =>
-        {
-            if(propArgs.PropertyName != nameof(MainViewModel.IsSidebarOpen)) return;
-
-            AnimateSidebarWidth(((MainViewModel)DataContext).IsSidebarOpen);
-        };
-
-        ((INotifyPropertyChanged)viewModel).PropertyChanged += _sidebarPropertyChangedHandler;
+        UpdateResponsiveMode(viewModel);
+        UpdateShellLayout(viewModel);
     }
 
-    void AnimateSidebarWidth(bool isOpen)
+    private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        double start = SidebarColumn.Width.Value;
-        double end   = isOpen ? 280 : 60;
+        if(DataContext is not MainViewModel viewModel) return;
 
-        if(Math.Abs(start - end) < 0.1) return;
-
-        // If expanding, show content immediately
-        if(isOpen && DataContext is MainViewModel vm) vm.SidebarContentVisible = true;
-
-        const int durationMs  = 250;
-        const int fps         = 60;
-        var       steps       = (int)(durationMs / (1000.0 / fps));
-        var       currentStep = 0;
-
-        var timer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(1000.0 / fps)
-        };
-
-        timer.Tick += (_, _) =>
-        {
-            currentStep++;
-            double t = (double)currentStep / steps;
-
-            // Ease in-out cubic
-            double eased = t < 0.5 ? 4           * t * t * t : 1 - Math.Pow(-2 * t + 2, 3) / 2;
-            double value = start + (end - start) * eased;
-            SidebarColumn.Width  = new GridLength(value, GridUnitType.Pixel);
-            SidebarWrapper.Width = value;
-
-            if(currentStep >= steps)
-            {
-                SidebarColumn.Width  = new GridLength(end, GridUnitType.Pixel);
-                SidebarWrapper.Width = end;
-                timer.Stop();
-
-                // After collapse animation completes, hide sidebar content
-                if(!isOpen && DataContext is MainViewModel vm) vm.SidebarContentVisible = false;
-            }
-        };
-
-        timer.Start();
+        UpdateResponsiveMode(viewModel);
+        UpdateShellLayout(viewModel);
     }
 
     private void MainPage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
-        if(args.NewValue is MainViewModel vm && _sidebarPropertyChangedHandler == null)
+        if(_observedViewModel is not null)
+            _observedViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+
+        if(args.NewValue is not MainViewModel vm) return;
+
+        _observedViewModel = vm;
+        _observedViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
+        UpdateResponsiveMode(vm);
+        UpdateShellLayout(vm);
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(sender is not MainViewModel viewModel) return;
+
+        if(e.PropertyName is nameof(MainViewModel.IsSidebarOpen) or nameof(MainViewModel.IsCompactLayout))
+            UpdateShellLayout(viewModel);
+    }
+
+    private void OnLayoutStateChanged(object sender, VisualStateChangedEventArgs e)
+    {
+        _isWideLayout = e.NewState?.Name == "Wide";
+
+        if(DataContext is MainViewModel viewModel)
         {
-            SidebarWrapper.Width = vm.IsSidebarOpen ? 280 : 60;
-
-            _sidebarPropertyChangedHandler = (_, propArgs) =>
-            {
-                if(propArgs.PropertyName != nameof(MainViewModel.IsSidebarOpen)) return;
-                AnimateSidebarWidth(vm.IsSidebarOpen);
-            };
-
-            ((INotifyPropertyChanged)vm).PropertyChanged += _sidebarPropertyChangedHandler;
+            UpdateResponsiveMode(viewModel);
+            UpdateShellLayout(viewModel);
         }
+    }
+
+    private void UpdateResponsiveMode(MainViewModel viewModel)
+    {
+        double width = ActualWidth;
+
+        if(width <= 0 && XamlRoot is not null) width = XamlRoot.Size.Width;
+        if(width <= 0) width = _isWideLayout ? 760 : 759;
+
+        viewModel.ApplyResponsiveLayout(width);
+        _isWideLayout = !viewModel.IsCompactLayout;
+    }
+
+    private void UpdateShellLayout(MainViewModel viewModel)
+    {
+        if(_isWideLayout)
+        {
+            SidebarColumn.Width           = new GridLength(viewModel.IsSidebarOpen ? ExpandedSidebarWidth : CompactSidebarWidth, GridUnitType.Pixel);
+            DesktopSidebarHost.Visibility = Visibility.Visible;
+
+            return;
+        }
+
+        SidebarColumn.Width           = new GridLength(viewModel.IsSidebarOpen ? ExpandedSidebarWidth : 0, GridUnitType.Pixel);
+        DesktopSidebarHost.Visibility = viewModel.IsSidebarOpen ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void OnGlobalSearchSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
