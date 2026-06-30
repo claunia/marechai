@@ -52,6 +52,7 @@ public partial class MessagesViewModel : ObservableObject, IRegionAware
 
     public bool IsInboxSelected => Folder == "inbox";
     public bool IsSentSelected => Folder == "sent";
+    public bool IsReportsSelected => Folder == "reports";
     public bool CanGoPrevious => CurrentPage > 1;
     public bool CanGoNext => CurrentPage * PageSize < TotalCount;
     public string PageSummary => TotalCount <= 0
@@ -78,6 +79,7 @@ public partial class MessagesViewModel : ObservableObject, IRegionAware
         CurrentPage = 1;
         OnPropertyChanged(nameof(IsInboxSelected));
         OnPropertyChanged(nameof(IsSentSelected));
+        OnPropertyChanged(nameof(IsReportsSelected));
         return LoadAsync();
     }
 
@@ -88,6 +90,18 @@ public partial class MessagesViewModel : ObservableObject, IRegionAware
         CurrentPage = 1;
         OnPropertyChanged(nameof(IsInboxSelected));
         OnPropertyChanged(nameof(IsSentSelected));
+        OnPropertyChanged(nameof(IsReportsSelected));
+        return LoadAsync();
+    }
+
+    [RelayCommand]
+    Task GoToReports()
+    {
+        Folder = "reports";
+        CurrentPage = 1;
+        OnPropertyChanged(nameof(IsInboxSelected));
+        OnPropertyChanged(nameof(IsSentSelected));
+        OnPropertyChanged(nameof(IsReportsSelected));
         return LoadAsync();
     }
 

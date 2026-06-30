@@ -41,6 +41,9 @@
                         Style="{ThemeResource AccentButtonStyle}" />
                 <Button Content="Sent"
                         Command="{Binding GoToSentCommand}" />
+                <Button Content="Reports"
+                        Command="{Binding GoToReportsCommand}"
+                        Visibility="{Binding IsAdmin}" />
                 <Button Content="Compose"
                         Command="{Binding OpenComposeCommand}" />
             </StackPanel>
