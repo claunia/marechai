@@ -316,6 +316,57 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     }
 
     [RelayCommand]
+    public Task NavigateToProcessor(ProcessorDisplayItem? processor)
+    {
+        if(processor is null || processor.Id <= 0) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.ProcessorId, processor.Id },
+            { NavParamKeys.MachineId, _currentMachineId },
+            { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task NavigateToGpu(GpuDisplayItem? gpu)
+    {
+        if(gpu is null || gpu.Id <= 0) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.GpuId, gpu.Id },
+            { NavParamKeys.MachineId, _currentMachineId },
+            { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task NavigateToSoundSynth(SoundSynthesizerDisplayItem? soundSynth)
+    {
+        if(soundSynth is null || soundSynth.Id <= 0) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoundSynthId, soundSynth.Id },
+            { NavParamKeys.MachineId, _currentMachineId },
+            { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public async Task OpenVideo(MachineVideoDisplayItem? video)
     {
         if(video?.LaunchUri is null) return;
@@ -424,6 +475,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
                     Processors.Add(new ProcessorDisplayItem
                     {
+                        Id           = processor.Id ?? 0,
                         DisplayName  = processor.Name    ?? string.Empty,
                         Manufacturer = processor.Company ?? string.Empty,
                         HasDetails   = details.Count > 0,
@@ -464,6 +516,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 {
                     Gpus.Add(new GpuDisplayItem
                     {
+                        Id              = gpu.Id ?? 0,
                         DisplayName     = LocalizeSpecialGpuName(gpu.Name),
                         Manufacturer    = gpu.Company ?? string.Empty,
                         HasManufacturer = !string.IsNullOrEmpty(gpu.Company)
@@ -483,6 +536,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
 
                     SoundSynthesizers.Add(new SoundSynthesizerDisplayItem
                     {
+                        Id          = synth.Id ?? 0,
                         DisplayName = LocalizeSpecialSoundSynthName(synth.Name),
                         HasDetails  = details.Count > 0,
                         DetailsText = string.Join(", ", details)

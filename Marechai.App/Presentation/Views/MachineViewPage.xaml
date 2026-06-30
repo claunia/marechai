@@ -204,22 +204,30 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource MetadataCardStyle}">
-                                        <StackPanel Spacing="8">
-                                            <TextBlock Text="{Binding DisplayName}"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{ThemeResource TextControlForeground}" />
-                                            <TextBlock Text="{Binding Manufacturer}"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                            <TextBlock Text="{Binding DetailsText}"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                       TextWrapping="Wrap"
-                                                       Visibility="{Binding HasDetails}" />
-                                        </StackPanel>
-                                    </Border>
+                                    <Button Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToProcessorCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}" />
+                                                <TextBlock Text="{Binding Manufacturer}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                <TextBlock Text="{Binding DetailsText}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                           TextWrapping="Wrap"
+                                                           Visibility="{Binding HasDetails}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -277,18 +285,26 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource MetadataCardStyle}">
-                                        <StackPanel Spacing="8">
-                                            <TextBlock Text="{Binding DisplayName}"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{ThemeResource TextControlForeground}" />
-                                            <TextBlock Text="{Binding Manufacturer}"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                       Visibility="{Binding HasManufacturer}" />
-                                        </StackPanel>
-                                    </Border>
+                                    <Button Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToGpuCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}" />
+                                                <TextBlock Text="{Binding Manufacturer}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                           Visibility="{Binding HasManufacturer}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -312,19 +328,27 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource MetadataCardStyle}">
-                                        <StackPanel Spacing="8">
-                                            <TextBlock Text="{Binding DisplayName}"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{ThemeResource TextControlForeground}" />
-                                            <TextBlock Text="{Binding DetailsText}"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                       TextWrapping="Wrap"
-                                                       Visibility="{Binding HasDetails}" />
-                                        </StackPanel>
-                                    </Border>
+                                    <Button Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToSoundSynthCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Style="{StaticResource MetadataCardStyle}">
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{ThemeResource TextControlForeground}" />
+                                                <TextBlock Text="{Binding DetailsText}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                           TextWrapping="Wrap"
+                                                           Visibility="{Binding HasDetails}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
