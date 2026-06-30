@@ -2697,6 +2697,27 @@
   <data name="SoundSynthVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
   <data name="SoundSynthVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
   <data name="SoundSynthVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
+  <data name="MachineVideosTitle" xml:space="preserve"><value>Machine Videos</value></data>
+  <data name="MachineVideosSubtitle" xml:space="preserve"><value>Link, review, and manage machine videos</value></data>
+  <data name="MachineVideosMgmtAccessDeniedTitle" xml:space="preserve"><value>Admin access required</value></data>
+  <data name="MachineVideosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an administrator to manage machine videos.</value></data>
+  <data name="MachineVideosLinkSectionTitle" xml:space="preserve"><value>Link Video</value></data>
+  <data name="MachineVideosLinkSectionSubtitle" xml:space="preserve"><value>Add a new video link for this machine using a YouTube URL, a YouTube video ID, or a custom provider/video ID pair.</value></data>
+  <data name="MachineVideosUrlInputLabel" xml:space="preserve"><value>YouTube URL or Video ID</value></data>
+  <data name="MachineVideosDetectedIdLabel" xml:space="preserve"><value>Detected Video ID</value></data>
+  <data name="MachineVideosAdvancedSectionTitle" xml:space="preserve"><value>Advanced</value></data>
+  <data name="MachineVideosManualIdLabel" xml:space="preserve"><value>Manual Video ID</value></data>
+  <data name="MachineVideosManualIdHelpText" xml:space="preserve"><value>Use this when the URL cannot be parsed or when you are linking a non-YouTube provider.</value></data>
+  <data name="MachineVideosLinkButton" xml:space="preserve"><value>Link Video</value></data>
+  <data name="MachineVideosEmptyMessage" xml:space="preserve"><value>No videos are linked to this machine yet.</value></data>
+  <data name="MachineVideosLoadFailed" xml:space="preserve"><value>Failed to load machine videos.</value></data>
+  <data name="MachineVideosLinkFailed" xml:space="preserve"><value>Failed to link machine video.</value></data>
+  <data name="MachineVideosUpdateFailed" xml:space="preserve"><value>Failed to update machine video.</value></data>
+  <data name="MachineVideosDeleteFailed" xml:space="preserve"><value>Failed to delete machine video.</value></data>
+  <data name="MachineVideosOpenFailed" xml:space="preserve"><value>Failed to open machine video.</value></data>
+  <data name="MachineVideosLinkedSuccessfully" xml:space="preserve"><value>Video linked successfully.</value></data>
+  <data name="MachineVideosUpdatedSuccessfully" xml:space="preserve"><value>Video updated successfully.</value></data>
+  <data name="MachineVideosDeletedSuccessfully" xml:space="preserve"><value>Video deleted successfully.</value></data>
   <data name="GpuPhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
   <data name="GpuPhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage GPU photos.</value></data>
   <data name="GpuPhotosBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
