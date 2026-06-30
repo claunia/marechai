@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -12,6 +13,25 @@ public sealed partial class SoundSynthPhotoDetailPage : Page
     public SoundSynthPhotoDetailPage()
     {
         InitializeComponent();
+        Loaded      += OnLoaded;
+        SizeChanged += OnSizeChanged;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e) => QueueLayoutRefresh();
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e) => QueueLayoutRefresh();
+
+    private async void QueueLayoutRefresh()
+    {
+        InvalidateMeasure();
+        InvalidateArrange();
+        UpdateLayout();
+
+        await Task.Yield();
+
+        InvalidateMeasure();
+        InvalidateArrange();
+        UpdateLayout();
     }
 
     private void ZoomIn_Click(object sender, RoutedEventArgs e)

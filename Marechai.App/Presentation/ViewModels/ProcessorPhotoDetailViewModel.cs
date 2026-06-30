@@ -364,6 +364,13 @@ public partial class ProcessorPhotoDetailViewModel : ObservableObject, IRegionAw
             Stream stream = await _photoCache.GetPhotoAsync(photoId);
 
             PhotoImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+
+            if(PhotoImageSource is null)
+            {
+                _logger.LogWarning("Processor photo image source was null for {PhotoId}", photoId);
+                ErrorOccurred = true;
+                ErrorMessage  = _localizer["Failed to load photo image"];
+            }
         }
         catch(Exception ex)
         {

@@ -51,7 +51,7 @@
         <Grid Grid.Row="1">
 
             <!-- Loading State -->
-            <StackPanel Visibility="{Binding IsLoading}"
+            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Padding="32"
@@ -68,7 +68,7 @@
             </StackPanel>
 
             <!-- Error State -->
-            <StackPanel Visibility="{Binding ErrorOccurred}"
+            <StackPanel Visibility="{Binding ErrorOccurred, Converter={StaticResource BoolToVisibilityConverter}}"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Padding="24"
@@ -82,7 +82,7 @@
             </StackPanel>
 
             <!-- Responsive Layout -->
-            <utu:ResponsiveView Visibility="{Binding PhotoImageSource, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <utu:ResponsiveView Visibility="{Binding IsLoading, Converter={StaticResource InvertBoolToVisibilityConverter}}">
 
                 <!-- Narrow Template -->
                 <utu:ResponsiveView.NarrowTemplate>

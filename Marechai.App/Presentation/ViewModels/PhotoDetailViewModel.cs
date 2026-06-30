@@ -387,6 +387,13 @@ public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
             Stream stream = await _photoCache.GetPhotoAsync(photoId);
 
             PhotoImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+
+            if(PhotoImageSource is null)
+            {
+                _logger.LogWarning("Machine photo image source was null for {PhotoId}", photoId);
+                ErrorOccurred = true;
+                ErrorMessage  = _localizer["Failed to load photo image"];
+            }
         }
         catch(Exception ex)
         {
