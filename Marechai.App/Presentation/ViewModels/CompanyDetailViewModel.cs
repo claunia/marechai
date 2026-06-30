@@ -55,6 +55,18 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private string _smartphonesFilterText = string.Empty;
 
     [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _tablets = [];
+
+    [ObservableProperty]
+    private string _tabletsFilterText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _pdas = [];
+
+    [ObservableProperty]
+    private string _pdasFilterText = string.Empty;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -65,6 +77,12 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private ObservableCollection<CompanyDetailMachine> _filteredSmartphones = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _filteredTablets = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailMachine> _filteredPdas = [];
 
     [ObservableProperty]
     private BitmapImage? _flagImageSource;
@@ -88,7 +106,31 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private string _descriptionHtml = string.Empty;
 
     [ObservableProperty]
-    private ObservableCollection<string> _people = [];
+    private ObservableCollection<CompanyDetailItem> _people = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _machineFamilies = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _gpus = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _processors = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _soundSynths = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _software = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _books = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _documents = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDetailItem> _magazines = [];
 
     public bool ShowPeople => People.Count > 0;
 
@@ -104,9 +146,28 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         _logger                  = logger;
         _regionManager           = regionManager;
         _imageSourceFactory      = imageSourceFactory;
-        LoadData                 = new AsyncRelayCommand(LoadDataAsync);
-        GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
-        NavigateToMachineCommand = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
+        LoadData                      = new AsyncRelayCommand(LoadDataAsync);
+        GoBackCommand                 = new AsyncRelayCommand(GoBackAsync);
+        NavigateToMachineCommand      = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
+        NavigateToSoldToCompanyCommand = new AsyncRelayCommand(NavigateToSoldToCompanyAsync);
+        NavigateToMachineFamilyCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(MachineFamilyViewPage), NavParamKeys.MachineFamilyId));
+        NavigateToGpuCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(GpuDetailPage), NavParamKeys.GpuId));
+        NavigateToProcessorCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(ProcessorDetailPage), NavParamKeys.ProcessorId));
+        NavigateToSoundSynthCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(SoundSynthDetailPage), NavParamKeys.SoundSynthId));
+        NavigateToSoftwareCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(SoftwareViewPage), NavParamKeys.SoftwareId));
+        NavigateToBookCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(BookViewPage), NavParamKeys.BookId, useLongId: true));
+        NavigateToDocumentCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(DocumentViewPage), NavParamKeys.DocumentId, useLongId: true));
+        NavigateToMagazineCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(MagazineViewPage), NavParamKeys.MagazineId, useLongId: true));
+        NavigateToPersonCommand = new AsyncRelayCommand<CompanyDetailItem>(item =>
+            NavigateToDetailAsync(item, nameof(PersonViewPage), NavParamKeys.PersonId));
         Title                    = _localizer["Company Details"];
     }
 
@@ -140,10 +201,20 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     /// </summary>
     public bool HasMultipleLogos => CompanyLogos.Count > 1;
 
-    public IAsyncRelayCommand                       LoadData                 { get; }
-    public ICommand                                 GoBackCommand            { get; }
-    public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand { get; }
-    public string                                   Title                    { get; }
+    public IAsyncRelayCommand                       LoadData                       { get; }
+    public ICommand                                 GoBackCommand                  { get; }
+    public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand       { get; }
+    public IAsyncRelayCommand                       NavigateToSoldToCompanyCommand { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToMachineFamilyCommand { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToGpuCommand           { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToProcessorCommand     { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToSoundSynthCommand    { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToSoftwareCommand      { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToBookCommand          { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToDocumentCommand      { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToMagazineCommand      { get; }
+    public IAsyncRelayCommand<CompanyDetailItem>    NavigateToPersonCommand        { get; }
+    public string                                   Title                          { get; }
 
     partial void OnCompanyChanged(CompanyDto? oldValue, CompanyDto? newValue)
     {
@@ -236,6 +307,46 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         FilteredSmartphones = filtered;
     }
 
+    partial void OnTabletsFilterTextChanged(string value)
+    {
+        FilterTablets(value);
+    }
+
+    private void FilterTablets(string filterText)
+    {
+        ObservableCollection<CompanyDetailMachine> filtered = string.IsNullOrWhiteSpace(filterText)
+                                                                  ? new ObservableCollection<
+                                                                      CompanyDetailMachine>(Tablets)
+                                                                  : new
+                                                                      ObservableCollection<
+                                                                          CompanyDetailMachine>(Tablets.Where(c =>
+                                                                          c.Name.Contains(filterText,
+                                                                              StringComparison
+                                                                                 .OrdinalIgnoreCase)));
+
+        FilteredTablets = filtered;
+    }
+
+    partial void OnPdasFilterTextChanged(string value)
+    {
+        FilterPdas(value);
+    }
+
+    private void FilterPdas(string filterText)
+    {
+        ObservableCollection<CompanyDetailMachine> filtered = string.IsNullOrWhiteSpace(filterText)
+                                                                  ? new ObservableCollection<
+                                                                      CompanyDetailMachine>(Pdas)
+                                                                  : new
+                                                                      ObservableCollection<
+                                                                          CompanyDetailMachine>(Pdas.Where(c =>
+                                                                          c.Name.Contains(filterText,
+                                                                              StringComparison
+                                                                                 .OrdinalIgnoreCase)));
+
+        FilteredPdas = filtered;
+    }
+
     private Task NavigateToMachineAsync(CompanyDetailMachine? machine)
     {
         if(machine == null) return Task.CompletedTask;
@@ -248,6 +359,38 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         };
 
         _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    private Task NavigateToSoldToCompanyAsync()
+    {
+        if(SoldToCompany?.Id == null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.CompanyId, SoldToCompany.Id.Value },
+            { NavParamKeys.NavigationSource, nameof(CompanyDetailViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(CompanyDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    private Task NavigateToDetailAsync(CompanyDetailItem? item, string pageName, string idParamKey,
+                                       bool             useLongId = false)
+    {
+        if(item == null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { idParamKey, useLongId ? item.Id : (int)item.Id },
+            { NavParamKeys.NavigationSource, nameof(CompanyDetailViewModel) },
+            { NavParamKeys.CompanyId, CompanyId }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, pageName, parameters);
 
         return Task.CompletedTask;
     }
@@ -505,6 +648,9 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
             List<MachineDto> machines = await _companyDetailService.GetComputersByCompanyAsync(CompanyId);
             Computers.Clear();
             Consoles.Clear();
+            Smartphones.Clear();
+            Tablets.Clear();
+            Pdas.Clear();
             FilteredComputers.Clear();
             FilteredConsoles.Clear();
 
@@ -525,12 +671,122 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                     Consoles.Add(machineItem);
                 else if(machine.Type == (int)MachineType.Smartphone)
                     Smartphones.Add(machineItem);
+                else if(machine.Type == (int)MachineType.Tablet)
+                    Tablets.Add(machineItem);
+                else if(machine.Type == (int)MachineType.Pda)
+                    Pdas.Add(machineItem);
             }
 
             // Initialize filtered lists
             FilteredComputers   = new ObservableCollection<CompanyDetailMachine>(Computers);
             FilteredConsoles    = new ObservableCollection<CompanyDetailMachine>(Consoles);
             FilteredSmartphones = new ObservableCollection<CompanyDetailMachine>(Smartphones);
+            FilteredTablets     = new ObservableCollection<CompanyDetailMachine>(Tablets);
+            FilteredPdas        = new ObservableCollection<CompanyDetailMachine>(Pdas);
+
+            // Load machine families designed by this company
+            try
+            {
+                List<MachineFamilyDto> families = await _companyDetailService.GetMachineFamiliesAsync(CompanyId);
+
+                MachineFamilies = new ObservableCollection<CompanyDetailItem>(families.Select(f =>
+                    new CompanyDetailItem { Id = f.Id ?? 0, Name = f.Name ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load machine families for company: {Exception}", ex.Message);
+            }
+
+            // Load GPUs manufactured by this company
+            try
+            {
+                List<GpuDto> gpus = await _companyDetailService.GetGpusAsync(CompanyId);
+
+                Gpus = new ObservableCollection<CompanyDetailItem>(gpus.Select(g =>
+                    new CompanyDetailItem { Id = g.Id ?? 0, Name = g.Name ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load GPUs for company: {Exception}", ex.Message);
+            }
+
+            // Load processors manufactured by this company
+            try
+            {
+                List<ProcessorDto> processors = await _companyDetailService.GetProcessorsAsync(CompanyId);
+
+                Processors = new ObservableCollection<CompanyDetailItem>(processors.Select(p =>
+                    new CompanyDetailItem { Id = p.Id ?? 0, Name = p.Name ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load processors for company: {Exception}", ex.Message);
+            }
+
+            // Load sound synthesizers made by this company
+            try
+            {
+                List<SoundSynthDto> soundSynths = await _companyDetailService.GetSoundSynthsAsync(CompanyId);
+
+                SoundSynths = new ObservableCollection<CompanyDetailItem>(soundSynths.Select(s =>
+                    new CompanyDetailItem { Id = s.Id ?? 0, Name = s.Name ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load sound synthesizers for company: {Exception}", ex.Message);
+            }
+
+            // Load software related to this company
+            try
+            {
+                List<SoftwareDto> software = await _companyDetailService.GetSoftwareAsync(CompanyId);
+
+                Software = new ObservableCollection<CompanyDetailItem>(software.Select(s =>
+                    new CompanyDetailItem { Id = s.Id ?? 0, Name = s.Name ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load software for company: {Exception}", ex.Message);
+            }
+
+            // Load books related to this company
+            try
+            {
+                List<BookDto> books = await _companyDetailService.GetBooksAsync(CompanyId);
+
+                Books = new ObservableCollection<CompanyDetailItem>(books.Select(b =>
+                    new CompanyDetailItem { Id = b.Id ?? 0, Name = b.Title ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load books for company: {Exception}", ex.Message);
+            }
+
+            // Load documents related to this company
+            try
+            {
+                List<DocumentDto> documents = await _companyDetailService.GetDocumentsAsync(CompanyId);
+
+                Documents = new ObservableCollection<CompanyDetailItem>(documents.Select(d =>
+                    new CompanyDetailItem { Id = d.Id ?? 0, Name = d.Title ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load documents for company: {Exception}", ex.Message);
+            }
+
+            // Load magazines related to this company
+            try
+            {
+                List<MagazineDto> magazines = await _companyDetailService.GetMagazinesAsync(CompanyId);
+
+                Magazines = new ObservableCollection<CompanyDetailItem>(magazines.Select(m =>
+                    new CompanyDetailItem { Id = m.Id ?? 0, Name = m.Title ?? string.Empty }));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load magazines for company: {Exception}", ex.Message);
+            }
 
             // Load people associated with this company
             try
@@ -558,7 +814,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                         display += $" ({start}–{end})";
                     }
 
-                    People.Add(display);
+                    People.Add(new CompanyDetailItem { Id = person.PersonId ?? 0, Name = display });
                 }
 
                 OnPropertyChanged(nameof(ShowPeople));

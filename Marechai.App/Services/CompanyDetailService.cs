@@ -233,4 +233,156 @@ public class CompanyDetailService
             return false;
         }
     }
+
+    /// <summary>
+    ///     Gets machine families designed by a company
+    /// </summary>
+    public async Task<List<MachineFamilyDto>> GetMachineFamiliesAsync(int companyId)
+    {
+        try
+        {
+            List<MachineFamilyDto>? families = await _apiClient.Companies[companyId].MachineFamilies.GetAsync();
+
+            return families ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching machine families for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets GPUs manufactured by a company
+    /// </summary>
+    public async Task<List<GpuDto>> GetGpusAsync(int companyId)
+    {
+        try
+        {
+            List<GpuDto>? gpus = await _apiClient.Companies[companyId].Gpus.GetAsync();
+
+            return gpus ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching GPUs for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets processors manufactured by a company
+    /// </summary>
+    public async Task<List<ProcessorDto>> GetProcessorsAsync(int companyId)
+    {
+        try
+        {
+            List<ProcessorDto>? processors = await _apiClient.Companies[companyId].Processors.GetAsync();
+
+            return processors ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching processors for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets sound synthesizers made by a company
+    /// </summary>
+    public async Task<List<SoundSynthDto>> GetSoundSynthsAsync(int companyId)
+    {
+        try
+        {
+            List<SoundSynthDto>? soundSynths = await _apiClient.Companies[companyId].SoundSynths.GetAsync();
+
+            return soundSynths ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching sound synthesizers for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets software related to a company
+    /// </summary>
+    public async Task<List<SoftwareDto>> GetSoftwareAsync(int companyId)
+    {
+        try
+        {
+            List<SoftwareDto>? software = await _apiClient.Companies[companyId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets books related to a company
+    /// </summary>
+    public async Task<List<BookDto>> GetBooksAsync(int companyId)
+    {
+        try
+        {
+            List<BookDto>? books = await _apiClient.Companies[companyId].Books.GetAsync();
+
+            return books ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching books for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets documents related to a company
+    /// </summary>
+    public async Task<List<DocumentDto>> GetDocumentsAsync(int companyId)
+    {
+        try
+        {
+            List<DocumentDto>? documents = await _apiClient.Companies[companyId].Documents.GetAsync();
+
+            return documents ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching documents for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets magazines related to a company
+    /// </summary>
+    public async Task<List<MagazineDto>> GetMagazinesAsync(int companyId)
+    {
+        try
+        {
+            List<MagazineDto>? magazines = await _apiClient.Companies[companyId].Magazines.GetAsync();
+
+            return magazines ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching magazines for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
 }

@@ -1052,6 +1052,26 @@ public class LocalizedStrings
     public string ReleasesTabHeader => _l["ReleasesTabHeader"];
     public string ReviewsTabHeader => _l["ReviewsTabHeader"];
     public string MachinesTabHeader => _l["MachinesTabHeader"];
+    public string HardwareTabHeader => _l["HardwareTabHeader"];
+    public string SoftwareMediaTabHeader => _l["SoftwareMediaTabHeader"];
+    public string PeopleTabHeader => _l["PeopleTabHeader"];
+    public string DescriptionTabHeader => _l["DescriptionTabHeader"];
+
+    // Company detail page: additional junction sections
+    public string SmartphonesText => _l["SmartphonesText"];
+    public string SmartphonesFilterBox_Placeholder => _l["SmartphonesFilterBox_Placeholder"];
+    public string TabletsText => _l["TabletsText"];
+    public string TabletsFilterBox_Placeholder => _l["TabletsFilterBox_Placeholder"];
+    public string PdasText => _l["PdasText"];
+    public string PdasFilterBox_Placeholder => _l["PdasFilterBox_Placeholder"];
+    public string MachineFamiliesText => _l["MachineFamiliesText"];
+    public string GpusText => _l["GpusText"];
+    public string ProcessorsText => _l["ProcessorsText"];
+    public string SoundSynthsText => _l["SoundSynthsText"];
+    public string CompanySoftwareText => _l["CompanySoftwareText"];
+    public string BooksText => _l["BooksText"];
+    public string DocumentsText => _l["DocumentsText"];
+    public string MagazinesText => _l["MagazinesText"];
 
     // Software user-facing pages
     public string AllSoftwareButton => _l["AllSoftwareButton"];

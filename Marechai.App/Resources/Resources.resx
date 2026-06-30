@@ -1199,6 +1199,12 @@
   <data name="ConsolesSearchBox_Placeholder" xml:space="preserve">
     <value>Search consoles...</value>
   </data>
+  <data name="SmartphonesText" xml:space="preserve">
+    <value>Smartphones</value>
+  </data>
+  <data name="SmartphonesFilterBox_Placeholder" xml:space="preserve">
+    <value>Filter smartphones...</value>
+  </data>
   <data name="PdasText" xml:space="preserve">
     <value>PDAs</value>
   </data>
@@ -1210,6 +1216,30 @@
   </data>
   <data name="TabletsFilterBox_Placeholder" xml:space="preserve">
     <value>Filter Tablets...</value>
+  </data>
+  <data name="MachineFamiliesText" xml:space="preserve">
+    <value>Machine families</value>
+  </data>
+  <data name="GpusText" xml:space="preserve">
+    <value>GPUs</value>
+  </data>
+  <data name="ProcessorsText" xml:space="preserve">
+    <value>Processors</value>
+  </data>
+  <data name="SoundSynthsText" xml:space="preserve">
+    <value>Sound synthesizers</value>
+  </data>
+  <data name="CompanySoftwareText" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="BooksText" xml:space="preserve">
+    <value>Books</value>
+  </data>
+  <data name="DocumentsText" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="MagazinesText" xml:space="preserve">
+    <value>Magazines</value>
   </data>
   <data name="PdasErrorInfoBar_Title" xml:space="preserve">
     <value>Unable to Load PDAs</value>
@@ -1399,6 +1429,18 @@
   </data>
   <data name="MachinesTabHeader" xml:space="preserve">
     <value>Machines</value>
+  </data>
+  <data name="HardwareTabHeader" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="SoftwareMediaTabHeader" xml:space="preserve">
+    <value>Software &amp; Media</value>
+  </data>
+  <data name="PeopleTabHeader" xml:space="preserve">
+    <value>People</value>
+  </data>
+  <data name="DescriptionTabHeader" xml:space="preserve">
+    <value>Description</value>
   </data>
   <data name="PhotosLabel" xml:space="preserve">
     <value>Photos</value>

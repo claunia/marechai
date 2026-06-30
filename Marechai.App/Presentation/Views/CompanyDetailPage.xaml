@@ -30,359 +30,843 @@
         </utu:NavigationBar>
 
         <!-- Content -->
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Padding="16"
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
                         Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="48"
+                              Width="48" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           TextAlignment="Center"
+                           FontSize="14" />
+            </StackPanel>
 
-                <!-- Logo Display (Top Center) -->
-                <Image MaxHeight="96"
-                       Stretch="Uniform"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,8"
-                       Source="{Binding LogoImageSource}"
-                       Visibility="{Binding HasLogoContent, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        Padding="16"
+                        Background="{ThemeResource SystemErrorBackgroundColor}"
+                        CornerRadius="8"
+                        Spacing="8">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
+                           FontWeight="Bold"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
 
-                <!-- Loading State -->
-                <StackPanel Visibility="{Binding IsLoading}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Padding="32"
-                            Spacing="16">
-                    <ProgressRing IsActive="True"
-                                  IsIndeterminate="True"
-                                  Height="48"
-                                  Width="48" />
-                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
-                               TextAlignment="Center"
-                               FontSize="14" />
-                </StackPanel>
+            <!-- Company Details -->
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <!-- Error State -->
-                <StackPanel Visibility="{Binding HasError}"
-                            Padding="16"
-                            Background="{ThemeResource SystemErrorBackgroundColor}"
-                            CornerRadius="8"
+                <!-- Logo + Company Name (Top) -->
+                <StackPanel Grid.Row="0"
+                            Padding="16,16,16,0"
                             Spacing="8">
-                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
-                               FontWeight="Bold"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-
-                <!-- Company Details -->
-                <StackPanel Visibility="{Binding IsDataLoaded}"
-                            Spacing="16">
-
-                    <!-- Company Name -->
+                    <Image MaxHeight="96"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Source="{Binding LogoImageSource}"
+                           Visibility="{Binding HasLogoContent, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <TextBlock Text="{Binding Company.Name}"
                                FontSize="28"
                                FontWeight="Bold"
                                TextWrapping="Wrap" />
-
-                    <!-- Company Status -->
-                    <StackPanel Style="{StaticResource MetadataPanelStyle}"
-                                    Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=StatusText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding CompanyStatusDisplay}"
-                                   FontSize="14"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <!-- Founded Date -->
-                    <StackPanel Visibility="{Binding Company.Founded, Converter={StaticResource ObjectToVisibilityConverter}}"
-                                Style="{StaticResource MetadataPanelStyle}"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=FoundedText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding CompanyFoundedDateDisplay}"
-                                   FontSize="14" />
-                    </StackPanel>
-
-                    <!-- Legal Name -->
-                    <StackPanel Visibility="{Binding Company.LegalName, Converter={StaticResource StringToVisibilityConverter}}"
-                                Style="{StaticResource MetadataPanelStyle}"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=LegalNameText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Company.LegalName}"
-                                   FontSize="14" />
-                    </StackPanel>
-
-                    <!-- Country -->
-                    <StackPanel Style="{StaticResource MetadataPanelStyle}"
-                                    >
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Country Name and Label -->
-                            <StackPanel Grid.Column="0"
-                                        Spacing="4">
-                                <TextBlock
-                                           Text="{Binding Source={StaticResource Strings}, Path=CountryText}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                <TextBlock Text="{Binding Company.Country}"
-                                           FontSize="14"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-
-                            <!-- Country Flag -->
-                            <Image Grid.Column="1"
-                                   Width="48"
-                                   Height="32"
-                                   Stretch="Uniform"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
-                                   Margin="8"
-                                   Source="{Binding FlagImageSource}"
-                                   Visibility="{Binding HasFlagContent, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        </Grid>
-                    </StackPanel>
-
-                    <!-- Address -->
-                    <StackPanel Visibility="{Binding Company.Address, Converter={StaticResource StringToVisibilityConverter}}"
-                                Style="{StaticResource MetadataPanelStyle}"
-                                Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=AddressText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock TextWrapping="Wrap">
-                            <Run Text="{Binding Company.Address}" />
-                            <Run Text="{Binding Company.City}" />
-                            <Run Text="{Binding Company.PostalCode}" />
-                            <Run Text="{Binding Company.Province}" />
-                        </TextBlock>
-                    </StackPanel>
-
-                    <!-- Links Section -->
-                    <StackPanel Spacing="8">
-                        <TextBlock
-                                   Text="{Binding Source={StaticResource Strings}, Path=LinksText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-
-                        <!-- Website -->
-                        <HyperlinkButton Visibility="{Binding Company.Website, Converter={StaticResource StringToVisibilityConverter}}"
-                                         NavigateUri="{Binding Company.Website}">
-                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=WebsiteText}" />
-                        </HyperlinkButton>
-
-                        <!-- Twitter -->
-                        <HyperlinkButton Visibility="{Binding Company.Twitter, Converter={StaticResource StringToVisibilityConverter}}"
-                                         Click="OnTwitterClick">
-                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=TwitterText}" />
-                        </HyperlinkButton>
-
-                        <!-- Facebook -->
-                        <HyperlinkButton Visibility="{Binding Company.Facebook, Converter={StaticResource StringToVisibilityConverter}}"
-                                         Click="OnFacebookClick">
-                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=FacebookText}" />
-                        </HyperlinkButton>
-                    </StackPanel>
-
-                    <!-- Logo Carousel Section -->
-                    <StackPanel Visibility="{Binding HasMultipleLogos, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Spacing="8">
-                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LogoHistoryText}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-
-                        <!-- Logo Carousel -->
-                        <controls:Carousel ItemsSource="{Binding CompanyLogos}"
-                                           Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                           CornerRadius="8"
-                                           ItemRotationY="45"
-                                           TransitionDuration="400"
-                                           Height="220">
-                            <controls:Carousel.EasingFunction>
-                                <CubicEase EasingMode="EaseOut" />
-                            </controls:Carousel.EasingFunction>
-                            <controls:Carousel.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               Spacing="8"
-                                               Padding="24">
-                                        <!-- Logo Image -->
-                                        <Image Source="{Binding LogoSource}"
-                                               Width="120"
-                                               Height="120"
-                                               Stretch="Uniform"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-
-                                        <!-- Year Label -->
-                                        <TextBlock Text="{Binding Year, FallbackValue='Year Unknown'}"
-                                                   FontSize="12"
-                                                   TextAlignment="Center"
-                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </controls:Carousel.ItemTemplate>
-                        </controls:Carousel>
-                    </StackPanel>
-
-                    <!-- Computers Section -->
-                    <StackPanel Visibility="{Binding Computers.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
-                                Spacing="8">
-                        <StackPanel Orientation="Horizontal"
-                                    Spacing="8">
-                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ComputersText}"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <TextBlock Text="{Binding Computers.Count}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource SystemAccentColor}" />
-                        </StackPanel>
-
-                        <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=ComputersFilterBox_Placeholder}"
-                                        Text="{Binding ComputersFilterText, Mode=TwoWay}"
-                                        BorderThickness="1"
-                                        BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
-
-                        <!-- Scrollable Computers List -->
-                        <ScrollViewer Height="200"
-                                      BorderThickness="1"
-                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                                      CornerRadius="8">
-                            <ItemsRepeater ItemsSource="{Binding FilteredComputers}"
-                                           Margin="0">
-                                <ItemsRepeater.Layout>
-                                    <StackLayout Spacing="4" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
-                                                CommandParameter="{Binding}"
-                                                Padding="12,8"
-                                                HorizontalAlignment="Stretch"
-                                                HorizontalContentAlignment="Left">
-                                            <TextBlock Text="{Binding Name}"
-                                                       FontSize="12"
-                                                       TextWrapping="Wrap" />
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                        </ScrollViewer>
-                    </StackPanel>
-
-                    <!-- Consoles Section -->
-                    <StackPanel Visibility="{Binding Consoles.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
-                                Spacing="8">
-                        <StackPanel Orientation="Horizontal"
-                                    Spacing="8">
-                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ConsolesText}"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
-                            <TextBlock Text="{Binding Consoles.Count}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource SystemAccentColor}" />
-                        </StackPanel>
-
-                        <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=ConsolesFilterBox_Placeholder}"
-                                        Text="{Binding ConsolesFilterText, Mode=TwoWay}"
-                                        BorderThickness="1"
-                                        BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
-
-                        <!-- Scrollable Consoles List -->
-                        <ScrollViewer Height="200"
-                                      BorderThickness="1"
-                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                                      CornerRadius="8">
-                            <ItemsRepeater ItemsSource="{Binding FilteredConsoles}"
-                                           Margin="0">
-                                <ItemsRepeater.Layout>
-                                    <StackLayout Spacing="4" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
-                                                CommandParameter="{Binding}"
-                                                Padding="12,8"
-                                                HorizontalAlignment="Stretch"
-                                                HorizontalContentAlignment="Left">
-                                            <TextBlock Text="{Binding Name}"
-                                                       FontSize="12"
-                                                       TextWrapping="Wrap" />
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                        </ScrollViewer>
-                    </StackPanel>
-
-                    <!-- People Section -->
-                    <StackPanel Visibility="{Binding ShowPeople, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Spacing="8"
-                                Margin="0,16,0,0">
-                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
-                                   FontSize="20"
-                                   FontWeight="SemiBold" />
-                        <ItemsControl ItemsSource="{Binding People}"
-                                      HorizontalAlignment="Stretch">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical"
-                                                Spacing="4" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            CornerRadius="4"
-                                            Padding="12,8">
-                                        <TextBlock Text="{Binding}"
-                                                   FontSize="14"
-                                                   TextWrapping="Wrap" />
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-
-                    <!-- Description Section -->
-                    <StackPanel Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Spacing="8"
-                                Margin="0,16,0,0">
-                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
-                                   FontSize="20"
-                                   FontWeight="SemiBold" />
-                        <WebView2 x:Name="DescriptionWebView"
-                                  MinHeight="200" />
-                    </StackPanel>
-
                 </StackPanel>
 
-            </StackPanel>
-        </ScrollViewer>
+                <TabView Grid.Row="1"
+                         Style="{StaticResource DetailTabViewStyle}">
+
+                    <!-- Overview Tab -->
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=OverviewTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16"
+                                        Spacing="16">
+
+                                <!-- Company Status -->
+                                <StackPanel Style="{StaticResource MetadataPanelStyle}"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=StatusText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                    <TextBlock Text="{Binding CompanyStatusDisplay}"
+                                               FontSize="14"
+                                               TextWrapping="Wrap" />
+                                    <HyperlinkButton Visibility="{Binding SoldToCompany, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                                     Command="{Binding NavigateToSoldToCompanyCommand}"
+                                                     Padding="0">
+                                        <TextBlock Text="{Binding SoldToCompany.Name}"
+                                                   FontSize="14" />
+                                    </HyperlinkButton>
+                                </StackPanel>
+
+                                <!-- Founded Date -->
+                                <StackPanel Visibility="{Binding Company.Founded, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                            Style="{StaticResource MetadataPanelStyle}"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=FoundedText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                    <TextBlock Text="{Binding CompanyFoundedDateDisplay}"
+                                               FontSize="14" />
+                                </StackPanel>
+
+                                <!-- Legal Name -->
+                                <StackPanel Visibility="{Binding Company.LegalName, Converter={StaticResource StringToVisibilityConverter}}"
+                                            Style="{StaticResource MetadataPanelStyle}"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LegalNameText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                    <TextBlock Text="{Binding Company.LegalName}"
+                                               FontSize="14" />
+                                </StackPanel>
+
+                                <!-- Country -->
+                                <StackPanel Style="{StaticResource MetadataPanelStyle}">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0"
+                                                    Spacing="4">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CountryText}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <TextBlock Text="{Binding Company.Country}"
+                                                       FontSize="14"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+
+                                        <Image Grid.Column="1"
+                                               Width="48"
+                                               Height="32"
+                                               Stretch="Uniform"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"
+                                               Margin="8"
+                                               Source="{Binding FlagImageSource}"
+                                               Visibility="{Binding HasFlagContent, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </Grid>
+                                </StackPanel>
+
+                                <!-- Address -->
+                                <StackPanel Visibility="{Binding Company.Address, Converter={StaticResource StringToVisibilityConverter}}"
+                                            Style="{StaticResource MetadataPanelStyle}"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=AddressText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="{Binding Company.Address}" />
+                                        <Run Text="{Binding Company.City}" />
+                                        <Run Text="{Binding Company.PostalCode}" />
+                                        <Run Text="{Binding Company.Province}" />
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <!-- Links Section -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LinksText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                                    <HyperlinkButton Visibility="{Binding Company.Website, Converter={StaticResource StringToVisibilityConverter}}"
+                                                     NavigateUri="{Binding Company.Website}">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=WebsiteText}" />
+                                    </HyperlinkButton>
+
+                                    <HyperlinkButton Visibility="{Binding Company.Twitter, Converter={StaticResource StringToVisibilityConverter}}"
+                                                     Click="OnTwitterClick">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=TwitterText}" />
+                                    </HyperlinkButton>
+
+                                    <HyperlinkButton Visibility="{Binding Company.Facebook, Converter={StaticResource StringToVisibilityConverter}}"
+                                                     Click="OnFacebookClick">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=FacebookText}" />
+                                    </HyperlinkButton>
+                                </StackPanel>
+
+                                <!-- Logo Carousel Section -->
+                                <StackPanel Visibility="{Binding HasMultipleLogos, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LogoHistoryText}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                                    <controls:Carousel ItemsSource="{Binding CompanyLogos}"
+                                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                       CornerRadius="8"
+                                                       ItemRotationY="45"
+                                                       TransitionDuration="400"
+                                                       Height="220">
+                                        <controls:Carousel.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut" />
+                                        </controls:Carousel.EasingFunction>
+                                        <controls:Carousel.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           Spacing="8"
+                                                           Padding="24">
+                                                    <Image Source="{Binding LogoSource}"
+                                                           Width="120"
+                                                           Height="120"
+                                                           Stretch="Uniform"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Year, FallbackValue='Year Unknown'}"
+                                                               FontSize="12"
+                                                               TextAlignment="Center"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </controls:Carousel.ItemTemplate>
+                                    </controls:Carousel>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <!-- Hardware Tab -->
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=HardwareTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16"
+                                        Spacing="16">
+
+                                <!-- Computers Section -->
+                                <StackPanel Visibility="{Binding Computers.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ComputersText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Computers.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=ComputersFilterBox_Placeholder}"
+                                                    Text="{Binding ComputersFilterText, Mode=TwoWay}"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding FilteredComputers}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Consoles Section -->
+                                <StackPanel Visibility="{Binding Consoles.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ConsolesText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Consoles.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=ConsolesFilterBox_Placeholder}"
+                                                    Text="{Binding ConsolesFilterText, Mode=TwoWay}"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding FilteredConsoles}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Smartphones Section -->
+                                <StackPanel Visibility="{Binding Smartphones.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SmartphonesText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Smartphones.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=SmartphonesFilterBox_Placeholder}"
+                                                    Text="{Binding SmartphonesFilterText, Mode=TwoWay}"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding FilteredSmartphones}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Tablets Section -->
+                                <StackPanel Visibility="{Binding Tablets.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=TabletsText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Tablets.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=TabletsFilterBox_Placeholder}"
+                                                    Text="{Binding TabletsFilterText, Mode=TwoWay}"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding FilteredTablets}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- PDAs Section -->
+                                <StackPanel Visibility="{Binding Pdas.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=PdasText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Pdas.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=PdasFilterBox_Placeholder}"
+                                                    Text="{Binding PdasFilterText, Mode=TwoWay}"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding FilteredPdas}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Machine Families Section -->
+                                <StackPanel Visibility="{Binding MachineFamilies.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MachineFamiliesText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding MachineFamilies.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding MachineFamilies}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMachineFamilyCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- GPUs Section -->
+                                <StackPanel Visibility="{Binding Gpus.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=GpusText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Gpus.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Gpus}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToGpuCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Processors Section -->
+                                <StackPanel Visibility="{Binding Processors.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProcessorsText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Processors.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Processors}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToProcessorCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Sound Synthesizers Section -->
+                                <StackPanel Visibility="{Binding SoundSynths.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoundSynthsText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding SoundSynths.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding SoundSynths}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToSoundSynthCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <!-- Software & Media Tab -->
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=SoftwareMediaTabHeader}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16"
+                                        Spacing="16">
+
+                                <!-- Software Section -->
+                                <StackPanel Visibility="{Binding Software.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanySoftwareText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Software.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Software}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToSoftwareCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Books Section -->
+                                <StackPanel Visibility="{Binding Books.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=BooksText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Books.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Books}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToBookCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Documents Section -->
+                                <StackPanel Visibility="{Binding Documents.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DocumentsText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Documents.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Documents}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToDocumentCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                                <!-- Magazines Section -->
+                                <StackPanel Visibility="{Binding Magazines.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                            Spacing="8">
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="8">
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MagazinesText}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                        <TextBlock Text="{Binding Magazines.Count}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="{ThemeResource SystemAccentColor}" />
+                                    </StackPanel>
+                                    <ScrollViewer Height="200"
+                                                  BorderThickness="1"
+                                                  BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                                  CornerRadius="8">
+                                        <ItemsRepeater ItemsSource="{Binding Magazines}"
+                                                       Margin="0">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToMagazineCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="12,8"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="12"
+                                                                   TextWrapping="Wrap" />
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </ScrollViewer>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <!-- People Tab -->
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=PeopleTabHeader}"
+                                 Visibility="{Binding ShowPeople, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16"
+                                        Spacing="8">
+                                <ItemsControl ItemsSource="{Binding People}"
+                                              HorizontalAlignment="Stretch">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical"
+                                                        Spacing="4" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.NavigateToPersonCommand, ElementName=PageRoot}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="12,8"
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Left">
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="14"
+                                                           TextWrapping="Wrap" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                    <!-- Description Tab -->
+                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                 Header="{Binding Source={StaticResource Strings}, Path=DescriptionTabHeader}"
+                                 Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Padding="16"
+                                        Spacing="8">
+                                <WebView2 x:Name="DescriptionWebView"
+                                          MinHeight="400" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabViewItem>
+
+                </TabView>
+
+            </Grid>
+
+        </Grid>
 
     </Grid>
 
