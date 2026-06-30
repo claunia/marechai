@@ -9,6 +9,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
@@ -29,6 +30,36 @@
                 <TextBlock Text="{Binding HeroSubtitle, ElementName=Root}"
                            Style="{StaticResource HeroSubtitleTextStyle}"
                            Visibility="{Binding HasSubtitle, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        Spacing="4"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding ShowScore, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Border Width="56"
+                        Height="56"
+                        CornerRadius="28"
+                        Background="{Binding HeroScoreValue, ElementName=Root, Converter={StaticResource MarechaiScoreToBrushConverter}}">
+                    <TextBlock Text="{Binding HeroScoreText, ElementName=Root}"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="{Binding HeroScoreLabel, ElementName=Root}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding HeroScoreRankText, ElementName=Root}"
+                           FontSize="11"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           TextWrapping="WrapWholeWords"
+                           MaxWidth="116"
+                           Visibility="{Binding HasScoreRankText, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </Grid>
     </Border>

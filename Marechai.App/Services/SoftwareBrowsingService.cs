@@ -1046,6 +1046,22 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<MarechaiScoreDto?> GetMarechaiScoreAsync(int softwareId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching Marechai score for software {SoftwareId}", softwareId);
+
+            return await _apiClient.Software[softwareId].MarechaiScore.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching Marechai score for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+    }
+
     private static string GetIso639CodeFromCulture()
     {
         string twoLetter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;

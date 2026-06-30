@@ -103,7 +103,11 @@
                     <components:HeroHeader HeroTitle="{Binding SoftwareName}"
                                            HeroSubtitle="{Binding Family}"
                                            HeroImageSource="{Binding HeroImageSource}"
-                                           ShowImage="{Binding HasHeroImage}" />
+                                           ShowImage="{Binding HasHeroImage}"
+                                           HeroScoreValue="{Binding MarechaiScore}"
+                                           HeroScoreText="{Binding MarechaiScoreText}"
+                                           HeroScoreLabel="{Binding MarechaiScoreLabel}"
+                                           HeroScoreRankText="{Binding MarechaiScoreRankText}" />
 
                     <!-- Type Badges -->
                     <wctui:WrapPanel Orientation="Horizontal"

@@ -50,6 +50,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private ObservableCollection<SoftwareRankingPlacementDto> _rankingPlacements = [];
 
     [ObservableProperty]
+    private double? _marechaiScore;
+
+    [ObservableProperty]
+    private string _marechaiScoreText = string.Empty;
+
+    [ObservableProperty]
+    private string _marechaiScoreLabel = string.Empty;
+
+    [ObservableProperty]
+    private string? _marechaiScoreRankText;
+
+    [ObservableProperty]
     private string _softwareName = string.Empty;
 
     [ObservableProperty]
@@ -225,6 +237,8 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
     public bool HasHeroImage   => HeroImageSource is not null;
+    public bool HasMarechaiScore => MarechaiScore.HasValue;
+    public bool HasMarechaiScoreRankText => !string.IsNullOrWhiteSpace(MarechaiScoreRankText);
 
     partial void OnDescriptionHtmlChanged(string value)
     {
@@ -234,6 +248,16 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     partial void OnHeroImageSourceChanged(ImageSource? value)
     {
         OnPropertyChanged(nameof(HasHeroImage));
+    }
+
+    partial void OnMarechaiScoreChanged(double? value)
+    {
+        OnPropertyChanged(nameof(HasMarechaiScore));
+    }
+
+    partial void OnMarechaiScoreRankTextChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasMarechaiScoreRankText));
     }
 
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
@@ -462,6 +486,10 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             HasError     = false;
             ErrorMessage = string.Empty;
             HeroImageSource = null;
+            MarechaiScore = null;
+            MarechaiScoreText = string.Empty;
+            MarechaiScoreLabel = _localizer["Marechai Score"];
+            MarechaiScoreRankText = null;
             Companies.Clear();
             Versions.Clear();
             CreditGroups.Clear();
@@ -688,6 +716,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
             // Load ranking placements
             await LoadRankingPlacementsAsync(softwareId);
+            await LoadMarechaiScoreAsync(softwareId);
 
             UpdateVisibilities();
             IsDataLoaded = true;
@@ -716,6 +745,25 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error loading ranking placements for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private async Task LoadMarechaiScoreAsync(int softwareId)
+    {
+        try
+        {
+            MarechaiScoreDto? score = await _browsingService.GetMarechaiScoreAsync(softwareId);
+
+            MarechaiScore = score?.MarechaiScore;
+            MarechaiScoreText = score?.MarechaiScore is double value ? value.ToString("F1") : string.Empty;
+            MarechaiScoreLabel = _localizer["Marechai Score"];
+            MarechaiScoreRankText = score?.Rank is int rank
+                                        ? string.Format(_localizer["Ranked #{0} of {1}"], rank, score.TotalRanked)
+                                        : null;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading Marechai score for software {SoftwareId}", softwareId);
         }
     }
 
