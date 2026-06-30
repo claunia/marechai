@@ -228,193 +228,200 @@
                                                FontWeight="SemiBold" />
                                 </Grid>
 
-                                <!-- Edit form (scrollable) -->
-                                <ScrollViewer Grid.Row="1"
-                                              Padding="16"
-                                              VerticalScrollBarVisibility="Auto">
-                                    <StackPanel Spacing="12">
+                                <!-- Edit form -->
+                                <TabView Grid.Row="1"
+                                         Style="{StaticResource DetailTabViewStyle}">
+                                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                                 Header="{Binding Source={StaticResource Strings}, Path=OverviewTabHeader}">
+                                        <ScrollViewer Padding="16"
+                                                      VerticalScrollBarVisibility="Auto">
+                                            <StackPanel Spacing="12">
 
-                                        <!-- Name -->
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyNameLabel}"
-                                                 Text="{Binding CompanyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                 PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyNameLabel}" />
+                                                <!-- Name -->
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyNameLabel}"
+                                                         Text="{Binding CompanyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyNameLabel}" />
 
-                                        <!-- Legal Name -->
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyLegalNameLabel}"
-                                                 Text="{Binding LegalName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <!-- Legal Name -->
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyLegalNameLabel}"
+                                                         Text="{Binding LegalName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                        <!-- Status -->
-                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=CompanyStatusLabel}"
-                                                  ItemsSource="{Binding StatusItems}"
-                                                  SelectedIndex="{Binding StatusIndex, Mode=TwoWay}"
-                                                  HorizontalAlignment="Stretch" />
+                                                <!-- Status -->
+                                                <ComboBox Header="{Binding Source={StaticResource Strings}, Path=CompanyStatusLabel}"
+                                                          ItemsSource="{Binding StatusItems}"
+                                                          SelectedIndex="{Binding StatusIndex, Mode=TwoWay}"
+                                                          HorizontalAlignment="Stretch" />
 
-                                        <!-- Founded -->
-                                        <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyFoundedLabel}"
-                                                            Date="{Binding Founded, Mode=TwoWay}"
-                                                            HorizontalAlignment="Stretch" />
-                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
-                                                  SelectedIndex="{Binding FoundedPrecision, Mode=TwoWay}"
-                                                  HorizontalAlignment="Stretch">
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
-                                        </ComboBox>
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedMonthUnknownLabel}"
-                                                  IsChecked="{Binding FoundedMonthIsUnknown, Mode=TwoWay}" />
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedDayUnknownLabel}"
-                                                  IsChecked="{Binding FoundedDayIsUnknown, Mode=TwoWay}" />
+                                                <!-- Founded -->
+                                                <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyFoundedLabel}"
+                                                                    Date="{Binding Founded, Mode=TwoWay}"
+                                                                    HorizontalAlignment="Stretch" />
+                                                <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                          SelectedIndex="{Binding FoundedPrecision, Mode=TwoWay}"
+                                                          HorizontalAlignment="Stretch">
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                                </ComboBox>
+                                                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedMonthUnknownLabel}"
+                                                          IsChecked="{Binding FoundedMonthIsUnknown, Mode=TwoWay}" />
+                                                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedDayUnknownLabel}"
+                                                          IsChecked="{Binding FoundedDayIsUnknown, Mode=TwoWay}" />
 
-                                        <!-- Sold -->
-                                        <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanySoldLabel}"
-                                                            Date="{Binding Sold, Mode=TwoWay}"
-                                                            HorizontalAlignment="Stretch" />
-                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
-                                                  SelectedIndex="{Binding SoldPrecision, Mode=TwoWay}"
-                                                  HorizontalAlignment="Stretch">
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
-                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
-                                        </ComboBox>
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldMonthUnknownLabel}"
-                                                  IsChecked="{Binding SoldMonthIsUnknown, Mode=TwoWay}" />
-                                        <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldDayUnknownLabel}"
-                                                  IsChecked="{Binding SoldDayIsUnknown, Mode=TwoWay}" />
+                                                <!-- Sold -->
+                                                <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanySoldLabel}"
+                                                                    Date="{Binding Sold, Mode=TwoWay}"
+                                                                    HorizontalAlignment="Stretch" />
+                                                <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                          SelectedIndex="{Binding SoldPrecision, Mode=TwoWay}"
+                                                          HorizontalAlignment="Stretch">
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                                    <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                                </ComboBox>
+                                                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldMonthUnknownLabel}"
+                                                          IsChecked="{Binding SoldMonthIsUnknown, Mode=TwoWay}" />
+                                                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldDayUnknownLabel}"
+                                                          IsChecked="{Binding SoldDayIsUnknown, Mode=TwoWay}" />
 
-                                        <!-- Sold To -->
-                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanySoldToLabel}"
-                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompaniesSearchBox_Placeholder}"
-                                                        Text="{Binding SoldToSearchText, Mode=TwoWay}"
-                                                        QueryIcon="Find"
-                                                        x:Name="SoldToFilterBox"
-                                                        TextChanged="SoldToFilterBox_TextChanged" />
-                                        <ComboBox ItemsSource="{Binding SoldToSuggestions}"
-                                                  SelectedItem="{Binding SelectedSoldToCompany, Mode=TwoWay}"
-                                                  DisplayMemberPath="Name"
-                                                  HorizontalAlignment="Stretch"
-                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanySoldToLabel}" />
+                                                <!-- Sold To -->
+                                                <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanySoldToLabel}"
+                                                                PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompaniesSearchBox_Placeholder}"
+                                                                Text="{Binding SoldToSearchText, Mode=TwoWay}"
+                                                                QueryIcon="Find"
+                                                                x:Name="SoldToFilterBox"
+                                                                TextChanged="SoldToFilterBox_TextChanged" />
+                                                <ComboBox ItemsSource="{Binding SoldToSuggestions}"
+                                                          SelectedItem="{Binding SelectedSoldToCompany, Mode=TwoWay}"
+                                                          DisplayMemberPath="Name"
+                                                          HorizontalAlignment="Stretch"
+                                                          PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanySoldToLabel}" />
 
-                                        <!-- Country -->
-                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=CompanyCountryLabel}"
-                                                  ItemsSource="{Binding Countries}"
-                                                  SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                                                  DisplayMemberPath="Name"
-                                                  HorizontalAlignment="Stretch" />
+                                                <!-- Country -->
+                                                <ComboBox Header="{Binding Source={StaticResource Strings}, Path=CompanyCountryLabel}"
+                                                          ItemsSource="{Binding Countries}"
+                                                          SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+                                                          DisplayMemberPath="Name"
+                                                          HorizontalAlignment="Stretch" />
 
-                                        <!-- Address -->
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyAddressLabel}"
-                                                 Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyCityLabel}"
-                                                 Text="{Binding City, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyProvinceLabel}"
-                                                 Text="{Binding Province, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPostalCodeLabel}"
-                                                 Text="{Binding PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <!-- Address -->
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyAddressLabel}"
+                                                         Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyCityLabel}"
+                                                         Text="{Binding City, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyProvinceLabel}"
+                                                         Text="{Binding Province, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPostalCodeLabel}"
+                                                         Text="{Binding PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                        <!-- Links -->
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=WebsiteText}"
-                                                 Text="{Binding Website, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=TwitterText}"
-                                                 Text="{Binding Twitter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=FacebookText}"
-                                                 Text="{Binding Facebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                        <!-- People Section (only when editing existing company) -->
-                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                    Spacing="8"
-                                                    Margin="0,16,0,0">
-
-                                            <!-- Section header -->
-                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanyPeopleSection}"
-                                                       FontSize="16"
-                                                       FontWeight="SemiBold" />
-
-                                            <!-- Current people list -->
-                                            <ItemsRepeater ItemsSource="{Binding CompanyPeopleDisplays}">
-                                                <ItemsRepeater.Layout>
-                                                    <StackLayout Spacing="4" />
-                                                </ItemsRepeater.Layout>
-                                                <ItemsRepeater.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnSpacing="4">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <TextBlock Grid.Column="0"
-                                                                       Text="{Binding}"
-                                                                       VerticalAlignment="Center"
-                                                                       TextWrapping="Wrap" />
-                                                            <Button Grid.Column="1"
-                                                                    Content="✏️"
-                                                                    Command="{Binding DataContext.EditPersonCommand, ElementName=PageRoot}"
-                                                                    CommandParameter="{Binding}"
-                                                                    Padding="4,2"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" />
-                                                            <Button Grid.Column="2"
-                                                                    Content="🗑️"
-                                                                    Command="{Binding DataContext.RemovePersonCommand, ElementName=PageRoot}"
-                                                                    CommandParameter="{Binding}"
-                                                                    Padding="4,2"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" />
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsRepeater.ItemTemplate>
-                                            </ItemsRepeater>
-
-                                            <!-- Add/Edit person form -->
-                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
-                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
-                                                            Text="{Binding PersonSearchText, Mode=TwoWay}"
-                                                            QueryIcon="Find"
-                                                            x:Name="PersonSearchBox"
-                                                            TextChanged="PersonSearchBox_TextChanged" />
-                                            <ComboBox ItemsSource="{Binding AvailablePeople}"
-                                                      SelectedItem="{Binding SelectedAvailablePerson, Mode=TwoWay}"
-                                                      HorizontalAlignment="Stretch"
-                                                      PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock>
-                                                            <Run Text="{Binding Name}" />
-                                                            <Run Text=" " />
-                                                            <Run Text="{Binding Surname}" />
-                                                        </TextBlock>
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox>
-
-                                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonPositionLabel}"
-                                                     Text="{Binding NewPersonPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                            <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonStartLabel}"
-                                                                Date="{Binding NewPersonStart, Mode=TwoWay}"
-                                                                HorizontalAlignment="Stretch" />
-
-                                            <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonEndLabel}"
-                                                                Date="{Binding NewPersonEnd, Mode=TwoWay}"
-                                                                HorizontalAlignment="Stretch" />
-
-                                            <CheckBox Content="{Binding Source={StaticResource Strings}, Path=CompanyPersonOngoingLabel}"
-                                                      IsChecked="{Binding NewPersonOngoing, Mode=TwoWay}" />
-
-                                            <StackPanel Orientation="Horizontal"
-                                                        Spacing="8">
-                                                <Button Content="+"
-                                                        Command="{Binding AddPersonCommand}"
-                                                        Style="{ThemeResource AccentButtonStyle}"
-                                                        Padding="8,4" />
-                                                <Button Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
-                                                        Command="{Binding SavePersonEditCommand}"
-                                                        Padding="8,4" />
-                                                <Button Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
-                                                        Command="{Binding CancelPersonEditCommand}"
-                                                        Padding="8,4" />
+                                                <!-- Links -->
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=WebsiteText}"
+                                                         Text="{Binding Website, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=TwitterText}"
+                                                         Text="{Binding Twitter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=FacebookText}"
+                                                         Text="{Binding Facebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             </StackPanel>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </ScrollViewer>
+                                        </ScrollViewer>
+                                    </TabViewItem>
+
+                                    <TabViewItem Style="{StaticResource DetailTabViewItemStyle}"
+                                                 Header="{Binding Source={StaticResource Strings}, Path=CompanyPeopleSection}"
+                                                 Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <ScrollViewer Padding="16"
+                                                      VerticalScrollBarVisibility="Auto">
+                                            <StackPanel Spacing="12">
+                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanyPeopleSection}"
+                                                           FontSize="16"
+                                                           FontWeight="SemiBold" />
+
+                                                <!-- Current people list -->
+                                                <ItemsRepeater ItemsSource="{Binding CompanyPeopleDisplays}">
+                                                    <ItemsRepeater.Layout>
+                                                        <StackLayout Spacing="4" />
+                                                    </ItemsRepeater.Layout>
+                                                    <ItemsRepeater.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid ColumnSpacing="4">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0"
+                                                                           Text="{Binding}"
+                                                                           VerticalAlignment="Center"
+                                                                           TextWrapping="Wrap" />
+                                                                <Button Grid.Column="1"
+                                                                        Content="✏️"
+                                                                        Command="{Binding DataContext.EditPersonCommand, ElementName=PageRoot}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Padding="4,2"
+                                                                        Style="{ThemeResource TextBlockButtonStyle}" />
+                                                                <Button Grid.Column="2"
+                                                                        Content="🗑️"
+                                                                        Command="{Binding DataContext.RemovePersonCommand, ElementName=PageRoot}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Padding="4,2"
+                                                                        Style="{ThemeResource TextBlockButtonStyle}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsRepeater.ItemTemplate>
+                                                </ItemsRepeater>
+
+                                                <!-- Add/Edit person form -->
+                                                <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
+                                                                PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
+                                                                Text="{Binding PersonSearchText, Mode=TwoWay}"
+                                                                QueryIcon="Find"
+                                                                x:Name="PersonSearchBox"
+                                                                TextChanged="PersonSearchBox_TextChanged" />
+                                                <ComboBox ItemsSource="{Binding AvailablePeople}"
+                                                          SelectedItem="{Binding SelectedAvailablePerson, Mode=TwoWay}"
+                                                          HorizontalAlignment="Stretch"
+                                                          PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock>
+                                                                <Run Text="{Binding Name}" />
+                                                                <Run Text=" " />
+                                                                <Run Text="{Binding Surname}" />
+                                                            </TextBlock>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+
+                                                <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonPositionLabel}"
+                                                         Text="{Binding NewPersonPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonStartLabel}"
+                                                                    Date="{Binding NewPersonStart, Mode=TwoWay}"
+                                                                    HorizontalAlignment="Stretch" />
+
+                                                <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonEndLabel}"
+                                                                    Date="{Binding NewPersonEnd, Mode=TwoWay}"
+                                                                    HorizontalAlignment="Stretch" />
+
+                                                <CheckBox Content="{Binding Source={StaticResource Strings}, Path=CompanyPersonOngoingLabel}"
+                                                          IsChecked="{Binding NewPersonOngoing, Mode=TwoWay}" />
+
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="8">
+                                                    <Button Content="+"
+                                                            Command="{Binding AddPersonCommand}"
+                                                            Style="{ThemeResource AccentButtonStyle}"
+                                                            Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
+                                                            Command="{Binding SavePersonEditCommand}"
+                                                            Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                                            Command="{Binding CancelPersonEditCommand}"
+                                                            Padding="8,4" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </TabViewItem>
+                                </TabView>
 
                                 <!-- Edit footer (Save / Cancel) -->
                                 <Grid Grid.Row="2"
