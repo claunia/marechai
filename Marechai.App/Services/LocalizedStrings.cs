@@ -70,6 +70,10 @@ public class LocalizedStrings
     public string ContactPage_Title => _l["ContactPage_Title"];
     public string CoresText => _l["CoresText"];
     public string CountryText => _l["CountryText"];
+    public string DatePrecisionLabel => _l["DatePrecisionLabel"];
+    public string DatePrecisionFull => _l["DatePrecisionFull"];
+    public string DatePrecisionMonthYear => _l["DatePrecisionMonthYear"];
+    public string DatePrecisionYearOnly => _l["DatePrecisionYearOnly"];
     public string DeleteUserButton => _l["DeleteUserButton"];
     public string DepthText => _l["DepthText"];
     public string DieSizeText => _l["DieSizeText"];
@@ -937,6 +941,23 @@ public class LocalizedStrings
     public string MagazineMachinesSectionHeader => _l["MagazineMachinesSectionHeader"];
     public string MagazineMachineFamiliesSectionHeader => _l["MagazineMachineFamiliesSectionHeader"];
     public string MagazineManagementButton => _l["MagazineManagementButton"];
+    public string BackToMagazinesButton => _l["BackToMagazinesButton"];
+    public string MagazineIssuesManagementTitle => _l["MagazineIssuesManagementTitle"];
+    public string AddMagazineIssueButton => _l["AddMagazineIssueButton"];
+    public string RefreshMagazineIssuesButton => _l["RefreshMagazineIssuesButton"];
+    public string MagazineIssueNumberColumn => _l["MagazineIssueNumberColumn"];
+    public string MagazineIssueCaptionColumn => _l["MagazineIssueCaptionColumn"];
+    public string MagazineIssueNativeCaptionColumn => _l["MagazineIssueNativeCaptionColumn"];
+    public string MagazineIssueProductCodeColumn => _l["MagazineIssueProductCodeColumn"];
+    public string MagazineIssuePagesColumn => _l["MagazineIssuePagesColumn"];
+    public string EditMagazineIssueButton => _l["EditMagazineIssueButton"];
+    public string DeleteMagazineIssueButton => _l["DeleteMagazineIssueButton"];
+    public string MagazineIssueCaptionLabel => _l["MagazineIssueCaptionLabel"];
+    public string MagazineIssueInternetArchiveUrlLabel => _l["MagazineIssueInternetArchiveUrlLabel"];
+    public string MagazineIssueCoverSectionHeader => _l["MagazineIssueCoverSectionHeader"];
+    public string MagazineIssueHasCoverMessage => _l["MagazineIssueHasCoverMessage"];
+    public string MagazineIssueNoCoverMessage => _l["MagazineIssueNoCoverMessage"];
+    public string MagazineIssueSoftwareSectionHeader => _l["MagazineIssueSoftwareSectionHeader"];
 
     // Software Admin
     public string SoftwarePlatformManagementTitle => _l["SoftwarePlatformManagementTitle"];
