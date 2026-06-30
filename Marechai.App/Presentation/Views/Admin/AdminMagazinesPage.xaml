@@ -173,27 +173,28 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditMagazineButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditMagazineButton}"
                                                             Command="{Binding DataContext.OpenEditMagazineCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=IssuesButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=IssuesButton}"
                                                             Command="{Binding DataContext.OpenIssuesCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=SynopsisButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <SymbolIcon Symbol="List" />
+                                                    </Button>
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SynopsisButton}"
                                                             Command="{Binding DataContext.OpenSynopsisCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteMagazineButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <SymbolIcon Symbol="Document" />
+                                                    </Button>
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteMagazineButton}"
                                                             Command="{Binding DataContext.DeleteMagazineCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>

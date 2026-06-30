@@ -158,34 +158,32 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal"
                                                     Spacing="4">
-                                            <Button Content="{Binding Source={StaticResource Strings}, Path=EditUserButton}"
+                                            <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditUserButton}"
                                                     Command="{Binding DataContext.OpenEditUserDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
-                                                    Style="{ThemeResource TextBlockButtonStyle}"
-                                                    Padding="8,4" />
-                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ChangePasswordButton}"
+                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
+                                            <Button Content="&#xE192;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=ChangePasswordButton}"
                                                     Command="{Binding DataContext.OpenChangePasswordDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
-                                                    Style="{ThemeResource TextBlockButtonStyle}"
-                                                    Padding="8,4" />
-                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ManageRolesButton}"
+                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
+                                            <Button Content="&#xE713;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=ManageRolesButton}"
                                                     Command="{Binding DataContext.OpenManageRolesDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
-                                                    Style="{ThemeResource TextBlockButtonStyle}"
-                                                    Padding="8,4" />
-                                            <Button Content="{Binding Source={StaticResource Strings}, Path=DisableTwoFactorButton}"
+                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
+                                            <Button Content="&#xE72E;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DisableTwoFactorButton}"
                                                     Command="{Binding DataContext.DisableUserTwoFactorCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Visibility="{Binding TwoFactorEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                    Foreground="{ThemeResource SystemErrorTextColor}"
-                                                    Style="{ThemeResource TextBlockButtonStyle}"
-                                                    Padding="8,4" />
-                                            <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteUserButton}"
+                                                    Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
+                                            <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteUserButton}"
                                                     Command="{Binding DataContext.DeleteUserCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
-                                                    Foreground="{ThemeResource SystemErrorTextColor}"
-                                                    Style="{ThemeResource TextBlockButtonStyle}"
-                                                    Padding="8,4" />
+                                                    Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>

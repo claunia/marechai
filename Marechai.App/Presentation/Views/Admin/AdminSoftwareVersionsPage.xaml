@@ -14,8 +14,7 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
                     Content="&#xE72B;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                    Command="{Binding GoBackCommand}"
+                                        Command="{Binding GoBackCommand}"
                     Style="{ThemeResource TextBlockButtonStyle}"
                     Padding="8,4"
                     VerticalAlignment="Center"
@@ -61,12 +60,14 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>

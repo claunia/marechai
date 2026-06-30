@@ -146,6 +146,22 @@
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
+    <!-- Compact icon-only buttons used in admin grid action columns. Keeping these
+         centralized makes it easy to retune density/affordance without touching
+         dozens of individual DataTemplates. -->
+    <Style x:Key="AdminGridActionButtonStyle" TargetType="Button" BasedOn="{ThemeResource TextBlockButtonStyle}">
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="MinWidth" Value="32" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="AdminGridDestructiveActionButtonStyle" TargetType="Button" BasedOn="{StaticResource AdminGridActionButtonStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource SystemErrorTextColor}" />
+    </Style>
+
+
     <!-- Responsive media grid: covers / screenshots / promo art thumbnail grids. -->
     <UniformGridLayout x:Key="MediaUniformGridLayout"
                         MinItemWidth="200"

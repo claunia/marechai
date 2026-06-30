@@ -41,8 +41,10 @@
                                     <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=ActionsColumn}" Width="Auto">
                                         <controls:DataGridTemplateColumn.CellTemplate><DataTemplate>
                                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <Button Content="{Binding Source={StaticResource Strings}, Path=EditMachineFamilyButton}" Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteMachineFamilyButton}" Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditMachineFamilyButton}" Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteMachineFamilyButton}" Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                             </StackPanel>
                                         </DataTemplate></controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>

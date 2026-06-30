@@ -152,17 +152,16 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditInstructionSetButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditInstructionSetButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteInstructionSetButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteInstructionSetButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>

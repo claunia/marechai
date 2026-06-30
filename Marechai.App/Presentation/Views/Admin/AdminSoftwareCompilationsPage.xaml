@@ -94,12 +94,14 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
@@ -203,10 +205,11 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding SoftwareName}" />
-                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveIncludedSoftwareCommand, ElementName=PageRoot}"
                                                                     CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsRepeater.ItemTemplate>
@@ -243,10 +246,11 @@
                                                                 <Run Text=" - " />
                                                                 <Run Text="{Binding SoftwareVersion}" />
                                                             </TextBlock>
-                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveIncludedVersionCommand, ElementName=PageRoot}"
                                                                     CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsRepeater.ItemTemplate>
@@ -279,10 +283,11 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" />
-                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveIncludedCompilationCommand, ElementName=PageRoot}"
                                                                     CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsRepeater.ItemTemplate>
@@ -372,10 +377,11 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" />
-                                                            <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveMergeSourceCommand, ElementName=PageRoot}"
                                                                     CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"
-                                                                    Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                                    Style="{StaticResource AdminGridActionButtonStyle}" />
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsRepeater.ItemTemplate>

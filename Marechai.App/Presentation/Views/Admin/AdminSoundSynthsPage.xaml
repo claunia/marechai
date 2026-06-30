@@ -63,21 +63,27 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditSoundSynthButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditSoundSynthButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
                                                             Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=PhotosButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <SymbolIcon Symbol="Document" />
+                                                    </Button>
+                                                    <Button Content="&#xE91B;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=PhotosButton}"
                                                             Command="{Binding DataContext.OpenPhotosCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=VideosButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE714;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=VideosButton}"
                                                             Command="{Binding DataContext.OpenVideosCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteSoundSynthButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteSoundSynthButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>

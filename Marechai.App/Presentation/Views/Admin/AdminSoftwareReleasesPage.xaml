@@ -54,9 +54,11 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditButton}" Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=SoftwareCoverManagementButton}" Command="{Binding DataContext.OpenCoversCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}" Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}" Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=SoftwareCoverManagementButton}" Command="{Binding DataContext.OpenCoversCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}" Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}" Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>

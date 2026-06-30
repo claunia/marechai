@@ -170,32 +170,33 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=EditCompanyButton}"
+                                                    <Button Content="&#xE70F;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditCompanyButton}"
                                                             Command="{Binding DataContext.OpenEditCompanyCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
                                                             Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=LogosButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <SymbolIcon Symbol="Document" />
+                                                    </Button>
+                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=LogosButton}"
                                                             Command="{Binding DataContext.OpenLogosCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=MergeCompanyButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}">
+                                                        <SymbolIcon Symbol="Library" />
+                                                    </Button>
+                                                    <Button Content="&#xE8AB;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeCompanyButton}"
                                                             Command="{Binding DataContext.OpenMergeCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
-                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteCompanyButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE74D;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteCompanyButton}"
                                                             Command="{Binding DataContext.DeleteCompanyCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
-                                                            Foreground="{ThemeResource SystemErrorTextColor}"
-                                                            Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Padding="8,4" />
+                                                            Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
