@@ -24,6 +24,7 @@ using Uno.Extensions.Authentication;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Toolkit;
 using Uno.UI;
+using System.Reflection;
 
 namespace Marechai.App;
 
@@ -80,6 +81,14 @@ public partial class App : PrismApplication
         containerRegistry.RegisterInstance<ILoggerFactory>(loggerFactory);
         containerRegistry.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
 
+#if __ANDROID__
+        var a = Assembly.GetExecutingAssembly();
+        using var stream = a.GetManifestResourceStream("Marechai.App.appsettings.json");
+
+        var configuration = new ConfigurationBuilder()
+			.AddJsonStream(stream)
+			.Build();
+#else
         // Configuration — build from appsettings files so services can resolve IConfiguration
         System.Diagnostics.Debug.WriteLine($"[App] AppContext.BaseDirectory={AppContext.BaseDirectory}");
         System.Diagnostics.Debug.WriteLine($"[App] appsettings.json exists={System.IO.File.Exists(System.IO.Path.Combine(AppContext.BaseDirectory, "appsettings.json"))}");
@@ -88,6 +97,7 @@ public partial class App : PrismApplication
                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                            .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false)
                            .Build();
+#endif
 
         foreach(var kvp in configuration.AsEnumerable())
             System.Diagnostics.Debug.WriteLine($"[App] Config: {kvp.Key} = {kvp.Value}");
