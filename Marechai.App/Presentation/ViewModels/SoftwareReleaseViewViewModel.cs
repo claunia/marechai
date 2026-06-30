@@ -70,6 +70,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private Visibility _showPlatform = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showVersion = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showRegions = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -183,6 +186,15 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             Barcodes.Clear();
             ProductCodes.Clear();
             Companies.Clear();
+            VersionString = null;
+            Platform = null;
+            RegionsDisplay = null;
+            LanguagesDisplay = null;
+            Title = null;
+            Publisher = null;
+            ReleaseDateDisplay = null;
+            SoftwareName = null;
+            ReleaseTitle = string.Empty;
 
             SoftwareReleaseDto? release = await _browsingService.GetReleaseByIdAsync(releaseId);
 
@@ -260,6 +272,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
 
     private void UpdateVisibilities()
     {
+        ShowVersion     = !string.IsNullOrEmpty(VersionString) ? Visibility.Visible : Visibility.Collapsed;
         ShowPlatform    = !string.IsNullOrEmpty(Platform) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegions     = !string.IsNullOrEmpty(RegionsDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowLanguages   = !string.IsNullOrEmpty(LanguagesDisplay) ? Visibility.Visible : Visibility.Collapsed;

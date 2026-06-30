@@ -104,7 +104,8 @@
                             Spacing="24">
 
                     <!-- Version -->
-                    <StackPanel Spacing="8">
+                    <StackPanel Spacing="8"
+                                Visibility="{Binding ShowVersion}">
                         <TextBlock
                                    Text="{Binding Source={StaticResource Strings}, Path=SoftwareVersionLabel}"
                                    FontSize="12"
