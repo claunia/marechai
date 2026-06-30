@@ -12,16 +12,6 @@ public sealed partial class AdminSoftwareScreenshotsPage : Page
 
     AdminSoftwareScreenshotsViewModel ViewModel => DataContext as AdminSoftwareScreenshotsViewModel;
 
-    void SoftwareAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-    {
-        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            ViewModel?.UpdateSoftwareSuggestions(sender.Text);
-    }
-
-    void SoftwareAutoSuggestBox_SuggestionChosen(AutoSuggestBox sender,
-                                                  AutoSuggestBoxSuggestionChosenEventArgs args) =>
-        ViewModel?.OnSoftwareSuggestionChosen(args.SelectedItem as string);
-
     void PlatformAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)

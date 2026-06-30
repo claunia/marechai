@@ -130,6 +130,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
         OpenReleasesCommand = new RelayCommand<SoftwareDto>(OpenReleases);
         OpenPromoArtCommand = new RelayCommand<SoftwareDto>(OpenPromoArt);
         OpenVideosCommand   = new RelayCommand<SoftwareDto>(OpenVideos);
+        OpenScreenshotsCommand = new RelayCommand<SoftwareDto>(OpenScreenshots);
         OpenDescriptionCommand     = new RelayCommand<SoftwareDto>(OpenDescription);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
@@ -158,6 +159,7 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public IRelayCommand<SoftwareDto>        OpenReleasesCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenPromoArtCommand { get; }
     public IRelayCommand<SoftwareDto>        OpenVideosCommand { get; }
+    public IRelayCommand<SoftwareDto>        OpenScreenshotsCommand { get; }
     public IRelayCommand<SoftwareDto>                   OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand                           SaveDescriptionCommand   { get; }
     public IRelayCommand                                CancelDescriptionCommand { get; }
@@ -447,6 +449,17 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
             { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
         };
         _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareVideosPage), parameters);
+    }
+
+    private void OpenScreenshots(SoftwareDto? item)
+    {
+        if(item?.Id == null) return;
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, item.Id.Value },
+            { NavParamKeys.SoftwareName, item.Name ?? string.Empty }
+        };
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwareScreenshotsPage), parameters);
     }
 
     public void ApplyFilter()

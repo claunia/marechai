@@ -15,6 +15,7 @@ using AdminSoftwareScreenshotBatchJobStatusDto = Marechai.ApiClient.Models.Admin
 using AdminPendingSoftwareScreenshotUploadDto = Marechai.ApiClient.Models.AdminPendingSoftwareScreenshotUploadDto;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
@@ -43,9 +44,9 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     readonly IRegionManager                              _regionManager;
 
     List<SoftwareScreenshotDto>? _allScreenshots;
-    List<SoftwareDto>?           _allSoftware;
     List<SoftwarePlatformDto>?   _allPlatforms;
     List<SoftwareVersionDto>?    _allVersions;
+    int                          _softwareId;
 
     [ObservableProperty]
     private ObservableCollection<ScreenshotGridItem> _screenshots = [];
@@ -70,6 +71,9 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
 
     [ObservableProperty]
     private bool _isAdmin;
+
+    [ObservableProperty]
+    private string _pageTitle = string.Empty;
 
     [ObservableProperty]
     private bool _isUploading;
@@ -114,15 +118,8 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     [ObservableProperty]
     private string _editCaption = string.Empty;
 
-    // Software picker
-    [ObservableProperty]
-    private ObservableCollection<string> _softwareSuggestions = [];
-
     [ObservableProperty]
     private SoftwareDto? _selectedSoftware;
-
-    [ObservableProperty]
-    private string _softwareSearchText = string.Empty;
 
     // Platform picker
     [ObservableProperty]
@@ -220,6 +217,12 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     {
         CheckAdminRole();
 
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SoftwareId, out int softwareId))
+            _softwareId = softwareId;
+
+        if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.SoftwareName, out string? name))
+            PageTitle = string.Format(_localizer["SoftwareScreenshotsForTitle"], name);
+
         if(IsAdmin)
         {
             _ = LoadPickerDataAsync();
@@ -255,14 +258,16 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     {
         try
         {
-            var softwareResult = await _apiClient.Software.GetAsync();
-            _allSoftware = softwareResult?.ToList() ?? [];
+            SelectedSoftware = await _apiClient.Software[_softwareId].GetAsync();
 
             var platformResult = await _apiClient.Software.Platforms.GetAsync();
             _allPlatforms = platformResult?.ToList() ?? [];
 
             var versionsResult = await _apiClient.Software.Versions.GetAsync();
             _allVersions = versionsResult?.ToList() ?? [];
+
+            UpdatePlatformSuggestions(string.Empty);
+            UpdateVersionSuggestions(string.Empty);
         }
         catch(Exception ex)
         {
@@ -279,8 +284,17 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
             ErrorMessage = string.Empty;
             Screenshots.Clear();
 
-            var result = await _apiClient.Software.Screenshots.GetAsync();
-            _allScreenshots = result?.ToList() ?? [];
+            List<Guid?> guids = await _apiClient.Software[_softwareId].Screenshots.GetAsync() ?? [];
+            _allScreenshots = [];
+
+            foreach(Guid? guid in guids)
+            {
+                if(guid is not Guid id) continue;
+
+                SoftwareScreenshotDto? dto = await _apiClient.Software.Screenshots[id].GetAsync();
+
+                if(dto is not null) _allScreenshots.Add(dto);
+            }
 
             foreach(SoftwareScreenshotDto dto in _allScreenshots)
             {
@@ -753,11 +767,9 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
         EditCaption       = dto.Caption ?? string.Empty;
         SelectedScreenshot = item;
 
-        SelectedSoftware = _allSoftware?.FirstOrDefault(s => s.Id == dto.SoftwareId);
         SelectedPlatform = _allPlatforms?.FirstOrDefault(p => p.Id == dto.SoftwarePlatformId);
         SelectedVersion  = _allVersions?.FirstOrDefault(v => v.Id == dto.SoftwareVersionId);
 
-        UpdateSoftwareSuggestions(string.Empty);
         UpdatePlatformSuggestions(string.Empty);
         UpdateVersionSuggestions(string.Empty);
     }
@@ -799,24 +811,6 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     {
         IsEditing         = false;
         IsEditingExisting = false;
-    }
-
-    public void UpdateSoftwareSuggestions(string text)
-    {
-        SoftwareSuggestions.Clear();
-
-        if(_allSoftware is null) return;
-
-        IEnumerable<SoftwareDto> filtered = string.IsNullOrEmpty(text)
-                                                 ? _allSoftware
-                                                 : _allSoftware.Where(s =>
-                                                       s.Name?.Contains(text,
-                                                                        StringComparison
-                                                                           .OrdinalIgnoreCase) ??
-                                                       false);
-
-        foreach(SoftwareDto s in filtered.OrderBy(s => s.Name))
-            SoftwareSuggestions.Add(s.Name ?? string.Empty);
     }
 
     public void UpdatePlatformSuggestions(string text)
@@ -862,14 +856,6 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
                                        : v.VersionString ?? string.Empty);
     }
 
-    public void OnSoftwareSuggestionChosen(string? chosen)
-    {
-        if(chosen is null) return;
-
-        SelectedSoftware = _allSoftware?.FirstOrDefault(s => s.Name == chosen);
-        UpdateVersionSuggestions(string.Empty);
-    }
-
     public void OnPlatformSuggestionChosen(string? chosen)
     {
         if(chosen is null) return;
@@ -891,7 +877,7 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
         });
     }
 
-    void GoBack() => _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePage));
 
     async Task<Microsoft.UI.Xaml.Media.ImageSource?> CreateImageSourceFromDataUrlAsync(string? dataUrl)
     {

@@ -820,6 +820,7 @@ public class LocalizedStrings
     public string DeleteButton => _l["DeleteButton"];
     public string PhotosButton => _l["PhotosButton"];
     public string VideosButton => _l["VideosButton"];
+    public string ScreenshotsButton => _l["ScreenshotsButton"];
     public string RefreshButton => _l["RefreshButton"];
 
     // People management
@@ -1174,7 +1175,6 @@ public class LocalizedStrings
     public string SoundSynthLabel => _l["SoundSynthLabel"];
 
     // Software Screenshots
-    public string SoftwareScreenshotsTitle => _l["SoftwareScreenshotsTitle"];
     public string SoftwareScreenshotsSubtitle => _l["SoftwareScreenshotsSubtitle"];
     public string SoftwareScreenshotsBatchSectionTitle => _l["SoftwareScreenshotsBatchSectionTitle"];
     public string SoftwareScreenshotsBatchSectionSubtitle => _l["SoftwareScreenshotsBatchSectionSubtitle"];

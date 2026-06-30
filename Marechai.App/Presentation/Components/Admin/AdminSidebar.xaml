@@ -120,7 +120,6 @@
                 <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminExternalSitesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE80B;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding ExternalSiteManagementButtonText}" /></StackPanel></Button>
                 <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareCompilationsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareCompilationManagementButtonText}" /></StackPanel></Button>
                 <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareAttributesCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE429;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareAttributesManagementButtonText}" /></StackPanel></Button>
-                <Button Style="{StaticResource AdminSidebarNavButtonStyle}" Command="{Binding NavigateToAdminSoftwareScreenshotsCommand}"><StackPanel Orientation="Horizontal" Spacing="12"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /><TextBlock Style="{StaticResource AdminSidebarButtonTextStyle}" Text="{Binding SoftwareScreenshotManagementButtonText}" /></StackPanel></Button>
             </StackPanel>
         </ScrollViewer>
 
@@ -158,7 +157,6 @@
                 <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminExternalSitesCommand}" ToolTipService.ToolTip="{Binding ExternalSiteManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE80B;" /></Button>
                 <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareCompilationsCommand}" ToolTipService.ToolTip="{Binding SoftwareCompilationManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /></Button>
                 <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareAttributesCommand}" ToolTipService.ToolTip="{Binding SoftwareAttributesManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE429;" /></Button>
-                <Button Style="{StaticResource AdminSidebarCompactButtonStyle}" Command="{Binding NavigateToAdminSoftwareScreenshotsCommand}" ToolTipService.ToolTip="{Binding SoftwareScreenshotManagementButtonText}"><FontIcon Style="{StaticResource AdminSidebarMaterialIconStyle}" Glyph="&#xE3B6;" /></Button>
             </StackPanel>
         </ScrollViewer>
 

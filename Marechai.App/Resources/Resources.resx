@@ -2821,6 +2821,7 @@
   <data name="DeleteButton" xml:space="preserve"><value>Delete</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Photos</value></data>
   <data name="VideosButton" xml:space="preserve"><value>Videos</value></data>
+  <data name="ScreenshotsButton" xml:space="preserve"><value>Screenshots</value></data>
   <data name="RefreshButton" xml:space="preserve"><value>Refresh</value></data>
   <data name="PeopleManagementButton" xml:space="preserve"><value>People Management</value></data>
   <data name="PeopleManagementTitle" xml:space="preserve"><value>People Management</value></data>
@@ -3338,8 +3339,7 @@
   <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Supported Sound Synthesizers</value></data>
   <data name="SoundSynthLabel" xml:space="preserve"><value>Sound Synthesizer</value></data>
 
-  <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
-  <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
+  <data name="SoftwareScreenshotsForTitle" xml:space="preserve"><value>Screenshots for: {0}</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
   <data name="SoftwareScreenshotsBatchSectionTitle" xml:space="preserve"><value>Batch Upload</value></data>
   <data name="SoftwareScreenshotsBatchSectionSubtitle" xml:space="preserve"><value>Stage up to 25 screenshots, set an optional caption per image and a shared group name, then submit the batch.</value></data>

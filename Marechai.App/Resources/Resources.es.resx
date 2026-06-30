@@ -2485,6 +2485,7 @@
   <data name="DeleteButton" xml:space="preserve"><value>Eliminar</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
   <data name="VideosButton" xml:space="preserve"><value>Vídeos</value></data>
+  <data name="ScreenshotsButton" xml:space="preserve"><value>Capturas de pantalla</value></data>
   <data name="RefreshButton" xml:space="preserve"><value>Actualizar</value></data>
   <data name="PeopleManagementButton" xml:space="preserve"><value>Gestión de personas</value></data>
   <data name="PeopleManagementTitle" xml:space="preserve"><value>Gestión de personas</value></data>
