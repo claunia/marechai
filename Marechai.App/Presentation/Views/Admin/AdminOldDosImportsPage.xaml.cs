@@ -10,6 +10,8 @@ public sealed partial class AdminOldDosImportsPage : Page
 {
     public AdminOldDosImportsPage() => InitializeComponent();
 
+    AdminOldDosImportsViewModel? ViewModel => DataContext as AdminOldDosImportsViewModel;
+
     private async void Reject_Click(object sender, RoutedEventArgs e)
     {
         if((sender as Button)?.CommandParameter is not OldDosQueueItemViewModel item ||
@@ -38,5 +40,13 @@ public sealed partial class AdminOldDosImportsPage : Page
         string url = vm.AbsoluteOldDosUrl(item.SourceUrl);
         if(Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
             await Launcher.LaunchUriAsync(uri);
+    }
+
+    private async void PageSizeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(ViewModel == null) return;
+
+        ViewModel.CurrentPage = 1;
+        await ViewModel.LoadCommand.ExecuteAsync(null);
     }
 }

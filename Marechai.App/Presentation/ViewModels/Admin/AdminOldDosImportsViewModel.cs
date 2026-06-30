@@ -17,14 +17,15 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAware
 {
     private readonly OldDosImportsService _service;
-    private readonly IJwtService _jwtService;
-    private readonly ITokenService _tokenService;
-    private readonly IStringLocalizer _localizer;
+    private readonly IJwtService          _jwtService;
+    private readonly ITokenService        _tokenService;
+    private readonly IStringLocalizer     _localizer;
     private readonly ILogger<AdminOldDosImportsViewModel> _logger;
-    private readonly IRegionManager _regionManager;
+    private readonly IRegionManager                       _regionManager;
 
     [ObservableProperty] private ObservableCollection<OldDosQueueItemViewModel> _imports = [];
     [ObservableProperty] private ObservableCollection<OldDosQueueItemViewModel> _filteredImports = [];
+    [ObservableProperty] private ObservableCollection<int> _pageSizeOptions = [10, 25, 50, 100];
     [ObservableProperty] private ObservableCollection<OldDosEnumOption> _statusOptions = [];
     [ObservableProperty] private OldDosQueueItemViewModel? _selectedImport;
     [ObservableProperty] private OldDosEnumOption? _selectedStatusOption;
@@ -37,6 +38,9 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
     [ObservableProperty] private bool _isAdmin;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _statusIsSuccess;
+    [ObservableProperty] private int _currentPage = 1;
+    [ObservableProperty] private int _pageSize = 25;
+    [ObservableProperty] private int _totalCount;
 
     public AdminOldDosImportsViewModel(OldDosImportsService service,
                                        IJwtService jwtService,
@@ -53,6 +57,8 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
         _regionManager = regionManager;
 
         LoadCommand = new AsyncRelayCommand(LoadAsync);
+        NextPageCommand = new AsyncRelayCommand(NextPageAsync);
+        PreviousPageCommand = new AsyncRelayCommand(PreviousPageAsync);
         ReviewCommand = new RelayCommand<OldDosQueueItemViewModel>(OpenReview);
         ClearStatusMessageCommand = new RelayCommand(() => StatusMessage = string.Empty);
 
@@ -61,8 +67,19 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
+    public IAsyncRelayCommand NextPageCommand { get; }
+    public IAsyncRelayCommand PreviousPageCommand { get; }
     public IRelayCommand<OldDosQueueItemViewModel> ReviewCommand { get; }
     public IRelayCommand ClearStatusMessageCommand { get; }
+
+    public bool CanGoPrevious => CurrentPage > 1;
+    public bool CanGoNext => CurrentPage * PageSize < TotalCount;
+    public string PageSummary => TotalCount == 0
+                                     ? _localizer["SoftwareAttributesPaginationEmpty"]
+                                     : string.Format(_localizer["MessageReportsPaginationFormat"],
+                                                     (CurrentPage - 1) * PageSize + 1,
+                                                     Math.Min(CurrentPage * PageSize, TotalCount),
+                                                     TotalCount);
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -79,17 +96,7 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
     {
         FilteredImports.Clear();
 
-        IEnumerable<OldDosQueueItemViewModel> source = Imports;
-
-        if(!string.IsNullOrWhiteSpace(SearchText))
-        {
-            source = source.Where(item =>
-                                      item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                                      item.DeveloperName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                                      item.RussianCategoryPath.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
-        }
-
-        foreach(OldDosQueueItemViewModel item in source)
+        foreach(OldDosQueueItemViewModel item in Imports)
             FilteredImports.Add(item);
     }
 
@@ -106,10 +113,16 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
             OldDosSoftwareStatus? status = GetSelectedStatus();
             string? search = string.IsNullOrWhiteSpace(SearchText) ? null : SearchText;
 
-            int count = await _service.GetPendingCountAsync(status, search, HasEnrichmentError);
-            int take = Math.Clamp(count, 1, 5000);
+            TotalCount = await _service.GetPendingCountAsync(status, search, HasEnrichmentError);
 
-            List<OldDosPendingListItemDto> rows = await _service.GetPendingAsync(0, take, status, search, HasEnrichmentError);
+            int maxPage = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+
+            if(CurrentPage > maxPage)
+                CurrentPage = maxPage;
+
+            int skip = (CurrentPage - 1) * PageSize;
+            List<OldDosPendingListItemDto> rows = await _service.GetPendingAsync(skip, PageSize, status, search,
+                                                                                 HasEnrichmentError);
 
             Imports.Clear();
 
@@ -192,9 +205,12 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
         return "https://old-dos.ru" + (url.StartsWith('/') ? url : "/" + url);
     }
 
-    partial void OnSearchTextChanged(string value) => _ = LoadCommand.ExecuteAsync(null);
-    partial void OnSelectedStatusOptionChanged(OldDosEnumOption? value) => _ = LoadCommand.ExecuteAsync(null);
-    partial void OnHasEnrichmentErrorChanged(bool value) => _ = LoadCommand.ExecuteAsync(null);
+    partial void OnSearchTextChanged(string value) => _ = ReloadFromFirstPageAsync();
+    partial void OnSelectedStatusOptionChanged(OldDosEnumOption? value) => _ = ReloadFromFirstPageAsync();
+    partial void OnHasEnrichmentErrorChanged(bool value) => _ = ReloadFromFirstPageAsync();
+    partial void OnCurrentPageChanged(int value) => NotifyPageStateChanged();
+    partial void OnPageSizeChanged(int value) => NotifyPageStateChanged();
+    partial void OnTotalCountChanged(int value) => NotifyPageStateChanged();
 
     private void BuildOptions()
     {
@@ -218,6 +234,28 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
         SelectedStatusOption?.Value.HasValue == true
             ? (OldDosSoftwareStatus)SelectedStatusOption.Value.Value
             : HasEnrichmentError ? null : OldDosSoftwareStatus.ReadyForReview;
+
+    private async Task NextPageAsync()
+    {
+        if(!CanGoNext) return;
+
+        CurrentPage++;
+        await LoadAsync();
+    }
+
+    private async Task PreviousPageAsync()
+    {
+        if(!CanGoPrevious) return;
+
+        CurrentPage--;
+        await LoadAsync();
+    }
+
+    private async Task ReloadFromFirstPageAsync()
+    {
+        CurrentPage = 1;
+        await LoadAsync();
+    }
 
     private void CheckAdminRole()
     {
@@ -247,5 +285,12 @@ public partial class AdminOldDosImportsViewModel : ObservableObject, IRegionAwar
     {
         StatusIsSuccess = success;
         StatusMessage   = message;
+    }
+
+    private void NotifyPageStateChanged()
+    {
+        OnPropertyChanged(nameof(CanGoPrevious));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(PageSummary));
     }
 }
