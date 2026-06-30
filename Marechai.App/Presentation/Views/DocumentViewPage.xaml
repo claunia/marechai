@@ -6,6 +6,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:local="using:Marechai.App.Presentation.Views"
       NavigationCacheMode="Disabled"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -125,8 +126,7 @@
                                    FontSize="14" FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
                         <Border Style="{StaticResource MetadataCardStyle}">
-                            <TextBlock Text="{Binding SynopsisText}" FontSize="14"
-                                       Foreground="{ThemeResource TextControlForeground}" TextWrapping="Wrap" />
+                            <local:MessageMarkdownView Markdown="{Binding SynopsisText}" />
                         </Border>
                     </StackPanel>
 
