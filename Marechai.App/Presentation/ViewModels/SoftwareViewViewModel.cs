@@ -227,7 +227,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     private Visibility _showCredits = Visibility.Collapsed;
 
     [ObservableProperty]
-    private string _descriptionHtml = string.Empty;
+    private string _descriptionMarkdown = string.Empty;
 
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
@@ -235,12 +235,12 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ImageSource? _heroImageSource;
 
-    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionMarkdown);
     public bool HasHeroImage   => HeroImageSource is not null;
     public bool HasMarechaiScore => MarechaiScore.HasValue;
     public bool HasMarechaiScoreRankText => !string.IsNullOrWhiteSpace(MarechaiScoreRankText);
 
-    partial void OnDescriptionHtmlChanged(string value)
+    partial void OnDescriptionMarkdownChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
     }
@@ -707,7 +707,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             {
                 string langCode = GetIso639CodeFromCulture();
                 SoftwareDescriptionDto? desc = await _browsingService.GetDescriptionAsync(softwareId, langCode);
-                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+                DescriptionMarkdown = desc?.Markdown ?? string.Empty;
             }
             catch(Exception ex)
             {

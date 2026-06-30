@@ -64,6 +64,7 @@
     <PackageReference Include="Svg.Skia"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
     <PackageReference Include="QRCoder"/>
+    <PackageReference Include="Markdig"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Presentation\Views\Shell.xaml.cs">
@@ -102,12 +103,10 @@
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls"/>
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown"/>
     <!-- Add more community toolkit references here -->
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
     <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls"/>
-    <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown"/>
     <!-- Add more uno community toolkit references here -->
   </ItemGroup>
 

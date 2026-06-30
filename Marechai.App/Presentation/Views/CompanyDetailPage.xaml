@@ -4,6 +4,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
+      xmlns:local="using:Marechai.App.Presentation.Views"
       xmlns:utu="using:Uno.Toolkit.UI"
       xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Required"
@@ -856,8 +857,7 @@
                                       HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Padding="16"
                                         Spacing="8">
-                                <WebView2 x:Name="DescriptionWebView"
-                                          MinHeight="400" />
+                                <local:MessageMarkdownView Markdown="{Binding DescriptionMarkdown}" />
                             </StackPanel>
                         </ScrollViewer>
                     </TabViewItem>

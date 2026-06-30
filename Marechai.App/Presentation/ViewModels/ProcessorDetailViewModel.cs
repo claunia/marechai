@@ -68,7 +68,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     private bool _hasSmartphones;
 
     [ObservableProperty]
-    private string _descriptionHtml = string.Empty;
+    private string _descriptionMarkdown = string.Empty;
 
     [ObservableProperty]
     private Visibility _showDescription = Visibility.Collapsed;
@@ -76,9 +76,9 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
-    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
-    partial void OnDescriptionHtmlChanged(string value)
+    partial void OnDescriptionMarkdownChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
     }
@@ -270,7 +270,7 @@ public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
                 string langCode = GetIso639CodeFromCulture();
                 ProcessorDescriptionDto? desc = await _processorsService.GetDescriptionAsync(ProcessorId, langCode);
 
-                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+                DescriptionMarkdown = desc?.Markdown ?? string.Empty;
             }
             catch(Exception ex)
             {

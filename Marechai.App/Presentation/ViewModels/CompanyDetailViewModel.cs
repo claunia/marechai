@@ -103,7 +103,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private CompanyDto? _soldToCompany;
 
     [ObservableProperty]
-    private string _descriptionHtml = string.Empty;
+    private string _descriptionMarkdown = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<CompanyDetailItem> _people = [];
@@ -194,7 +194,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
-    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
     /// <summary>
     ///     Gets whether company has multiple logos
@@ -235,7 +235,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         OnPropertyChanged(nameof(HasLogoContent));
     }
 
-    partial void OnDescriptionHtmlChanged(string value)
+    partial void OnDescriptionMarkdownChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
     }
@@ -830,7 +830,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                 string langCode = GetIso639CodeFromCulture();
                 CompanyDescriptionDto? desc = await _companyDetailService.GetDescriptionAsync(CompanyId, langCode);
 
-                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+                DescriptionMarkdown = desc?.Markdown ?? string.Empty;
             }
             catch(Exception ex)
             {

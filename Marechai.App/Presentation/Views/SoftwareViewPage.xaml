@@ -7,6 +7,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:components="using:Marechai.App.Presentation.Components"
+      xmlns:local="using:Marechai.App.Presentation.Views"
       xmlns:wctui="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Disabled"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -234,8 +235,7 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
                                    FontSize="20"
                                    FontWeight="SemiBold" />
-                        <WebView2 x:Name="DescriptionWebView"
-                                  MinHeight="200" />
+                        <local:MessageMarkdownView Markdown="{Binding DescriptionMarkdown}" />
                     </StackPanel>
 
                     <!-- Family -->

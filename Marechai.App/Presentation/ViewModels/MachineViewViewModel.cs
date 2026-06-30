@@ -62,7 +62,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private string _companyName = string.Empty;
 
     [ObservableProperty]
-    private string _descriptionHtml = string.Empty;
+    private string _descriptionMarkdown = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -145,9 +145,9 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     /// <summary>
     ///     Gets whether a description is available
     /// </summary>
-    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionMarkdown);
 
-    partial void OnDescriptionHtmlChanged(string value)
+    partial void OnDescriptionMarkdownChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
     }
@@ -662,7 +662,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
                 string langCode = GetIso639CodeFromCulture();
                 MachineDescriptionDto? desc = await _computersService.GetDescriptionAsync(machineId, langCode);
 
-                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+                DescriptionMarkdown = desc?.Markdown ?? string.Empty;
             }
             catch(Exception ex)
             {
