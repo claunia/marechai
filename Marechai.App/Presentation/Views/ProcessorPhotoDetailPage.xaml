@@ -50,39 +50,8 @@
         <!-- Main Content -->
         <Grid Grid.Row="1">
 
-            <!-- Loading State -->
-            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Padding="32"
-                        Spacing="16">
-                <ProgressRing IsActive="{Binding IsLoading}"
-                              IsIndeterminate="True"
-                              Height="64"
-                              Width="64"
-                              Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock
-                           Text="{Binding Source={StaticResource Strings}, Path=LoadingPhotoText}"
-                           FontSize="14"
-                           TextAlignment="Center" />
-            </StackPanel>
-
-            <!-- Error State -->
-            <StackPanel Visibility="{Binding ErrorOccurred, Converter={StaticResource BoolToVisibilityConverter}}"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Padding="24"
-                        Spacing="16"
-                        MaxWidth="400">
-                <InfoBar IsOpen="True"
-                         Severity="Error"
-                         Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingPhotoInfoBar_Title}"
-                         Message="{Binding ErrorMessage}"
-                         IsClosable="False" />
-            </StackPanel>
-
             <!-- Responsive Layout -->
-            <utu:ResponsiveView Visibility="{Binding IsLoading, Converter={StaticResource InvertBoolToVisibilityConverter}}">
+            <utu:ResponsiveView>
 
                 <!-- Narrow Template -->
                 <utu:ResponsiveView.NarrowTemplate>
@@ -600,6 +569,37 @@
                 </utu:ResponsiveView.WideTemplate>
 
             </utu:ResponsiveView>
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="{Binding IsLoading}"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingPhotoText}"
+                           FontSize="14"
+                           TextAlignment="Center" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding ErrorOccurred, Converter={StaticResource BoolToVisibilityConverter}}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingPhotoInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+            </StackPanel>
 
         </Grid>
 

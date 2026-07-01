@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -10,29 +9,7 @@ public sealed partial class PhotoDetailPage : Page
 {
     private const double ZoomFactor = 1.5;
 
-    public PhotoDetailPage()
-    {
-        InitializeComponent();
-        Loaded      += OnLoaded;
-        SizeChanged += OnSizeChanged;
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e) => QueueLayoutRefresh();
-
-    private void OnSizeChanged(object sender, SizeChangedEventArgs e) => QueueLayoutRefresh();
-
-    private async void QueueLayoutRefresh()
-    {
-        InvalidateMeasure();
-        InvalidateArrange();
-        UpdateLayout();
-
-        await Task.Yield();
-
-        InvalidateMeasure();
-        InvalidateArrange();
-        UpdateLayout();
-    }
+    public PhotoDetailPage() => InitializeComponent();
 
     private void ZoomIn_Click(object sender, RoutedEventArgs e)
     {
