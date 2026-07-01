@@ -12,6 +12,7 @@ using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
+using Marechai.Data.Helpers;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -174,16 +175,25 @@ public partial class AdminWwpcImportReviewViewModel : ObservableObject, IRegionA
         return "https://winworldpc.com" + (url.StartsWith('/') ? url : "/" + url);
     }
 
+    static IEnumerable<T> RankByQuery<T>(IEnumerable<T> source, string query, Func<T, string> nameSelector)
+    {
+        if(string.IsNullOrWhiteSpace(query))
+            return source.OrderBy(nameSelector);
+
+        return source.Where(i => (nameSelector(i) ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase))
+                     .OrderByDescending(i => string.Equals(nameSelector(i), query, StringComparison.OrdinalIgnoreCase))
+                     .ThenByDescending(i => JaroWinkler.Similarity(query, nameSelector(i) ?? string.Empty))
+                     .ThenBy(nameSelector);
+    }
+
     public void UpdateGenreSuggestions(string query)
     {
         GenreSuggestions.Clear();
 
         IEnumerable<SoftwareGenreDto> source = _allGenres.Where(g => g.Type == (int)SoftwareGenreType.Category &&
                                                                       !SelectedGenres.Any(selected => selected.Id == g.Id));
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(g => (g.Name ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(SoftwareGenreDto genre in source.OrderBy(g => g.Name).Take(30))
+        foreach(SoftwareGenreDto genre in RankByQuery(source, query, g => g.Name ?? string.Empty).Take(30))
             GenreSuggestions.Add(genre);
     }
 
@@ -191,11 +201,7 @@ public partial class AdminWwpcImportReviewViewModel : ObservableObject, IRegionA
     {
         CompanySuggestions.Clear();
 
-        IEnumerable<CompanyDto> source = _allCompanies;
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(c => (c.Name ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase));
-
-        foreach(CompanyDto company in source.OrderBy(c => c.Name).Take(30))
+        foreach(CompanyDto company in RankByQuery(_allCompanies, query, c => c.Name ?? string.Empty).Take(30))
             CompanySuggestions.Add(company);
     }
 
@@ -203,11 +209,7 @@ public partial class AdminWwpcImportReviewViewModel : ObservableObject, IRegionA
     {
         PlatformSuggestions.Clear();
 
-        IEnumerable<SoftwarePlatformDto> source = _allPlatforms;
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(p => (p.Name ?? string.Empty).Contains(query, StringComparison.OrdinalIgnoreCase));
-
-        foreach(SoftwarePlatformDto platform in source.OrderBy(p => p.Name).Take(30))
+        foreach(SoftwarePlatformDto platform in RankByQuery(_allPlatforms, query, p => p.Name ?? string.Empty).Take(30))
             PlatformSuggestions.Add(platform);
     }
 
