@@ -16,6 +16,7 @@ using AdminPendingMachinePhotoUploadDto = Marechai.ApiClient.Models.AdminPending
 using LicenseDto = Marechai.ApiClient.Models.LicenseDto;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -680,6 +681,10 @@ public partial class AdminMachinePhotosViewModel : ObservableObject, IRegionAwar
     async Task DeletePhotoAsync(MachinePhotoDisplayItem? item)
     {
         if(item == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(item.UploadDate) ? item.PhotoId.ToString() : item.UploadDate))
+            return;
 
         try
         {

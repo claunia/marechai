@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -430,6 +431,9 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     {
         if(proc?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, proc.Name ?? string.Empty))
+            return;
+
         try
         {
             await _apiClient.Processors[proc.Id.Value].DeleteAsync();
@@ -752,6 +756,10 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(ProcessorDescriptionDto? translation)
     {
         if(DescriptionProcessorId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               $"{ProcessorName} ({translation.LanguageCode})"))
+            return;
 
         try
         {

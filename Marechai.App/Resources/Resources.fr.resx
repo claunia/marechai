@@ -2456,6 +2456,8 @@
   <data name="FailedToDeletePhoto" xml:space="preserve"><value>Échec de la suppression de la photo.</value></data>
   <data name="ViewDetailsButton" xml:space="preserve"><value>Voir les détails</value></data>
   <data name="DeleteButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="ConfirmDeleteDialogTitle" xml:space="preserve"><value>Confirmer la suppression</value></data>
+  <data name="ConfirmDeleteDialogMessage" xml:space="preserve"><value>Voulez-vous vraiment supprimer {0} ? Cette action est irréversible.</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Photos</value></data>
   <data name="VideosButton" xml:space="preserve"><value>Vidéos</value></data>
   <data name="ScreenshotsButton" xml:space="preserve"><value>Captures d'écran</value></data>

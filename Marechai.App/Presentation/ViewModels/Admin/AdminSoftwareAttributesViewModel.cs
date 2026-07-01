@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -290,6 +291,9 @@ public partial class AdminSoftwareAttributesViewModel : ObservableObject, IRegio
     async Task DeleteAsync(SoftwareAttributeDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{item.Category}: {item.Key}"))
+            return;
 
         (bool succeeded, string? error) = await _attributesService.DeleteAsync(item.Id.Value);
 

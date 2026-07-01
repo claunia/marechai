@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -346,6 +347,10 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     private async Task DeleteAsync(SoftwareDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name ?? string.Empty))
+            return;
+
         try
         {
             await _service.DeleteAsync(item.Id.Value);
@@ -800,6 +805,9 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(SoftwareDescriptionDto? translation)
     {
         if(DescriptionSoftwareId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{SoftwareName} ({translation.LanguageCode})"))
+            return;
 
         try
         {

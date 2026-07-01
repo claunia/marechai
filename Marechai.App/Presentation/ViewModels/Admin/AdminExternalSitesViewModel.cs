@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -141,6 +142,9 @@ public partial class AdminExternalSitesViewModel : ObservableObject, IRegionAwar
     private async Task DeleteAsync(ExternalSiteDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name))
+            return;
 
         try
         {

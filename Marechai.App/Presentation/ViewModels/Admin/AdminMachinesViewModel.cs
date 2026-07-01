@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Humanizer;
 using Marechai.App.Navigation;
 using Marechai.App.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
@@ -333,6 +334,10 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     private async Task DeleteAsync(MachineDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name ?? string.Empty))
+            return;
+
         try
         {
             await _apiClient.Machines[item.Id.Value].DeleteAsync();
@@ -572,6 +577,9 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(MachineDescriptionDto? translation)
     {
         if(DescriptionMachineId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{MachineName} ({translation.LanguageCode})"))
+            return;
 
         try
         {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Humanizer;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -284,6 +285,9 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     {
         if(item?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name ?? string.Empty))
+            return;
+
         try
         {
             await _apiClient.SoundSynths[item.Id.Value].DeleteAsync();
@@ -556,6 +560,10 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(SoundSynthDescriptionDto? translation)
     {
         if(DescriptionSoundSynthId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               $"{SynthName} ({translation.LanguageCode})"))
+            return;
 
         try
         {

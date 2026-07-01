@@ -16,6 +16,7 @@ using AdminPendingGpuPhotoUploadDto = Marechai.ApiClient.Models.AdminPendingGpuP
 using LicenseDto = Marechai.ApiClient.Models.LicenseDto;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Presentation.Views.Admin;
@@ -681,6 +682,10 @@ public partial class AdminGpuPhotosViewModel : ObservableObject, IRegionAware
     async Task DeletePhotoAsync(MachinePhotoDisplayItem? item)
     {
         if(item == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(item.UploadDate) ? item.PhotoId.ToString() : item.UploadDate))
+            return;
 
         try
         {

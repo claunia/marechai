@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -242,6 +243,9 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
     private async Task DeleteUserAsync(UserDto? user)
     {
         if(user?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, user.UserName ?? user.Email ?? user.Id))
+            return;
 
         try
         {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 using Microsoft.UI.Dispatching;
@@ -456,6 +457,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     private async Task DeleteCompanyAsync(CompanyDto? company)
     {
         if(company?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, company.Name ?? string.Empty))
+            return;
 
         try
         {

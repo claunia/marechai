@@ -15,6 +15,7 @@ using AdminBatchJobStatusDto = Marechai.ApiClient.Models.AdminBatchJobStatusDto;
 using AdminPendingCoverUploadDto = Marechai.ApiClient.Models.AdminPendingCoverUploadDto;
 using SoftwareCoverDto = Marechai.ApiClient.Models.SoftwareCoverDto;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -659,6 +660,10 @@ public partial class AdminSoftwareCoversViewModel : ObservableObject, IRegionAwa
     async Task DeleteCoverAsync(CoverGridItem? item)
     {
         if(item == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(item.Caption) ? item.TypeName : item.Caption))
+            return;
 
         try
         {

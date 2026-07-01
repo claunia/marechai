@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -280,6 +281,9 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
     private async Task DeleteAsync(ScreenDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{item.Diagonal}\""))
+            return;
 
         try
         {

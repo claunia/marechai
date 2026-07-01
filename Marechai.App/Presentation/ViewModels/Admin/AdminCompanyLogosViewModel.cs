@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -265,6 +266,10 @@ public partial class AdminCompanyLogosViewModel : ObservableObject, IRegionAware
     async Task DeleteLogoAsync(CompanyLogoDisplayItem? item)
     {
         if(item == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               item.Year.HasValue ? item.Year.Value.ToString() : item.Guid.ToString()))
+            return;
 
         try
         {

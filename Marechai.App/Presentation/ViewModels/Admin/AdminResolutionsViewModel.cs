@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -196,6 +197,9 @@ public partial class AdminResolutionsViewModel : ObservableObject, IRegionAware
     private async Task DeleteAsync(ResolutionDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{item.Width}x{item.Height}"))
+            return;
 
         try
         {

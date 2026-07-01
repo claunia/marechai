@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
@@ -308,6 +309,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     {
         if(book?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, book.Title ?? string.Empty))
+            return;
+
         try
         {
             await _booksService.DeleteBookAsync(book.Id.Value);
@@ -480,6 +484,10 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     private async Task DeleteSynopsisAsync(DocumentSynopsisDto? synopsis)
     {
         if(SynopsisBookId == null || synopsis?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+                                                              $"{BookTitle} ({synopsis.LanguageCode})"))
+            return;
 
         try
         {
@@ -1082,6 +1090,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     private async Task DeleteCoverAsync()
     {
         if(_editingBookId == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{BookTitle} cover"))
+            return;
 
         try
         {

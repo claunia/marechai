@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Microsoft.Kiota.Abstractions;
@@ -242,6 +243,11 @@ public partial class AdminMagazineIssuesViewModel : ObservableObject, IRegionAwa
     {
         if(issue?.Id == null) return;
 
+        string itemName = issue.Caption ?? $"{MagazineTitle} #{issue.IssueNumber}";
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, itemName))
+            return;
+
         try
         {
             await _magazinesService.DeleteIssueAsync(issue.Id.Value);
@@ -383,6 +389,9 @@ public partial class AdminMagazineIssuesViewModel : ObservableObject, IRegionAwa
     private async Task DeleteCoverAsync()
     {
         if(_editingIssueId == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, $"{MagazineTitle} {Caption} cover"))
+            return;
 
         try
         {

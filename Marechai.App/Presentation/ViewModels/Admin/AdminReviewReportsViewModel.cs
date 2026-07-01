@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -80,6 +81,9 @@ public partial class AdminReviewReportsViewModel : ObservableObject, IRegionAwar
     async Task DeleteReportAsync(ReviewReportListItem? item)
     {
         if(item is null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.SoftwareName))
+            return;
 
         (bool succeeded, string? error) = await _reviewReportsService.DeleteAsync(item.Id);
 

@@ -2352,6 +2352,8 @@
   <data name="FailedToDeletePhoto" xml:space="preserve"><value>Fehler beim Löschen des Fotos.</value></data>
   <data name="ViewDetailsButton" xml:space="preserve"><value>Details anzeigen</value></data>
   <data name="DeleteButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="ConfirmDeleteDialogTitle" xml:space="preserve"><value>Löschung bestätigen</value></data>
+  <data name="ConfirmDeleteDialogMessage" xml:space="preserve"><value>Möchten Sie {0} wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
   <data name="VideosButton" xml:space="preserve"><value>Videos</value></data>
   <data name="ScreenshotsButton" xml:space="preserve"><value>Screenshots</value></data>

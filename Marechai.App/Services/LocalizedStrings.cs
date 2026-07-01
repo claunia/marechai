@@ -821,6 +821,8 @@ public class LocalizedStrings
     public string UploadingPhotoText => _l["UploadingPhotoText"];
     public string ViewDetailsButton => _l["ViewDetailsButton"];
     public string DeleteButton => _l["DeleteButton"];
+    public string ConfirmDeleteDialogTitle => _l["ConfirmDeleteDialogTitle"];
+    public string ConfirmDeleteDialogMessage => _l["ConfirmDeleteDialogMessage"];
     public string PhotosButton => _l["PhotosButton"];
     public string VideosButton => _l["VideosButton"];
     public string ScreenshotsButton => _l["ScreenshotsButton"];

@@ -14,6 +14,7 @@ using AdminSoftwareScreenshotBatchJobItemResultDto = Marechai.ApiClient.Models.A
 using AdminSoftwareScreenshotBatchJobStatusDto = Marechai.ApiClient.Models.AdminSoftwareScreenshotBatchJobStatusDto;
 using AdminPendingSoftwareScreenshotUploadDto = Marechai.ApiClient.Models.AdminPendingSoftwareScreenshotUploadDto;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -724,6 +725,10 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     async Task DeleteScreenshotAsync(ScreenshotGridItem? item)
     {
         if(item is null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(item.Caption) ? item.Id.ToString() : item.Caption))
+            return;
 
         try
         {

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -295,6 +296,9 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     {
         if(magazine?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, magazine.Title ?? string.Empty))
+            return;
+
         try
         {
             await _magazinesService.DeleteMagazineAsync(magazine.Id.Value);
@@ -468,6 +472,10 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     private async Task DeleteSynopsisAsync(DocumentSynopsisDto? synopsis)
     {
         if(SynopsisMagazineId == null || synopsis?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+                                                              $"{MagazineTitle} ({synopsis.LanguageCode})"))
+            return;
 
         try
         {

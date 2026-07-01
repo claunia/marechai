@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Microsoft.UI.Dispatching;
@@ -314,6 +315,9 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     {
         if(item?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, GetFullName(item)))
+            return;
+
         try
         {
             await _apiClient.People[item.Id.Value].DeleteAsync();
@@ -562,6 +566,10 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(PersonDescriptionDto? translation)
     {
         if(DescriptionPersonId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               $"{PersonName} {Surname} ({translation.LanguageCode})"))
+            return;
 
         try
         {

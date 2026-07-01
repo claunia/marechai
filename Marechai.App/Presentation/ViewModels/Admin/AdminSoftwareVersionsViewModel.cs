@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -212,6 +213,9 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     private async Task DeleteAsync(SoftwareVersionDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.VersionString))
+            return;
         try
         {
             await _service.DeleteAsync(item.Id.Value);

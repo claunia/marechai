@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -318,6 +319,10 @@ public partial class AdminSoftwarePromoArtViewModel : ObservableObject, IRegionA
     async Task DeleteItemAsync(AdminSoftwarePromoArtItem? item)
     {
         if(item is null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(item.Caption) ? item.GroupName : item.Caption))
+            return;
 
         try
         {

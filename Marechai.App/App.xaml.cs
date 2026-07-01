@@ -32,7 +32,9 @@ namespace Marechai.App;
 public partial class App : PrismApplication
 {
     static readonly Lazy<IConfigurationRoot> SharedConfiguration = new(BuildConfiguration);
-    private Window _mainWindow;
+    private static Window _mainWindow;
+
+    public static Window MainWindow => _mainWindow;
 
     public App()
     {

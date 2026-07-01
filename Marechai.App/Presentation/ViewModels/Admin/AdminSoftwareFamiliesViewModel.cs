@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -195,6 +196,9 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
     private async Task DeleteAsync(SoftwareFamilyDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name))
+            return;
         try
         {
             await _service.DeleteAsync(item.Id.Value);

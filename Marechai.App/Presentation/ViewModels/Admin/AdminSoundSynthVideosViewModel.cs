@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -290,6 +291,10 @@ public partial class AdminSoundSynthVideosViewModel : ObservableObject, IRegionA
     async Task DeleteVideoAsync(AdminSoundSynthVideoItem? video)
     {
         if(video is null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               string.IsNullOrWhiteSpace(video.Title) ? video.VideoId : video.Title))
+            return;
 
         try
         {

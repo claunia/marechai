@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -383,6 +384,9 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     {
         if(gpu?.Id == null) return;
 
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, gpu.Name ?? string.Empty))
+            return;
+
         try
         {
             await _apiClient.Gpus[gpu.Id.Value].DeleteAsync();
@@ -630,6 +634,10 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private async Task DeleteTranslationAsync(GpuDescriptionDto? translation)
     {
         if(DescriptionGpuId == null || translation?.LanguageCode == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer,
+               $"{GpuName} ({translation.LanguageCode})"))
+            return;
 
         try
         {

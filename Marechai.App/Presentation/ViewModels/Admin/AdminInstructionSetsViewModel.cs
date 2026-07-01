@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Dialogs;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -194,6 +195,9 @@ public partial class AdminInstructionSetsViewModel : ObservableObject, IRegionAw
     private async Task DeleteAsync(InstructionSetDto? item)
     {
         if(item?.Id == null) return;
+
+        if(!await ConfirmationDialogHelper.ConfirmDeleteAsync(_localizer, item.Name))
+            return;
 
         try
         {

@@ -2831,6 +2831,8 @@
   <data name="FailedToDeletePhoto" xml:space="preserve"><value>Failed to delete photo.</value></data>
   <data name="ViewDetailsButton" xml:space="preserve"><value>View Details</value></data>
   <data name="DeleteButton" xml:space="preserve"><value>Delete</value></data>
+  <data name="ConfirmDeleteDialogTitle" xml:space="preserve"><value>Confirm deletion</value></data>
+  <data name="ConfirmDeleteDialogMessage" xml:space="preserve"><value>Are you sure you want to delete {0}? This action cannot be undone.</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Photos</value></data>
   <data name="VideosButton" xml:space="preserve"><value>Videos</value></data>
   <data name="ScreenshotsButton" xml:space="preserve"><value>Screenshots</value></data>
