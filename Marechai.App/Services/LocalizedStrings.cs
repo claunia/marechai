@@ -303,6 +303,9 @@ public class LocalizedStrings
     public string AddCompanyDialog_Title => _l["AddCompanyDialog_Title"];
     public string EditCompanyDialog_Title => _l["EditCompanyDialog_Title"];
     public string DescriptionDialogTitle => _l["DescriptionDialogTitle"];
+    public string MarkdownSourceLabel => _l["MarkdownSourceLabel"];
+    public string MarkdownPreviewLabel => _l["MarkdownPreviewLabel"];
+    public string DescriptionMarkdownPlaceholder => _l["DescriptionMarkdownPlaceholder"];
     public string LanguageLabel => _l["LanguageLabel"];
     public string ExistingTranslationsLabel => _l["ExistingTranslationsLabel"];
     public string DescriptionSectionTitle => _l["DescriptionSectionTitle"];
@@ -985,6 +988,12 @@ public class LocalizedStrings
     public string SoftwareAttributesManagementSubtitle => _l["SoftwareAttributesManagementSubtitle"];
     public string SoftwareReleaseManagementTitle => _l["SoftwareReleaseManagementTitle"];
     public string SoftwareReleaseManagementSubtitle => _l["SoftwareReleaseManagementSubtitle"];
+    public string SoftwareReleaseManagementButton => _l["SoftwareReleaseManagementButton"];
+    public string ExternalIdsHeader => _l["ExternalIdsHeader"];
+    public string ExternalSiteLabel => _l["ExternalSiteLabel"];
+    public string ExternalIdValueLabel => _l["ExternalIdValueLabel"];
+    public string SimilarSoftwareHeader => _l["SimilarSoftwareHeader"];
+    public string SimilarSoftwareSearchLabel => _l["SimilarSoftwareSearchLabel"];
     public string SoftwareAttributesPageSizeLabel => _l["SoftwareAttributesPageSizeLabel"];
     public string SoftwareAttributesSoftwareColumn => _l["SoftwareAttributesSoftwareColumn"];
     public string SoftwareAttributesReleaseColumn => _l["SoftwareAttributesReleaseColumn"];
