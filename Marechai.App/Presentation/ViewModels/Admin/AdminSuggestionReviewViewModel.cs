@@ -101,6 +101,7 @@ public partial class AdminSuggestionReviewViewModel : ObservableObject, IRegionA
         GoBack();
     }
 
+    [RelayCommand]
     void GoBack()
     {
         if(_regionManager.Regions[RegionNames.Content].NavigationService.Journal.CanGoBack)
