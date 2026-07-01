@@ -6,7 +6,6 @@
       xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:local="using:Marechai.App.Presentation.Views"
       xmlns:utu="using:Uno.Toolkit.UI"
-      xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -279,32 +278,40 @@
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
-                        <controls:Carousel ItemsSource="{Binding Photos}"
-                                        Height="280"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        HorizontalAlignment="Stretch">
-                            <controls:Carousel.ItemTemplate>
+                        <ItemsRepeater ItemsSource="{Binding Photos}">
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinItemWidth="180"
+                                                   MinItemHeight="180"
+                                                   MinColumnSpacing="12"
+                                                   MinRowSpacing="12"
+                                                   ItemsStretch="Fill" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
+                                    <Button Padding="0"
+                                            Margin="0"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
                                             Command="{Binding ElementName=PageRoot, Path=DataContext.SelectPhotoCommand}"
-                                            CommandParameter="{Binding PhotoId}">
-                                        <Image Source="{Binding ThumbnailImageSource}"
-                                               Stretch="Uniform"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               MaxWidth="256"
-                                               MaxHeight="256" />
+                                            CommandParameter="{Binding PhotoId}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="8">
+                                            <Image Source="{Binding ThumbnailImageSource}"
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   MaxHeight="256" />
+                                        </Border>
                                     </Button>
                                 </DataTemplate>
-                            </controls:Carousel.ItemTemplate>
-                        </controls:Carousel>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
                     </StackPanel>
 
                     <!-- Videos -->

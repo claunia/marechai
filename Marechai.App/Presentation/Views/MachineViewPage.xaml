@@ -6,7 +6,6 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:loc="using:Marechai.App.Presentation.Converters"
-      xmlns:wctui="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:local="using:Marechai.App.Presentation.Views"
       xmlns:components="using:Marechai.App.Presentation.Components"
       NavigationCacheMode="Disabled"
@@ -830,33 +829,40 @@
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
-                        <wctui:Carousel ItemsSource="{Binding Photos}"
-                                        Height="280"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        HorizontalAlignment="Stretch">
-                            <wctui:Carousel.ItemTemplate>
+                        <ItemsRepeater ItemsSource="{Binding Photos}">
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinItemWidth="180"
+                                                   MinItemHeight="180"
+                                                   MinColumnSpacing="12"
+                                                   MinRowSpacing="12"
+                                                   ItemsStretch="Fill" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Command="{Binding DataContext.ViewPhotoDetailsCommand, ElementName=PageRoot}"
+                                    <Button Padding="0"
+                                            Margin="0"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.ViewPhotoDetailsCommand, ElementName=PageRoot}"
                                             CommandParameter="{Binding PhotoId}"
-                                            Padding="0"
-                                            Background="Transparent">
-                                        <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center">
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="8">
                                             <Image Source="{Binding ThumbnailImageSource}"
                                                    Stretch="Uniform"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
-                                                   MaxWidth="256"
                                                    MaxHeight="256" />
-                                        </Grid>
+                                        </Border>
                                     </Button>
                                 </DataTemplate>
-                            </wctui:Carousel.ItemTemplate>
-                        </wctui:Carousel>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
                     </StackPanel>
 
                     <!-- Bottom Spacing -->
