@@ -4,21 +4,37 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Marechai.App.Services.Authentication;
 using Marechai.ApiClient.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
 public class MachinePhotosService
 {
+    static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy        = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNameCaseInsensitive = true
+    };
+
     readonly Client                        _apiClient;
     readonly ILogger<MachinePhotosService> _logger;
+    readonly ITokenService                 _tokenService;
+    readonly IConfiguration                _configuration;
 
-    public MachinePhotosService(Client apiClient, ILogger<MachinePhotosService> logger)
+    public MachinePhotosService(Client apiClient, ILogger<MachinePhotosService> logger, ITokenService tokenService,
+                                 IConfiguration configuration)
     {
-        _apiClient = apiClient;
-        _logger    = logger;
+        _apiClient     = apiClient;
+        _logger        = logger;
+        _tokenService  = tokenService;
+        _configuration = configuration;
     }
 
     public async Task<List<Guid>> GetPhotoIdsAsync(int machineId)
@@ -96,19 +112,41 @@ public class MachinePhotosService
         {
             _logger.LogInformation("Staging admin machine photo for machine {MachineId}", machineId);
 
-            var body = new MultipartBody();
-            body.AddOrReplacePart("file", GetContentType(fileName, contentType), new MemoryStream(fileBytes), fileName);
+            // The Kiota-generated client's typed response deserialization throws
+            // ArgumentOutOfRangeException in Microsoft.Kiota.Serialization.Json for this
+            // endpoint's response, so the request/response is handled manually here instead.
+            string baseUrl = _configuration.GetValue<string>("ApiClient:Url") ?? "http://localhost:5023";
 
-            AdminPendingMachinePhotoUploadDto? result = await _apiClient.Machines.Photos.Admin.Pending.PostAsync(
-                body, config => config.QueryParameters.MachineId = machineId);
+            using var httpClient = new HttpClient { BaseAddress = new Uri(baseUrl) };
+
+            string token = _tokenService.GetToken();
+
+            if(!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(fileBytes);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(fileName, contentType));
+            content.Add(fileContent, "file", fileName);
+
+            using HttpResponseMessage response =
+                await httpClient.PostAsync($"/machines/photos/admin/pending?machineId={machineId}", content);
+
+            string json = await response.Content.ReadAsStringAsync();
+
+            if(!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error staging admin machine photo for machine {MachineId}: {StatusCode} {Body}",
+                                  machineId, response.StatusCode, json);
+
+                return (null, ExtractProblemDetail(json) ?? $"Request failed with status {(int)response.StatusCode}");
+            }
+
+            AdminPendingMachinePhotoUploadDto? result = string.IsNullOrWhiteSpace(json)
+                ? null
+                : JsonSerializer.Deserialize<AdminPendingMachinePhotoUploadDto>(json, JsonOptions);
 
             return (result, null);
-        }
-        catch(ApiException ex)
-        {
-            _logger.LogError(ex, "Error staging admin machine photo for machine {MachineId}", machineId);
-
-            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -209,6 +247,31 @@ public class MachinePhotosService
             ".tif" or ".tiff" => "image/tiff",
             _                 => "application/octet-stream"
         };
+    }
+
+    static string? ExtractProblemDetail(string json)
+    {
+        if(string.IsNullOrWhiteSpace(json))
+            return null;
+
+        try
+        {
+            using JsonDocument doc = JsonDocument.Parse(json);
+
+            if(doc.RootElement.TryGetProperty("detail", out JsonElement detail) &&
+               detail.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(detail.GetString()))
+                return detail.GetString();
+
+            if(doc.RootElement.TryGetProperty("title", out JsonElement title) &&
+               title.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(title.GetString()))
+                return title.GetString();
+        }
+        catch(JsonException)
+        {
+            // response body wasn't a ProblemDetails-shaped JSON document
+        }
+
+        return null;
     }
 
     static string ExtractDetail(ApiException ex)

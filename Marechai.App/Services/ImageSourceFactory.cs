@@ -71,8 +71,8 @@ public sealed class ImageSourceFactory
 
         if(_dispatcherQueue.HasThreadAccess)
             _ = CreateBitmapCoreAsync(stream, tcs);
-        else
-            _dispatcherQueue.TryEnqueue(() => _ = CreateBitmapCoreAsync(stream, tcs));
+        else if(!_dispatcherQueue.TryEnqueue(() => _ = CreateBitmapCoreAsync(stream, tcs)))
+            tcs.TrySetException(new InvalidOperationException("Failed to enqueue work on the UI dispatcher queue."));
 
         return tcs.Task;
     }
@@ -83,8 +83,8 @@ public sealed class ImageSourceFactory
 
         if(_dispatcherQueue.HasThreadAccess)
             _ = CreateBitmapFromBytesCoreAsync(imageBytes, tcs);
-        else
-            _dispatcherQueue.TryEnqueue(() => _ = CreateBitmapFromBytesCoreAsync(imageBytes, tcs));
+        else if(!_dispatcherQueue.TryEnqueue(() => _ = CreateBitmapFromBytesCoreAsync(imageBytes, tcs)))
+            tcs.TrySetException(new InvalidOperationException("Failed to enqueue work on the UI dispatcher queue."));
 
         return tcs.Task;
     }

@@ -2,21 +2,37 @@
 
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Marechai.App.Services.Authentication;
 using Marechai.ApiClient.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
 public class SoftwareScreenshotsService
 {
-    readonly Client                                _apiClient;
-    readonly ILogger<SoftwareScreenshotsService>   _logger;
-
-    public SoftwareScreenshotsService(Client apiClient, ILogger<SoftwareScreenshotsService> logger)
+    static readonly JsonSerializerOptions JsonOptions = new()
     {
-        _apiClient = apiClient;
-        _logger    = logger;
+        PropertyNamingPolicy        = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNameCaseInsensitive = true
+    };
+
+    readonly Client                              _apiClient;
+    readonly ILogger<SoftwareScreenshotsService> _logger;
+    readonly ITokenService                       _tokenService;
+    readonly IConfiguration                      _configuration;
+
+    public SoftwareScreenshotsService(Client apiClient, ILogger<SoftwareScreenshotsService> logger,
+                                       ITokenService tokenService, IConfiguration configuration)
+    {
+        _apiClient     = apiClient;
+        _logger        = logger;
+        _tokenService  = tokenService;
+        _configuration = configuration;
     }
 
     public async Task<(AdminPendingSoftwareScreenshotUploadDto? Result, string? Error)> StageAdminPendingScreenshotAsync(
@@ -26,19 +42,41 @@ public class SoftwareScreenshotsService
         {
             _logger.LogInformation("Staging admin screenshot for software {SoftwareId}", softwareId);
 
-            var body = new MultipartBody();
-            body.AddOrReplacePart("file", GetContentType(fileName, contentType), new MemoryStream(fileBytes), fileName);
+            // The Kiota-generated client's typed response deserialization throws
+            // ArgumentOutOfRangeException in Microsoft.Kiota.Serialization.Json for this
+            // endpoint's response, so the request/response is handled manually here instead.
+            string baseUrl = _configuration.GetValue<string>("ApiClient:Url") ?? "http://localhost:5023";
 
-            AdminPendingSoftwareScreenshotUploadDto? result = await _apiClient.Software.Screenshots.Admin.Pending.PostAsync(
-                body, config => config.QueryParameters.SoftwareId = softwareId);
+            using var httpClient = new HttpClient { BaseAddress = new Uri(baseUrl) };
+
+            string token = _tokenService.GetToken();
+
+            if(!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(fileBytes);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(fileName, contentType));
+            content.Add(fileContent, "file", fileName);
+
+            using HttpResponseMessage response =
+                await httpClient.PostAsync($"/software/screenshots/admin/pending?softwareId={softwareId}", content);
+
+            string json = await response.Content.ReadAsStringAsync();
+
+            if(!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error staging admin screenshot for software {SoftwareId}: {StatusCode} {Body}",
+                                  softwareId, response.StatusCode, json);
+
+                return (null, ExtractProblemDetail(json) ?? $"Request failed with status {(int)response.StatusCode}");
+            }
+
+            AdminPendingSoftwareScreenshotUploadDto? result = string.IsNullOrWhiteSpace(json)
+                ? null
+                : JsonSerializer.Deserialize<AdminPendingSoftwareScreenshotUploadDto>(json, JsonOptions);
 
             return (result, null);
-        }
-        catch(ApiException ex)
-        {
-            _logger.LogError(ex, "Error staging admin screenshot for software {SoftwareId}", softwareId);
-
-            return (null, ExtractDetail(ex));
         }
         catch(Exception ex)
         {
@@ -121,6 +159,31 @@ public class SoftwareScreenshotsService
             ".tif" or ".tiff" => "image/tiff",
             _                 => "application/octet-stream"
         };
+    }
+
+    static string? ExtractProblemDetail(string json)
+    {
+        if(string.IsNullOrWhiteSpace(json))
+            return null;
+
+        try
+        {
+            using JsonDocument doc = JsonDocument.Parse(json);
+
+            if(doc.RootElement.TryGetProperty("detail", out JsonElement detail) &&
+               detail.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(detail.GetString()))
+                return detail.GetString();
+
+            if(doc.RootElement.TryGetProperty("title", out JsonElement title) &&
+               title.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(title.GetString()))
+                return title.GetString();
+        }
+        catch(JsonException)
+        {
+            // response body wasn't a ProblemDetails-shaped JSON document
+        }
+
+        return null;
     }
 
     static string ExtractDetail(ApiException ex)

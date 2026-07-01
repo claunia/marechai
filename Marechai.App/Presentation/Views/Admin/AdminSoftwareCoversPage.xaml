@@ -267,7 +267,8 @@
                                                        ItemsStretch="Fill" />
                                 </ItemsRepeater.Layout>
                                 <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="models:AdminSoftwareCoverStagedItem">
+                                    <DataTemplate x:DataType="models:AdminSoftwareCoverStagedItem"
+                                                  x:DefaultBindMode="OneWay">
                                         <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                                 BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                                                 BorderThickness="1"
