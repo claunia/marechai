@@ -1028,6 +1028,15 @@
   <data name="MergeTargetLabel" xml:space="preserve">
     <value>Merge into</value>
   </data>
+  <data name="MergeChangeTargetLink" xml:space="preserve">
+    <value>Change…</value>
+  </data>
+  <data name="MergeSummaryTextFormat" xml:space="preserve">
+    <value>Merging "{0}" into "{1}"</value>
+  </data>
+  <data name="MergeTargetLockedHint" xml:space="preserve">
+    <value>Pre-selected master from duplicate group.</value>
+  </data>
   <data name="MergeWarningTitle" xml:space="preserve">
     <value>Warning</value>
   </data>

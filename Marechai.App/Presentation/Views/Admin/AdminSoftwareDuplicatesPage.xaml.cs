@@ -10,13 +10,6 @@ public sealed partial class AdminSoftwareDuplicatesPage : Page
     public AdminSoftwareDuplicatesPage()
     {
         InitializeComponent();
-        DataContextChanged += OnDataContextChanged;
-    }
-
-    private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-    {
-        if(DataContext is AdminSoftwareDuplicatesViewModel vm && vm.IsAdmin)
-            _ = vm.LoadPickerDataAsync();
     }
 
     private void MasterToggle_Click(object sender, RoutedEventArgs e)
@@ -51,11 +44,11 @@ public sealed partial class AdminSoftwareDuplicatesPage : Page
         vm.OpenMergeCommand.Execute(row);
     }
 
-    private void MergeTargetFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private async void MergeTargetFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
            DataContext is AdminSoftwareDuplicatesViewModel vm)
-            vm.UpdateMergeTargetSuggestions(sender.Text);
+            await vm.UpdateMergeTargetSuggestions(sender.Text);
     }
 
     private async void MergeButton_Click(object sender, RoutedEventArgs e)

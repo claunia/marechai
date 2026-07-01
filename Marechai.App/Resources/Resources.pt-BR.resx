@@ -914,6 +914,15 @@
   <data name="MergeTargetLabel" xml:space="preserve">
     <value>Mesclar com</value>
   </data>
+  <data name="MergeChangeTargetLink" xml:space="preserve">
+    <value>Alterar…</value>
+  </data>
+  <data name="MergeSummaryTextFormat" xml:space="preserve">
+    <value>Mesclando "{0}" com "{1}"</value>
+  </data>
+  <data name="MergeTargetLockedHint" xml:space="preserve">
+    <value>Mestre pré-selecionado do grupo de duplicatas.</value>
+  </data>
   <data name="MergeWarningTitle" xml:space="preserve">
     <value>Aviso</value>
   </data>

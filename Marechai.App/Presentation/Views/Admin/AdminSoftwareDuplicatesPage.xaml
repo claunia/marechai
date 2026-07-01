@@ -140,98 +140,134 @@
                                         VerticalAlignment="Bottom" />
                             </Grid>
 
-                            <!-- Groups -->
-                            <ListView Grid.Row="1"
-                                      Padding="16"
-                                      SelectionMode="None"
-                                      IsItemClickEnabled="False"
-                                      ItemsSource="{Binding GroupedDuplicates.View}">
-                                <ListView.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate x:DataType="vm:DuplicateGroupItem">
-                                                <StackPanel Orientation="Horizontal"
-                                                            Spacing="12"
-                                                            Padding="0,8,0,4">
-                                                    <TextBlock Text="{Binding NormalizedName}"
-                                                               FontWeight="SemiBold" />
-                                                    <Border Background="{ThemeResource SystemAccentColor}"
-                                                            CornerRadius="10"
-                                                            Padding="8,2">
-                                                        <TextBlock Text="{Binding EntriesCountText}"
-                                                                   Foreground="White"
-                                                                   FontSize="12" />
-                                                    </Border>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                    </GroupStyle>
-                                </ListView.GroupStyle>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:DuplicateItemRow">
-                                        <Grid Padding="8"
-                                              ColumnSpacing="8"
-                                              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                                              BorderThickness="0,0,0,1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
+                            <!-- Groups: explicit cards (native ListView/GroupStyle grouping is unreliable across Uno targets) -->
+                            <ScrollViewer Grid.Row="1"
+                                          Padding="16"
+                                          VerticalScrollBarVisibility="Auto">
+                                <ItemsRepeater ItemsSource="{Binding DuplicateGroups}">
+                                    <ItemsRepeater.Layout>
+                                        <StackLayout Spacing="12" />
+                                    </ItemsRepeater.Layout>
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:DuplicateGroupItem">
+                                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6">
+                                                <Grid RowSpacing="0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
 
-                                            <ToggleButton Grid.Column="0"
-                                                          IsChecked="{Binding IsMaster, Mode=OneWay}"
-                                                          Content="{Binding Source={StaticResource Strings}, Path=MasterColumnHeader}"
-                                                          Click="MasterToggle_Click"
-                                                          ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=IsMasterTooltip}" />
+                                                    <!-- Group header -->
+                                                    <StackPanel Grid.Row="0"
+                                                                Orientation="Horizontal"
+                                                                Spacing="12"
+                                                                Padding="12,10"
+                                                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                                BorderThickness="0,0,0,1">
+                                                        <TextBlock Text="{Binding NormalizedName}"
+                                                                   FontWeight="SemiBold"
+                                                                   VerticalAlignment="Center" />
+                                                        <Border Background="{ThemeResource SystemAccentColor}"
+                                                                CornerRadius="10"
+                                                                Padding="8,2"
+                                                                VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding EntriesCountText}"
+                                                                       Foreground="White"
+                                                                       FontSize="12" />
+                                                        </Border>
+                                                    </StackPanel>
 
-                                            <StackPanel Grid.Column="1">
-                                                <TextBlock Text="{Binding Item.Name}"
-                                                           FontWeight="SemiBold" />
-                                                <TextBlock Text="{Binding KindLabel}"
-                                                           FontSize="12"
-                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
-                                            </StackPanel>
+                                                    <!-- Group rows -->
+                                                    <ItemsRepeater Grid.Row="1"
+                                                                   ItemsSource="{Binding}">
+                                                        <ItemsRepeater.Layout>
+                                                            <StackLayout Spacing="0" />
+                                                        </ItemsRepeater.Layout>
+                                                        <ItemsRepeater.ItemTemplate>
+                                                            <DataTemplate x:DataType="vm:DuplicateItemRow">
+                                                                <Grid Padding="8"
+                                                                      ColumnSpacing="8"
+                                                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                                      BorderThickness="0,0,0,1">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="*" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="2"
-                                                       Text="{Binding EarliestReleaseYearText}"
-                                                       VerticalAlignment="Center" />
+                                                                    <ToggleButton Grid.Column="0"
+                                                                                  IsChecked="{Binding IsMaster, Mode=OneWay}"
+                                                                                  Content="{Binding Source={StaticResource Strings}, Path=MasterColumnHeader}"
+                                                                                  Click="MasterToggle_Click"
+                                                                                  ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=IsMasterTooltip}" />
 
-                                            <TextBlock Grid.Column="3"
-                                                       Text="{Binding Item.ReleasesCount}"
-                                                       VerticalAlignment="Center" />
+                                                                    <StackPanel Grid.Column="1">
+                                                                        <StackPanel Orientation="Horizontal"
+                                                                                    Spacing="8">
+                                                                            <TextBlock Text="{Binding Item.Name}"
+                                                                                       FontWeight="SemiBold" />
+                                                                            <Border Visibility="{Binding IsMaster, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                                    Background="{ThemeResource SystemFillColorSuccessBrush}"
+                                                                                    CornerRadius="10"
+                                                                                    Padding="8,1">
+                                                                                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MasterColumnHeader}"
+                                                                                           Foreground="White"
+                                                                                           FontSize="11" />
+                                                                            </Border>
+                                                                        </StackPanel>
+                                                                        <TextBlock Text="{Binding KindLabel}"
+                                                                                   FontSize="12"
+                                                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                                    </StackPanel>
 
-                                            <TextBlock Grid.Column="4"
-                                                       Text="{Binding PlatformsText}"
-                                                       VerticalAlignment="Center"
-                                                       MaxWidth="220"
-                                                       TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock Grid.Column="2"
+                                                                               Text="{Binding EarliestReleaseYearText}"
+                                                                               VerticalAlignment="Center" />
 
-                                            <StackPanel Grid.Column="5"
-                                                        Orientation="Horizontal"
-                                                        Spacing="4">
-                                                <Button Click="OpenInNewWindow_Click"
-                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
-                                                    <FontIcon Glyph="&#xE8A7;" />
-                                                </Button>
-                                                <Button Click="MergeIntoMaster_Click"
-                                                        IsEnabled="{Binding CanMergeIntoMaster}"
-                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoMasterTooltip}">
-                                                    <FontIcon Glyph="&#xE7C1;" />
-                                                </Button>
-                                                <Button Click="MergeIntoOther_Click"
-                                                        ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoOtherTooltip}">
-                                                    <FontIcon Glyph="&#xE8AB;" />
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                                                    <TextBlock Grid.Column="3"
+                                                                               Text="{Binding Item.ReleasesCount}"
+                                                                               VerticalAlignment="Center" />
+
+                                                                    <TextBlock Grid.Column="4"
+                                                                               Text="{Binding PlatformsText}"
+                                                                               VerticalAlignment="Center"
+                                                                               MaxWidth="220"
+                                                                               TextTrimming="CharacterEllipsis" />
+
+                                                                    <StackPanel Grid.Column="5"
+                                                                                Orientation="Horizontal"
+                                                                                Spacing="4">
+                                                                        <Button Click="OpenInNewWindow_Click"
+                                                                                ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
+                                                                            <FontIcon Glyph="&#xE8A7;" />
+                                                                        </Button>
+                                                                        <Button Click="MergeIntoMaster_Click"
+                                                                                IsEnabled="{Binding CanMergeIntoMaster}"
+                                                                                ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoMasterTooltip}">
+                                                                            <FontIcon Glyph="&#xE7C1;" />
+                                                                        </Button>
+                                                                        <Button Click="MergeIntoOther_Click"
+                                                                                ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoOtherTooltip}">
+                                                                            <FontIcon Glyph="&#xE8AB;" />
+                                                                        </Button>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </ItemsRepeater.ItemTemplate>
+                                                    </ItemsRepeater>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+                            </ScrollViewer>
 
                             <!-- Pager -->
                             <Grid Grid.Row="2"
@@ -285,8 +321,9 @@
                                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeSoftwarePanelTitle}"
                                                    FontSize="18"
                                                    FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding MergeSourceItem.Name}"
+                                        <TextBlock Text="{Binding MergeSummaryText}"
                                                    FontSize="13"
+                                                   TextWrapping="Wrap"
                                                    Foreground="{ThemeResource SystemBaseMediumColor}"
                                                    Margin="0,2,0,0" />
                                     </StackPanel>
@@ -302,14 +339,26 @@
                                         <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=MergeTargetLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareSearchBox_Placeholder}"
                                                         Text="{Binding MergeTargetSearchText, Mode=TwoWay}"
+                                                        IsEnabled="{Binding IsMergeTargetLocked, Converter={StaticResource InvertBoolConverter}}"
                                                         QueryIcon="Find"
                                                         x:Name="MergeTargetFilterBox"
                                                         TextChanged="MergeTargetFilterBox_TextChanged" />
                                         <ComboBox ItemsSource="{Binding MergeTargetSuggestions}"
                                                   SelectedItem="{Binding SelectedMergeTargetSoftware, Mode=TwoWay}"
+                                                  IsEnabled="{Binding IsMergeTargetLocked, Converter={StaticResource InvertBoolConverter}}"
                                                   DisplayMemberPath="Name"
                                                   HorizontalAlignment="Stretch"
                                                   PlaceholderText="{Binding Source={StaticResource Strings}, Path=MergeTargetLabel}" />
+                                        <StackPanel Visibility="{Binding IsMergeTargetLocked, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Orientation="Horizontal"
+                                                    Spacing="8">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MergeTargetLockedHint}"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            <HyperlinkButton Content="{Binding Source={StaticResource Strings}, Path=MergeChangeTargetLink}"
+                                                              Command="{Binding UnlockMergeTargetCommand}"
+                                                              Padding="0" />
+                                        </StackPanel>
 
                                         <!-- Warning -->
                                         <InfoBar IsOpen="{Binding IsMergeTargetSelected}"

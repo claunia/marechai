@@ -914,6 +914,15 @@
   <data name="MergeTargetLabel" xml:space="preserve">
     <value>Zusammenführen mit</value>
   </data>
+  <data name="MergeChangeTargetLink" xml:space="preserve">
+    <value>Ändern…</value>
+  </data>
+  <data name="MergeSummaryTextFormat" xml:space="preserve">
+    <value>"{0}" wird mit "{1}" zusammengeführt</value>
+  </data>
+  <data name="MergeTargetLockedHint" xml:space="preserve">
+    <value>Vorausgewählter Master aus der Duplikatgruppe.</value>
+  </data>
   <data name="MergeWarningTitle" xml:space="preserve">
     <value>Warnung</value>
   </data>

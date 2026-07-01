@@ -6,8 +6,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Presentation.Views;
+using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
-using Microsoft.UI.Xaml.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -18,22 +18,14 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
     private readonly IStringLocalizer                         _localizer;
     private readonly ILogger<AdminSoftwareDuplicatesViewModel> _logger;
     private readonly IRegionManager                            _regionManager;
+    private readonly SoftwareService                           _softwareService;
     private readonly ITokenService                             _tokenService;
-
-    private List<SoftwareDto>? _allSoftware;
 
     private readonly Dictionary<string, int> _masterByGroup = new(StringComparer.Ordinal);
 
     // --- List state ---
     [ObservableProperty]
     private ObservableCollection<DuplicateGroupItem> _duplicateGroups = [];
-
-    /// <summary>
-    /// Wraps <see cref="DuplicateGroups"/> for ListView's native grouping (GroupStyle), since each
-    /// <see cref="DuplicateGroupItem"/> is itself an <see cref="ObservableCollection{T}"/> of rows
-    /// and doubles as the "group" object WinUI's grouped CollectionViewSource expects.
-    /// </summary>
-    public CollectionViewSource GroupedDuplicates { get; }
 
     [ObservableProperty]
     private bool _isLoading;
@@ -115,25 +107,29 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
     [ObservableProperty]
     private bool _isMergeTargetSelected;
 
+    [ObservableProperty]
+    private bool _isMergeTargetLocked;
+
+    public string MergeSummaryText =>
+        SelectedMergeTargetSoftware is { Name: { } targetName }
+            ? string.Format(_localizer["MergeSummaryTextFormat"], MergeSourceItem?.Name, targetName)
+            : MergeSourceItem?.Name ?? string.Empty;
+
     public AdminSoftwareDuplicatesViewModel(Client                                   apiClient,
                                             IJwtService                              jwtService,
                                             ITokenService                            tokenService,
                                             ILogger<AdminSoftwareDuplicatesViewModel> logger,
                                             IStringLocalizer                         localizer,
-                                            IRegionManager                           regionManager)
+                                            IRegionManager                           regionManager,
+                                            SoftwareService                          softwareService)
     {
-        _apiClient     = apiClient;
-        _jwtService    = jwtService;
-        _tokenService  = tokenService;
-        _logger        = logger;
-        _localizer     = localizer;
-        _regionManager = regionManager;
-
-        GroupedDuplicates = new CollectionViewSource
-        {
-            Source          = DuplicateGroups,
-            IsSourceGrouped = true
-        };
+        _apiClient       = apiClient;
+        _jwtService      = jwtService;
+        _tokenService    = tokenService;
+        _logger          = logger;
+        _localizer       = localizer;
+        _regionManager   = regionManager;
+        _softwareService = softwareService;
 
         KindFilterItems =
         [
@@ -160,6 +156,7 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
         ConfirmMergeCommand         = new AsyncRelayCommand(ConfirmMergeAsync);
         CancelMergeCommand          = new RelayCommand(CancelMerge);
         OpenInNewWindowCommand      = new RelayCommand<DuplicateItemRow>(OpenInNewWindow);
+        UnlockMergeTargetCommand    = new RelayCommand(UnlockMergeTarget);
 
         CheckAdminRole();
     }
@@ -174,6 +171,7 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
     public IAsyncRelayCommand                    ConfirmMergeCommand        { get; }
     public IRelayCommand                          CancelMergeCommand         { get; }
     public IRelayCommand<DuplicateItemRow>       OpenInNewWindowCommand     { get; }
+    public IRelayCommand                          UnlockMergeTargetCommand   { get; }
 
     public string MergeConfirmDialogTitle   => _localizer["MergeConfirmDialogTitle"];
     public string MergeConfirmDialogMessage => _localizer["MergeConfirmDialogMessage"];
@@ -189,11 +187,7 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
     {
         CheckAdminRole();
 
-        if(IsAdmin)
-        {
-            _ = LoadDuplicateGroupsCommand.ExecuteAsync(null);
-            _ = LoadPickerDataAsync();
-        }
+        if(IsAdmin) _ = LoadDuplicateGroupsCommand.ExecuteAsync(null);
     }
 
     private void CheckAdminRole()
@@ -217,18 +211,6 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
         catch
         {
             IsAdmin = false;
-        }
-    }
-
-    public async Task LoadPickerDataAsync()
-    {
-        try
-        {
-            _allSoftware = await _apiClient.Software.GetAsync();
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error loading software list for merge target search");
         }
     }
 
@@ -409,6 +391,7 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
         ReleaseTitle                = string.Empty;
         MergeRelationshipSummaryLines.Clear();
         IsMergeTargetSelected = false;
+        IsMergeTargetLocked    = false;
         HasError               = false;
         ErrorMessage           = string.Empty;
         IsMerging              = true;
@@ -425,25 +408,22 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
 
         OpenMerge(row);
 
+        IsMergeTargetLocked          = true;
         SelectedMergeTargetSoftware = new SoftwareDto { Id = masterId, Name = master.Name };
         MergeTargetSearchText       = master.Name ?? string.Empty;
 
         await LoadMergePreviewAsync(sourceId, masterId);
     }
 
-    public void UpdateMergeTargetSuggestions(string query)
+    public async Task UpdateMergeTargetSuggestions(string query)
     {
         MergeTargetSuggestions.Clear();
 
-        if(_allSoftware == null || MergeSourceItem?.Id is not int sourceId) return;
+        if(MergeSourceItem?.Id is not int sourceId) return;
 
-        IEnumerable<SoftwareDto> source = _allSoftware.Where(s => s.Id != sourceId);
+        List<SoftwareDto> results = await _softwareService.SearchForPickerAsync(query);
 
-        if(!string.IsNullOrWhiteSpace(query))
-            source = source.Where(s => s.Name != null &&
-                                       s.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-
-        foreach(SoftwareDto match in source.Take(25))
+        foreach(SoftwareDto match in results.Where(s => s.Id != sourceId))
             MergeTargetSuggestions.Add(match);
     }
 
@@ -453,10 +433,18 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
         ReleaseTitle = string.Empty;
         MergeRelationshipSummaryLines.Clear();
         IsMergeTargetSelected = false;
+        OnPropertyChanged(nameof(MergeSummaryText));
 
         if(value?.Id is not int targetId || MergeSourceItem?.Id is not int sourceId || targetId == sourceId) return;
 
         _ = LoadMergePreviewAsync(sourceId, targetId);
+    }
+
+    partial void OnMergeSourceItemChanged(SoftwareDuplicateItemDto? value) => OnPropertyChanged(nameof(MergeSummaryText));
+
+    private void UnlockMergeTarget()
+    {
+        IsMergeTargetLocked = false;
     }
 
     private async Task LoadMergePreviewAsync(int sourceId, int targetId)
@@ -549,15 +537,16 @@ public partial class AdminSoftwareDuplicatesViewModel : ObservableObject, IRegio
         ReleaseTitle                 = string.Empty;
         MergeRelationshipSummaryLines.Clear();
         IsMergeTargetSelected       = false;
+        IsMergeTargetLocked          = false;
         HasError                    = false;
         ErrorMessage                 = string.Empty;
     }
 }
 
 /// <summary>
-/// One duplicate group, doubling as the "group" object WinUI's grouped <see cref="CollectionViewSource"/>
-/// expects: deriving from <see cref="ObservableCollection{T}"/> makes it both the group's item collection
-/// (for ListView.GroupStyle) and a bindable object whose own properties back the group header template.
+/// One duplicate group: deriving from <see cref="ObservableCollection{T}"/> lets the group card's
+/// nested rows repeater bind directly to the group instance (`ItemsSource="{Binding}"`) while its own
+/// properties back the card header.
 /// </summary>
 public partial class DuplicateGroupItem : ObservableCollection<DuplicateItemRow>
 {

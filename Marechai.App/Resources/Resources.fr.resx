@@ -914,6 +914,15 @@
   <data name="MergeTargetLabel" xml:space="preserve">
     <value>Fusionner avec</value>
   </data>
+  <data name="MergeChangeTargetLink" xml:space="preserve">
+    <value>Modifier…</value>
+  </data>
+  <data name="MergeSummaryTextFormat" xml:space="preserve">
+    <value>Fusion de « {0} » avec « {1} »</value>
+  </data>
+  <data name="MergeTargetLockedHint" xml:space="preserve">
+    <value>Maître présélectionné du groupe de doublons.</value>
+  </data>
   <data name="MergeWarningTitle" xml:space="preserve">
     <value>Avertissement</value>
   </data>
