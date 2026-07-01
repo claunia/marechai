@@ -178,7 +178,7 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <Button Content="&#xE70F;"
+                                                    <Button Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditBookButton}"
                                                             Command="{Binding DataContext.OpenEditBookCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
@@ -187,9 +187,9 @@
                                                             Command="{Binding DataContext.OpenSynopsisCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Document" />
+                                                        <FontIcon Glyph="&#xE873;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                     </Button>
-                                                    <Button Content="&#xE74D;"
+                                                    <Button Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteBookButton}"
                                                             Command="{Binding DataContext.DeleteBookCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
@@ -685,13 +685,15 @@
                                                                Text="{Binding Language}"
                                                                VerticalAlignment="Center" />
                                                     <Button Grid.Column="1"
-                                                            Content="✏️"
+                                                            Content="&#xE3C9;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                             Command="{Binding DataContext.EditSynopsisCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Padding="4,2"
                                                             Style="{ThemeResource TextBlockButtonStyle}" />
                                                     <Button Grid.Column="2"
-                                                            Content="🗑️"
+                                                            Content="&#xE872;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                             Command="{Binding DataContext.DeleteSynopsisCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Padding="4,2"

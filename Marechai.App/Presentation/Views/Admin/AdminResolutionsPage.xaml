@@ -145,12 +145,12 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="&#xE70F;"
+                                                    <Button Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditResolutionButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button Content="&#xE74D;"
+                                                    <Button Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteResolutionButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"

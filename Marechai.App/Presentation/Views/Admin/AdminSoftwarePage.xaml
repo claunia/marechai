@@ -83,41 +83,35 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="&#xE70F;"
+                                                    <Button Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=VersionsButton}"
+                                                    <Button Content="&#xE0EE;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=VersionsButton}"
                                                             Command="{Binding DataContext.OpenVersionsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Page" />
-                                                    </Button>
-                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SoftwareReleaseManagementButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE031;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SoftwareReleaseManagementButton}"
                                                             Command="{Binding DataContext.OpenReleasesCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <FontIcon Glyph="&#xE019;"
-                                                                  FontFamily="ms-appx:///Assets/Fonts/MaterialIcons-Regular.ttf#Material Icons"
-                                                                  FontSize="18" />
-                                                    </Button>
-                                                    <Button Content="&#xE91B;"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE413;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=PromoArtButton}"
                                                             Command="{Binding DataContext.OpenPromoArtCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button Content="&#xE714;"
+                                                    <Button Content="&#xE04A;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=VideosButton}"
                                                             Command="{Binding DataContext.OpenVideosCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=ScreenshotsButton}"
+                                                    <Button Content="&#xF056;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=ScreenshotsButton}"
                                                             Command="{Binding DataContext.OpenScreenshotsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Pictures" />
-                                                    </Button>
-                                                    <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE873;"
+                                                            ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
                                                             Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
-                                                            Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Document" />
-                                                    </Button>
-                                                    <Button Content="&#xE74D;"
+                                                            Style="{StaticResource AdminGridActionButtonStyle}" />
+                                                    <Button Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
@@ -230,7 +224,7 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}" />
-                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            <Button Grid.Column="1" Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveCompanyRoleByDisplayCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                                     Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
@@ -270,7 +264,7 @@
                                                                 <Run Text=": " />
                                                                 <Run Text="{Binding ExternalId}" />
                                                             </TextBlock>
-                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            <Button Grid.Column="1" Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveExternalIdCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                                     Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
@@ -305,7 +299,7 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" Text="{Binding SimilarSoftwareName}" VerticalAlignment="Center" />
-                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            <Button Grid.Column="1" Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveSimilarSoftwareCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                                     Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
@@ -362,11 +356,11 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Language}" />
-                                                <Button Grid.Column="1" Content="&#xE70F;"
+                                                <Button Grid.Column="1" Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}"
                                                         Command="{Binding DataContext.EditTranslationCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                         Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                <Button Grid.Column="2" Content="&#xE74D;"
+                                                <Button Grid.Column="2" Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                         Command="{Binding DataContext.DeleteTranslationCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                         Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />

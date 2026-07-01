@@ -25,8 +25,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Content="&#xE72B;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Content="&#xE5C4;"
+                    FontFamily="{StaticResource MaterialIconsFontFamily}"
                     Command="{Binding GoBackCommand}"
                     Style="{ThemeResource TextBlockButtonStyle}"
                     Padding="8,4"
@@ -261,8 +261,8 @@
                                                                FontWeight="SemiBold"
                                                                TextTrimming="CharacterEllipsis" />
                                                     <Button Grid.Column="1"
-                                                            Content="&#xE711;"
-                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                            Content="&#xE5CD;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                             Command="{Binding DataContext.RemoveStagedPhotoCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             IsEnabled="{x:Bind CanRemove}"

@@ -24,8 +24,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Content="&#xE72B;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Content="&#xE5C4;"
+                    FontFamily="{StaticResource MaterialIconsFontFamily}"
                     Command="{Binding GoBackCommand}"
                     Style="{ThemeResource TextBlockButtonStyle}"
                     Padding="8,4"
@@ -206,7 +206,8 @@
                                                                 VerticalAlignment="Center"
                                                                 HorizontalAlignment="Center"
                                                                 Spacing="8">
-                                                        <FontIcon Glyph="&#xE768;"
+                                                        <FontIcon Glyph="&#xE04A;"
+                                                                  FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                                   FontSize="28"
                                                                   Foreground="{ThemeResource SystemAccentColor}" />
                                                         <TextBlock Text="{Binding Provider}"

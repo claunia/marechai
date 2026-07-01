@@ -246,16 +246,16 @@
                                                                                 Spacing="4">
                                                                         <Button Click="OpenInNewWindow_Click"
                                                                                 ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
-                                                                            <FontIcon Glyph="&#xE8A7;" />
+                                                                            <FontIcon Glyph="&#xE89E;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                                         </Button>
                                                                         <Button Click="MergeIntoMaster_Click"
                                                                                 IsEnabled="{Binding CanMergeIntoMaster}"
                                                                                 ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoMasterTooltip}">
-                                                                            <FontIcon Glyph="&#xE7C1;" />
+                                                                            <FontIcon Glyph="&#xE252;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                                         </Button>
                                                                         <Button Click="MergeIntoOther_Click"
                                                                                 ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeIntoOtherTooltip}">
-                                                                            <FontIcon Glyph="&#xE8AB;" />
+                                                                            <FontIcon Glyph="&#xE0B6;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                                         </Button>
                                                                     </StackPanel>
                                                                 </Grid>

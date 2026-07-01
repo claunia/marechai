@@ -218,11 +218,11 @@
                                                         Spacing="4">
                                                 <Button Click="LinkRow_Click"
                                                         ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=SoftwareOrphanAddonsLinkTooltip}">
-                                                    <FontIcon Glyph="&#xE71B;" />
+                                                    <FontIcon Glyph="&#xE157;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                 </Button>
                                                 <Button Click="OpenInNewWindow_Click"
                                                         ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=OpenInNewWindowTooltip}">
-                                                    <FontIcon Glyph="&#xE8A7;" />
+                                                    <FontIcon Glyph="&#xE89E;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                 </Button>
                                             </StackPanel>
                                         </Grid>

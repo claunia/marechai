@@ -171,7 +171,7 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="4">
-                                                    <Button Content="&#xE70F;"
+                                                    <Button Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditCompanyButton}"
                                                             Command="{Binding DataContext.OpenEditCompanyCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
@@ -180,20 +180,20 @@
                                                             Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Document" />
+                                                        <FontIcon Glyph="&#xE873;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                     </Button>
                                                     <Button ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=LogosButton}"
                                                             Command="{Binding DataContext.OpenLogosCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}">
-                                                        <SymbolIcon Symbol="Library" />
+                                                        <FontIcon Glyph="&#xE3F4;" FontFamily="{StaticResource MaterialIconsFontFamily}" />
                                                     </Button>
-                                                    <Button Content="&#xE8AB;"
+                                                    <Button Content="&#xE252;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=MergeCompanyButton}"
                                                             Command="{Binding DataContext.OpenMergeCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button Content="&#xE74D;"
+                                                    <Button Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteCompanyButton}"
                                                             Command="{Binding DataContext.DeleteCompanyCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
@@ -386,13 +386,15 @@
                                                                            VerticalAlignment="Center"
                                                                            TextWrapping="Wrap" />
                                                                 <Button Grid.Column="1"
-                                                                        Content="✏️"
+                                                                        Content="&#xE3C9;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                                         Command="{Binding DataContext.EditPersonCommand, ElementName=PageRoot}"
                                                                         CommandParameter="{Binding}"
                                                                         Padding="4,2"
                                                                         Style="{ThemeResource TextBlockButtonStyle}" />
                                                                 <Button Grid.Column="2"
-                                                                        Content="🗑️"
+                                                                        Content="&#xE872;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                                         Command="{Binding DataContext.RemovePersonCommand, ElementName=PageRoot}"
                                                                         CommandParameter="{Binding}"
                                                                         Padding="4,2"
@@ -543,13 +545,15 @@
                                                                Text="{Binding Language}"
                                                                VerticalAlignment="Center" />
                                                     <Button Grid.Column="1"
-                                                            Content="✏️"
+                                                            Content="&#xE3C9;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                             Command="{Binding DataContext.EditTranslationCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Padding="4,2"
                                                             Style="{ThemeResource TextBlockButtonStyle}" />
                                                     <Button Grid.Column="2"
-                                                            Content="🗑️"
+                                                            Content="&#xE872;"
+                                                            FontFamily="{StaticResource MaterialIconsFontFamily}"
                                                             Command="{Binding DataContext.DeleteTranslationCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"
                                                             Padding="4,2"

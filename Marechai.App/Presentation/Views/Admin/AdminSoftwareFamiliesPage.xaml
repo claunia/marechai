@@ -91,11 +91,11 @@
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <Button Content="&#xE70F;"
+                                                    <Button Content="&#xE3C9;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=EditButton}"
                                                             Command="{Binding DataContext.OpenEditCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridActionButtonStyle}" />
-                                                    <Button Content="&#xE74D;"
+                                                    <Button Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{StaticResource AdminGridDestructiveActionButtonStyle}" />
@@ -170,7 +170,7 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}" />
-                                                            <Button Grid.Column="1" Content="&#xE74D;"
+                                                            <Button Grid.Column="1" Content="&#xE872;"
                                                             ToolTipService.ToolTip="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                                     Command="{Binding DataContext.RemoveCompanyByDisplayCommand, ElementName=PageRoot}"
                                                                     CommandParameter="{Binding}" Foreground="{ThemeResource SystemErrorTextColor}"

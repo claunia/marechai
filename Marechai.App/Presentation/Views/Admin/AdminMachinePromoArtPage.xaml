@@ -24,8 +24,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Content="&#xE72B;"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Content="&#xE5C4;"
+                    FontFamily="{StaticResource MaterialIconsFontFamily}"
                     Command="{Binding GoBackCommand}"
                     Style="{ThemeResource TextBlockButtonStyle}"
                     Padding="8,4"
