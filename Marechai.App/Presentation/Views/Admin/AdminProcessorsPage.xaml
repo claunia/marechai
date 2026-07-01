@@ -617,11 +617,17 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
-                                    <StackPanel Grid.Row="0"
-                                                Spacing="6">
-                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MarkdownSourceLabel}"
+                                    <Grid Grid.Row="0"
+                                          RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="{Binding Source={StaticResource Strings}, Path=MarkdownSourceLabel}"
                                                    FontWeight="SemiBold" />
-                                        <Border MinHeight="180"
+                                        <Border Grid.Row="1"
+                                                MinHeight="180"
                                                 Padding="1"
                                                 Background="{ThemeResource LayerFillColorDefaultBrush}"
                                                 BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
@@ -636,13 +642,19 @@
                                                      BorderThickness="0"
                                                      ScrollViewer.VerticalScrollBarVisibility="Auto" />
                                         </Border>
-                                    </StackPanel>
+                                    </Grid>
 
-                                    <StackPanel Grid.Row="1"
-                                                Spacing="6">
-                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MarkdownPreviewLabel}"
+                                    <Grid Grid.Row="1"
+                                          RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="{Binding Source={StaticResource Strings}, Path=MarkdownPreviewLabel}"
                                                    FontWeight="SemiBold" />
-                                        <Border MinHeight="180"
+                                        <Border Grid.Row="1"
+                                                MinHeight="180"
                                                 Padding="12"
                                                 Background="{ThemeResource LayerFillColorDefaultBrush}"
                                                 BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
@@ -652,7 +664,7 @@
                                                 <local:MessageMarkdownView Markdown="{Binding DescriptionMarkdown}" />
                                             </ScrollViewer>
                                         </Border>
-                                    </StackPanel>
+                                    </Grid>
                                 </Grid>
 
                                 <Grid Grid.Row="4"

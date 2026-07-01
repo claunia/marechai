@@ -3,6 +3,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:local="using:Marechai.App.Presentation.Views"
       x:Name="PageRoot" NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -374,11 +375,63 @@
                                     </ItemsRepeater.ItemTemplate>
                                 </ItemsRepeater>
 
-                                <TextBox Grid.Row="3" Margin="16" AcceptsReturn="True" TextWrapping="Wrap"
-                                         Text="{Binding DescriptionMarkdown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         PlaceholderText="Markdown"
-                                         MinHeight="200"
-                                         VerticalAlignment="Stretch" />
+                                <Grid Grid.Row="3"
+                                      Margin="16"
+                                      RowSpacing="12">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="0"
+                                          RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="{Binding Source={StaticResource Strings}, Path=MarkdownSourceLabel}"
+                                                   FontWeight="SemiBold" />
+                                        <Border Grid.Row="1"
+                                                MinHeight="180"
+                                                Padding="1"
+                                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8">
+                                            <TextBox Text="{Binding DescriptionMarkdown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     AcceptsReturn="True"
+                                                     TextWrapping="Wrap"
+                                                     PlaceholderText="{Binding Source={StaticResource Strings}, Path=DescriptionMarkdownPlaceholder}"
+                                                     VerticalAlignment="Stretch"
+                                                     HorizontalAlignment="Stretch"
+                                                     BorderThickness="0"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                        </Border>
+                                    </Grid>
+
+                                    <Grid Grid.Row="1"
+                                          RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0"
+                                                   Text="{Binding Source={StaticResource Strings}, Path=MarkdownPreviewLabel}"
+                                                   FontWeight="SemiBold" />
+                                        <Border Grid.Row="1"
+                                                MinHeight="180"
+                                                Padding="12"
+                                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="8">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                <local:MessageMarkdownView Markdown="{Binding DescriptionMarkdown}" />
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Grid>
+                                </Grid>
 
                                 <Grid Grid.Row="4" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">
                                     <Grid.ColumnDefinitions>
