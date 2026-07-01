@@ -1409,6 +1409,9 @@
   <data name="MachineSoftwareLabel" xml:space="preserve">
     <value>Software</value>
   </data>
+  <data name="MachineSoftwarePaginationEmpty" xml:space="preserve">
+    <value>No software found.</value>
+  </data>
   <data name="SpecificationsTabHeader" xml:space="preserve">
     <value>Specifications</value>
   </data>

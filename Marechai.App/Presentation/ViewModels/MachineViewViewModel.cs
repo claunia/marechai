@@ -134,6 +134,14 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     private Visibility _showSoftware = Visibility.Collapsed;
 
     [ObservableProperty]
+    private int _softwareCurrentPage = 1;
+
+    [ObservableProperty]
+    private int _softwareTotalCount;
+
+    private const int SoftwarePageSize = 20;
+
+    [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -150,6 +158,28 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     partial void OnDescriptionMarkdownChanged(string value)
     {
         OnPropertyChanged(nameof(HasDescription));
+    }
+
+    public bool CanGoToPreviousSoftwarePage => SoftwareCurrentPage > 1;
+    public bool CanGoToNextSoftwarePage => SoftwareCurrentPage * SoftwarePageSize < SoftwareTotalCount;
+
+    public string SoftwarePageSummary => SoftwareTotalCount == 0
+                                              ? _localizer["MachineSoftwarePaginationEmpty"]
+                                              : $"{((SoftwareCurrentPage - 1) * SoftwarePageSize) + 1}-" +
+                                                $"{Math.Min(SoftwareCurrentPage * SoftwarePageSize, SoftwareTotalCount)} of {SoftwareTotalCount}";
+
+    partial void OnSoftwareCurrentPageChanged(int value)
+    {
+        OnPropertyChanged(nameof(CanGoToPreviousSoftwarePage));
+        OnPropertyChanged(nameof(CanGoToNextSoftwarePage));
+        OnPropertyChanged(nameof(SoftwarePageSummary));
+    }
+
+    partial void OnSoftwareTotalCountChanged(int value)
+    {
+        OnPropertyChanged(nameof(CanGoToPreviousSoftwarePage));
+        OnPropertyChanged(nameof(CanGoToNextSoftwarePage));
+        OnPropertyChanged(nameof(SoftwarePageSummary));
     }
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,             IRegionManager     regionManager,
@@ -313,6 +343,24 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineFamilyViewPage), parameters);
 
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public async Task PreviousSoftwarePage()
+    {
+        if(!CanGoToPreviousSoftwarePage) return;
+
+        SoftwareCurrentPage--;
+        await LoadSoftwarePageAsync(_currentMachineId);
+    }
+
+    [RelayCommand]
+    public async Task NextSoftwarePage()
+    {
+        if(!CanGoToNextSoftwarePage) return;
+
+        SoftwareCurrentPage++;
+        await LoadSoftwarePageAsync(_currentMachineId);
     }
 
     [RelayCommand]
@@ -573,27 +621,8 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             }
 
             // Populate software
-            List<SoftwareDto> softwareList = await _computersService.GetSoftwareByMachineAsync(machineId);
-            string            baseUrl      = _configuration.GetSection("ApiClient:Url").Value;
-
-            foreach(SoftwareDto sw in softwareList)
-            {
-                int id = (int)(sw.Id ?? 0);
-
-                if(id == 0) continue;
-
-                Software.Add(new SoftwareListItem
-                {
-                    Id                = id,
-                    Name              = sw.Name ?? string.Empty,
-                    Family            = sw.Family,
-                    Kind              = (SoftwareKind)(sw.Kind ?? 0),
-                    FrontCoverId      = sw.FrontCoverId,
-                    CoverImageUrl     = sw.FrontCoverId.HasValue
-                                            ? $"{baseUrl}/assets/photos/software-covers/webp/4k/{sw.FrontCoverId}.webp"
-                                            : null
-                });
-            }
+            SoftwareCurrentPage = 1;
+            await LoadSoftwarePageAsync(machineId);
 
             // Populate videos
             List<MachineVideoDto> videoList = await _computersService.GetVideosByMachineAsync(machineId);
@@ -698,6 +727,39 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
             HasError     = true;
             ErrorMessage = ex.Message;
             IsLoading    = false;
+        }
+    }
+
+    private async Task LoadSoftwarePageAsync(int machineId)
+    {
+        Software.Clear();
+
+        SoftwareTotalCount = await _computersService.GetSoftwareByMachineCountAsync(machineId);
+
+        int skip = (SoftwareCurrentPage - 1) * SoftwarePageSize;
+
+        List<SoftwareDto> softwareList =
+            await _computersService.GetSoftwareByMachineAsync(machineId, skip, SoftwarePageSize);
+
+        string baseUrl = _configuration.GetSection("ApiClient:Url").Value;
+
+        foreach(SoftwareDto sw in softwareList)
+        {
+            int id = (int)(sw.Id ?? 0);
+
+            if(id == 0) continue;
+
+            Software.Add(new SoftwareListItem
+            {
+                Id            = id,
+                Name          = sw.Name ?? string.Empty,
+                Family        = sw.Family,
+                Kind          = (SoftwareKind)(sw.Kind ?? 0),
+                FrontCoverId  = sw.FrontCoverId,
+                CoverImageUrl = sw.FrontCoverId.HasValue
+                                    ? $"{baseUrl}/assets/photos/software-covers/webp/4k/{sw.FrontCoverId}.webp"
+                                    : null
+            });
         }
     }
 

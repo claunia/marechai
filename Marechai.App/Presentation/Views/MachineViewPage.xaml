@@ -540,6 +540,25 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0"
+                                    Content="{Binding Source={StaticResource Strings}, Path=PreviousPageButton}"
+                                    Command="{Binding PreviousSoftwarePageCommand}"
+                                    IsEnabled="{Binding CanGoToPreviousSoftwarePage}" />
+                            <Button Grid.Column="1"
+                                    Content="{Binding Source={StaticResource Strings}, Path=NextPageButton}"
+                                    Command="{Binding NextSoftwarePageCommand}"
+                                    IsEnabled="{Binding CanGoToNextSoftwarePage}" />
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding SoftwarePageSummary}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
                     </StackPanel>
                         </ScrollViewer>
                     </TabViewItem>

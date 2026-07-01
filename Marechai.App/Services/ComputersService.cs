@@ -292,15 +292,19 @@ public class ComputersService
     }
 
     /// <summary>
-    ///     Fetches all software available for a machine's supported platforms
+    ///     Fetches a page of software available for a machine's supported platforms
     /// </summary>
-    public async Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int machineId)
+    public async Task<List<SoftwareDto>> GetSoftwareByMachineAsync(int machineId, int skip, int take)
     {
         try
         {
             _logger.LogInformation("Fetching software for machine {MachineId} from API", machineId);
 
-            List<SoftwareDto> software = await _apiClient.Machines[machineId].Software.GetAsync();
+            List<SoftwareDto> software = await _apiClient.Machines[machineId].Software.GetAsync(config =>
+            {
+                config.QueryParameters.Skip = skip;
+                config.QueryParameters.Take = take;
+            });
 
             return software ?? [];
         }
@@ -309,6 +313,27 @@ public class ComputersService
             _logger.LogError(ex, "Error fetching software for machine {MachineId} from API", machineId);
 
             return [];
+        }
+    }
+
+    /// <summary>
+    ///     Fetches the total count of software available for a machine's supported platforms
+    /// </summary>
+    public async Task<int> GetSoftwareByMachineCountAsync(int machineId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching software count for machine {MachineId} from API", machineId);
+
+            int? result = await _apiClient.Machines[machineId].Software.Count.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching software count for machine {MachineId} from API", machineId);
+
+            return 0;
         }
     }
 
