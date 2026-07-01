@@ -499,25 +499,15 @@ public partial class App : PrismApplication
     static IConfigurationRoot BuildConfiguration()
     {
         var configurationBuilder = new ConfigurationBuilder();
-        var appSettingsPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-        var developmentSettingsPath = Path.Combine(AppContext.BaseDirectory, "appsettings.development.json");
-
-        System.Diagnostics.Debug.WriteLine($"[App] AppContext.BaseDirectory={AppContext.BaseDirectory}");
-        System.Diagnostics.Debug.WriteLine($"[App] appsettings.json exists={File.Exists(appSettingsPath)}");
-        System.Diagnostics.Debug.WriteLine($"[App] appsettings.development.json exists={File.Exists(developmentSettingsPath)}");
-
-        configurationBuilder.SetBasePath(AppContext.BaseDirectory)
-                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-                            .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false);
 
 #if __ANDROID__
-        // Android packaging can make copied content files unavailable early in startup,
-        // so keep the embedded appsettings as a fallback without creating a second config instance.
-        if(!File.Exists(appSettingsPath))
+        // On Android, Content items are packaged as APK assets, not loose files on disk,
+        // so File.Exists against BaseDirectory cannot be trusted to gate this (it only
+        // happens to succeed under Debug fast-deployment). Always seed from the embedded
+        // resource, then let any loose file layer on top as an optional override.
+        var assembly = Assembly.GetExecutingAssembly();
+        using(Stream? stream = assembly.GetManifestResourceStream("Marechai.App.appsettings.json"))
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            using Stream? stream = assembly.GetManifestResourceStream("Marechai.App.appsettings.json");
-
             if(stream is not null)
             {
                 var memoryStream = new MemoryStream();
@@ -527,6 +517,10 @@ public partial class App : PrismApplication
             }
         }
 #endif
+
+        configurationBuilder.SetBasePath(AppContext.BaseDirectory)
+                            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                            .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false);
 
         return configurationBuilder.Build();
     }
