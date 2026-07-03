@@ -141,6 +141,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         {
             string token = _tokenService.GetToken();
             if(string.IsNullOrWhiteSpace(token)) { IsAdmin = false; return; }
+            if(!_jwtService.IsTokenValid(token)) { IsAdmin = false; return; }
             IEnumerable<string> roles = _jwtService.GetRoles(token);
             IsAdmin = roles.Contains("UberAdmin", StringComparer.OrdinalIgnoreCase) ||
                       roles.Contains("Admin",     StringComparer.OrdinalIgnoreCase);

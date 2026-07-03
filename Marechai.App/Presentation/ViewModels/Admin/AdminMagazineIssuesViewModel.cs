@@ -186,6 +186,7 @@ public partial class AdminMagazineIssuesViewModel : ObservableObject, IRegionAwa
         {
             string token = _tokenService.GetToken();
             if(string.IsNullOrWhiteSpace(token)) { IsAdmin = false; return; }
+            if(!_jwtService.IsTokenValid(token)) { IsAdmin = false; return; }
             IEnumerable<string> roles = _jwtService.GetRoles(token);
             IsAdmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||
                       roles.Contains("Admin",     StringComparer.OrdinalIgnoreCase);

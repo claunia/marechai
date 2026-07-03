@@ -124,6 +124,13 @@ public partial class AdminInstructionSetsViewModel : ObservableObject, IRegionAw
                 return;
             }
 
+            if(!_jwtService.IsTokenValid(token))
+            {
+                IsAdmin = false;
+
+                return;
+            }
+
             IEnumerable<string> roles = _jwtService.GetRoles(token);
 
             IsAdmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||

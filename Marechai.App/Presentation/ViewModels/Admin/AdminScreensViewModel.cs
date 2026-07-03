@@ -108,6 +108,13 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
 
             if(string.IsNullOrWhiteSpace(token)) { IsAdmin = false; return; }
 
+            if(!_jwtService.IsTokenValid(token))
+            {
+                IsAdmin = false;
+
+                return;
+            }
+
             IEnumerable<string> roles = _jwtService.GetRoles(token);
 
             IsAdmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase) ||

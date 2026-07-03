@@ -127,6 +127,13 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
                 return;
             }
 
+            if(!_jwtService.IsTokenValid(token))
+            {
+                IsUberadmin = false;
+
+                return;
+            }
+
             IEnumerable<string> roles = _jwtService.GetRoles(token);
             IsUberadmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase);
         }

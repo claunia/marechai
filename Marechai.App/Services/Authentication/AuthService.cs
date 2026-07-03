@@ -10,7 +10,7 @@ using Uno.Extensions.Authentication;
 namespace Marechai.App.Services.Authentication;
 
 public sealed class AuthService
-    (Client client, ITokenService tokenService, IStringLocalizer stringLocalizer) : IAuthenticationService
+    (Client client, ITokenService tokenService, IStringLocalizer stringLocalizer, IJwtService jwtService) : IAuthenticationService
 {
     /// <inheritdoc />
     public async ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string> credentials = null,
@@ -499,8 +499,7 @@ public sealed class AuthService
     {
         string token = tokenService.GetToken();
 
-        // TODO: Check token validity
-        return !string.IsNullOrWhiteSpace(token);
+        return !string.IsNullOrWhiteSpace(token) && jwtService.IsTokenValid(token);
     }
 
     /// <inheritdoc />
