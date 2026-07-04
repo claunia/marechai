@@ -43,6 +43,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +53,7 @@ namespace Marechai.Server.Controllers;
 
 [ApiController]
 [Route("auth")]
+[EnableRateLimiting("AuthEndpoints")]
 public class AuthController
     (UserManager<ApplicationUser> userManager,         MarechaiContext              context,
      TokenService                 tokenService,        IConfiguration               configuration,

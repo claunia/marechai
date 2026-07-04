@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.RateLimiting;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Aaru.CommonTypes.Interop;
@@ -353,6 +354,24 @@ file class Program
                .AddEntityFrameworkStores<MarechaiContext>();
 
         builder.Services.AddMarechaiEmail(builder.Configuration);
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            // Strict per-IP limit for all auth endpoints (login, register, 2FA, password reset, etc.)
+            options.AddPolicy("AuthEndpoints", httpContext =>
+                RateLimitPartition.GetSlidingWindowLimiter(
+                    httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    _ => new SlidingWindowRateLimiterOptions
+                    {
+                        Window               = TimeSpan.FromMinutes(15),
+                        SegmentsPerWindow    = 3,
+                        PermitLimit          = 20,
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        QueueLimit           = 0
+                    }));
+        });
 
         builder.Services.AddScoped<TokenService, TokenService>();
         builder.Services.AddSingleton<InvitationCodeGenerator>();
