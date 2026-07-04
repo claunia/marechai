@@ -334,7 +334,21 @@ file class Program
                                                                                     .EnableStringComparisonTranslations()
                                                                                     .UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)));
 
-        builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+
+                    options.Password.RequiredLength         = 12;
+                    options.Password.RequireDigit           = true;
+                    options.Password.RequireLowercase       = true;
+                    options.Password.RequireUppercase       = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequiredUniqueChars    = 4;
+
+                    options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromMinutes(15);
+                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.Lockout.AllowedForNewUsers      = true;
+                })
                .AddRoles<ApplicationRole>()
                .AddEntityFrameworkStores<MarechaiContext>();
 
@@ -546,6 +560,7 @@ file class Program
         // still returned with the right Access-Control-Allow-Origin headers.
         app.UseOutputCache();
 
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
 
