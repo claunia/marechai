@@ -101,20 +101,11 @@ public class AuthController
 
         if(userInDb is null) return Unauthorized();
 
-        // Identity is configured with RequireConfirmedAccount=true. Surface the unconfirmed-email state as an
-        // explicit flag in the response so the client can offer a "Resend confirmation email" affordance
-        // instead of a generic "bad credentials" message (which would be confusing since the password was
-        // accepted just above).
-        if(!userInDb.EmailConfirmed)
-        {
-            return Ok(new AuthResponse
-            {
-                Message           = "Email not confirmed",
-                Succeeded         = false,
-                Token             = "",
-                EmailNotConfirmed = true
-            });
-        }
+        // Identity is configured with RequireConfirmedAccount=true. Return a generic 401 rather than surfacing
+        // the unconfirmed-email flag explicitly — doing so would let an attacker enumerate valid accounts
+        // (and confirm correct passwords) without completing login. Clients should offer a "resend confirmation"
+        // link unconditionally via the POST /auth/email/resend endpoint, which is already anti-enumeration.
+        if(!userInDb.EmailConfirmed) return Unauthorized("Bad credentials");
 
         // Two-factor required: short-circuit and return a pending token. The client must collect a code via one of
         // the /auth/login/two-factor* endpoints to complete the login.
