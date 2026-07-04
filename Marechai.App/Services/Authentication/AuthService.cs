@@ -89,16 +89,6 @@ public sealed class AuthService
 
         if(string.IsNullOrWhiteSpace(authResponse?.Token))
         {
-            // Email not yet confirmed: bubble up so the LoginViewModel can show a "resend confirmation"
-            // affordance. Same sentinel-key transport convention as the two-factor signal below.
-            if(authResponse?.EmailNotConfirmed == true)
-            {
-                credentials["emailNotConfirmed"] = "true";
-                credentials["error"]             = stringLocalizer["LoginPage.Error.EmailNotConfirmed"];
-
-                return false;
-            }
-
             // Two-factor required: bubble up the pending token + available methods so the LoginViewModel can
             // swap to the 2FA prompt. We deliberately return false (the ITokenService still has no usable token)
             // and use sentinel keys in the credentials dictionary as the only available transport.

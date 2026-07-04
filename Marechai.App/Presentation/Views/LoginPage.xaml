@@ -256,8 +256,7 @@
                                 <HyperlinkButton
                                                  Content="{Binding Source={StaticResource Strings}, Path=LoginPage_ResendConfirmationLink}"
                                                  Command="{Binding ResendConfirmationCommand}"
-                                                 HorizontalAlignment="Center"
-                                                 Visibility="{Binding EmailNotConfirmed, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                                 HorizontalAlignment="Center" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
