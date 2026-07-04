@@ -64,7 +64,7 @@ public sealed class TokenService(IConfiguration configuration)
         {
             List<Claim> claims =
             [
-                new(JwtRegisteredClaimNames.Sub, "TokenForTheApiWithAuth"),
+                new(JwtRegisteredClaimNames.Sub, user.Id),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(JwtRegisteredClaimNames.Iat,
                     EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture)),
