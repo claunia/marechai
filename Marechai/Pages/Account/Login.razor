@@ -101,7 +101,7 @@
                     <MudText Typo="Typo.body2" Class="mr-1">@L["Don't have an account?"]</MudText>
                     <MudLink Href="/register" Underline="Underline.Hover">@L["Sign up"]</MudLink>
                 </div>
-                @if(_emailNotConfirmed)
+                @if(!string.IsNullOrWhiteSpace(_errorMessage))
                 {
                     <div class="d-flex justify-center mt-2">
                         <MudLink Href="/resend-confirmation" Underline="Underline.Hover">@L["Resend confirmation email"]</MudLink>

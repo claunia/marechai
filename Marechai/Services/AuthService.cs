@@ -36,13 +36,11 @@ namespace Marechai.Services;
 /// <summary>
 ///     Outcome of <see cref="AuthService.LoginAsync" />. Either the JWT was issued and the user is fully signed
 ///     in (<see cref="Succeeded" /> + JWT applied), or the server requires a second factor and the caller must
-///     prompt for a code using <see cref="TwoFactorToken" /> + <see cref="AvailableMethods" />, or the email
-///     hasn't been confirmed yet (<see cref="EmailNotConfirmed" />) and the UI should offer a "resend" link.
+///     prompt for a code using <see cref="TwoFactorToken" /> + <see cref="AvailableMethods" />.
 /// </summary>
 public sealed record LoginResult(bool          Succeeded,         string       ErrorMessage,
                                  bool          RequiresTwoFactor, string       TwoFactorToken,
-                                 IList<string> AvailableMethods,
-                                 bool          EmailNotConfirmed = false);
+                                 IList<string> AvailableMethods);
 
 public sealed class AuthService(Marechai.ApiClient.Client             client,
                                 TokenProvider                          tokenProvider,
@@ -63,14 +61,6 @@ public sealed class AuthService(Marechai.ApiClient.Client             client,
 
             if(response is null)
                 return new LoginResult(false, "No response from server.", false, null, []);
-
-            if(response.EmailNotConfirmed == true)
-                return new LoginResult(false,
-                                       "Please confirm your email address before signing in.",
-                                       false,
-                                       null,
-                                       [],
-                                       EmailNotConfirmed: true);
 
             if(response.Succeeded != true)
                 return new LoginResult(false, response.Message ?? "Login failed.", false, null, []);
