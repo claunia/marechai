@@ -898,6 +898,9 @@ class Program
                 Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
                 Console.WriteLine("                                                  Download covers for imported games (--download-only skips the");
                 Console.WriteLine("                                                  ImageMagick conversion step; run `convert-images` later)");
+                Console.WriteLine("    repair-covers [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Retroactively regroup already-downloaded covers by MobyGames GroupId");
+                Console.WriteLine("                                                  and clear any stale SoftwareReleaseId. DB-only, no re-download.");
                 Console.WriteLine("    import-reviews [--batch-size N]");
                 Console.WriteLine("                                                  Import critic reviews for imported games");
                 Console.WriteLine("    status                                        Show import status counts");
