@@ -241,10 +241,18 @@ public static partial class MainTabParser
     {
         var section = doc.DocumentNode.SelectSingleNode("//section[@id='gameOfficialDescription']");
 
-        if(section is null) return;
+        // Newer scrapes use <section id="gameDescription"> with the body in a
+        // <div id="description-text"> (h2 header and toggle-long-text siblings around it).
+        var descriptionTextDiv = section is null
+                                     ? doc.DocumentNode
+                                          .SelectSingleNode("//section[@id='gameDescription']//div[@id='description-text']")
+                                     : null;
+
+        if(section is null && descriptionTextDiv is null) return;
 
         // Peel off the optional wrappers. Try the deepest wrapper first.
-        var inner = section.SelectSingleNode(".//div[contains(@class,'blurred-content')]") ?? section;
+        var inner = descriptionTextDiv ??
+                    section.SelectSingleNode(".//div[contains(@class,'blurred-content')]") ?? section;
 
         // Collect children excluding the cover/picture/image (the first <div> typically
         // holds the cover image when the description is adult-blurred).
