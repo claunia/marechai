@@ -49,20 +49,10 @@ public static partial class CoverArtTabParser
 
             // Extract group ID from the sidebar link that follows:
             // <div class="sideBarLinks">[<a href="...coverGroupId,{id}/...">add covers</a>]</div>
-            // This is a sibling after the cover heading's parent container
-            var sidebarLink = heading.ParentNode?.SelectSingleNode(
-                ".//div[contains(@class,'sideBarLinks')]//a[contains(@href,'coverGroupId')]");
-
-            if(sidebarLink is not null)
-            {
-                string href       = sidebarLink.GetAttributeValue("href", "");
-                var    groupMatch = CoverGroupIdRegex().Match(href);
-
-                if(groupMatch.Success)
-                    group.GroupId = groupMatch.Groups[1].Value;
-            }
-
-            // Cover thumbnails are in <div class="row"> following the coverHeading
+            // and cover thumbnails from <div class="row"> - both are siblings of this heading,
+            // somewhere before the *next* coverHeading. Walking siblings (rather than searching
+            // heading.ParentNode's whole subtree) keeps this scoped to the current group instead
+            // of always matching the first such node on the whole page for every group.
             // Structure: div.row > div.col-* > div.thumbnail > div.thumbnail-image-wrapper > a.thumbnail-cover
             //            + div.thumbnail-cover-caption > p (type label)
             var nextSibling = heading.NextSibling;
@@ -71,41 +61,29 @@ public static partial class CoverArtTabParser
             {
                 if(nextSibling.NodeType == HtmlNodeType.Element)
                 {
+                    // If we hit another coverHeading, this group's section has ended.
+                    if(nextSibling.GetAttributeValue("class", "").Contains("coverHeading"))
+                        break;
+
                     // Check if this is the row containing thumbnail covers
                     if(nextSibling.GetAttributeValue("class", "").Contains("row"))
-                    {
                         ParseCoversFromRow(nextSibling, group);
 
-                        break;
-                    }
+                    if(string.IsNullOrEmpty(group.GroupId))
+                    {
+                        var sgLink = nextSibling.SelectSingleNode(".//a[contains(@href,'coverGroupId')]");
 
-                    // If we hit another coverHeading or sideBarLinks, stop
-                    if(nextSibling.GetAttributeValue("class", "").Contains("coverHeading") ||
-                       nextSibling.GetAttributeValue("class", "").Contains("sideBarLinks"))
-                        break;
+                        if(sgLink is not null)
+                        {
+                            var m = CoverGroupIdRegex().Match(sgLink.GetAttributeValue("href", ""));
+
+                            if(m.Success)
+                                group.GroupId = m.Groups[1].Value;
+                        }
+                    }
                 }
 
                 nextSibling = nextSibling.NextSibling;
-            }
-
-            // Also search for the sidebar link as a sibling of the row
-            if(string.IsNullOrEmpty(group.GroupId))
-            {
-                var parent = heading.ParentNode;
-
-                if(parent is not null)
-                {
-                    var sgLink = parent.SelectSingleNode(
-                        ".//a[contains(@href,'coverGroupId')]");
-
-                    if(sgLink is not null)
-                    {
-                        var m = CoverGroupIdRegex().Match(sgLink.GetAttributeValue("href", ""));
-
-                        if(m.Success)
-                            group.GroupId = m.Groups[1].Value;
-                    }
-                }
             }
 
             if(group.Covers.Count > 0 || !string.IsNullOrWhiteSpace(group.Platform))

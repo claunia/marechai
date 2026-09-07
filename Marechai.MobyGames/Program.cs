@@ -701,6 +701,25 @@ class Program
                 break;
             }
 
+            case "reparse-covers":
+            {
+                int  coverReparseBatchSize = 50;
+                bool coverReparseDryRun    = false;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        coverReparseBatchSize = bs;
+                }
+
+                if(args.Contains("--dry-run")) coverReparseDryRun = true;
+
+                var coversReparseService = new CoversReparseService(factory, sourceDb);
+                await coversReparseService.RunAsync(coverReparseBatchSize, coverReparseDryRun);
+
+                break;
+            }
+
             case "reparse-descriptions":
             {
                 int  descReparseBatchSize = 50;
@@ -920,6 +939,10 @@ class Program
                 Console.WriteLine("    repair-covers [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Retroactively regroup already-downloaded covers by MobyGames GroupId");
                 Console.WriteLine("                                                  and clear any stale SoftwareReleaseId. DB-only, no re-download.");
+                Console.WriteLine("    reparse-covers [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Reparse the Covers tab from cached raw HTML and correct GroupId/Platform on");
+                Console.WriteLine("                                                  MobyGamesCoverDownloadState rows. No network access. Run `repair-covers`");
+                Console.WriteLine("                                                  afterwards to propagate the fix onto SoftwareCover/SoftwareCoverGroup.");
                 Console.WriteLine("    import-reviews [--batch-size N]");
                 Console.WriteLine("                                                  Import critic reviews for imported games");
                 Console.WriteLine("    status                                        Show import status counts");

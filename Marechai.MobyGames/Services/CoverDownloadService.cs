@@ -292,6 +292,19 @@ public class CoverDownloadService
                     // Create SoftwareCover record
                     await using var coverContext = await _contextFactory.CreateDbContextAsync();
 
+                    if(!string.IsNullOrWhiteSpace(group.GroupId))
+                    {
+                        bool groupExists =
+                            await coverContext.SoftwareCoverGroups.AnyAsync(g => g.Id == group.GroupId);
+
+                        if(!groupExists)
+                            coverContext.SoftwareCoverGroups.Add(new SoftwareCoverGroup
+                            {
+                                Id           = group.GroupId,
+                                PlatformName = Truncate(group.Platform, 256)
+                            });
+                    }
+
                     var softwareCover = new SoftwareCover
                     {
                         Id                = coverId,
@@ -371,8 +384,11 @@ public class CoverDownloadService
     ///     network access required. The cover's <c>SoftwareReleaseId</c> is cleared and its
     ///     <c>SoftwareId</c>/<c>GroupId</c> are (re)populated from the state row, so it stops
     ///     sitting on a release it was never actually evidence for and becomes correctly
-    ///     clustered with the rest of its original MobyGames cover group instead. Re-running
-    ///     this after a real pass is a no-op for already-fixed rows.
+    ///     clustered with the rest of its original MobyGames cover group instead. The
+    ///     <see cref="SoftwareCoverGroup" /> lookup (GroupId -> platform name) is also
+    ///     backfilled from the state row's <c>Platform</c>, so the UI can build a
+    ///     "Platform (#GroupId)" label instead of falling back to "Unknown".
+    ///     Re-running this after a real pass is a no-op for already-fixed rows.
     /// </summary>
     public async Task RepairMisassignedCoversAsync(bool dryRun, int batchSize = 1000)
     {
@@ -385,7 +401,11 @@ public class CoverDownloadService
         int scanned  = 0;
         int detached = 0;
         int skipped  = 0;
+        int missing  = 0;
         long lastId  = 0;
+
+        HashSet<string> knownGroupIds =
+            (await context.SoftwareCoverGroups.Select(g => g.Id).ToListAsync()).ToHashSet();
 
         while(true)
         {
@@ -403,6 +423,11 @@ public class CoverDownloadService
 
             lastId = batch[^1].Id;
 
+            HashSet<ulong> existingSoftwareIds =
+                (await context.Softwares.Where(sw => batch.Select(s => s.SoftwareId).Contains(sw.Id))
+                              .Select(sw => sw.Id)
+                              .ToListAsync()).ToHashSet();
+
             foreach(MobyGamesCoverDownloadState state in batch)
             {
                 scanned++;
@@ -414,6 +439,28 @@ public class CoverDownloadService
                     skipped++;
 
                     continue;
+                }
+
+                if(!existingSoftwareIds.Contains(state.SoftwareId))
+                {
+                    Console.WriteLine($"    [SKIP] cover {cover.Id}: state references missing Software " +
+                                       $"{state.SoftwareId} (likely merged/deleted) - leaving untouched");
+
+                    missing++;
+
+                    continue;
+                }
+
+                if(!string.IsNullOrWhiteSpace(state.GroupId) && !knownGroupIds.Contains(state.GroupId))
+                {
+                    knownGroupIds.Add(state.GroupId);
+
+                    if(!dryRun)
+                        context.SoftwareCoverGroups.Add(new SoftwareCoverGroup
+                        {
+                            Id           = state.GroupId,
+                            PlatformName = state.Platform
+                        });
                 }
 
                 bool alreadyCorrect = cover.SoftwareReleaseId is null &&
@@ -428,7 +475,8 @@ public class CoverDownloadService
                 }
 
                 Console.WriteLine($"    [DETACH] cover {cover.Id}: release {cover.SoftwareReleaseId} -> " +
-                                   $"software {state.SoftwareId}, group {state.GroupId ?? "(none)"}");
+                                   $"software {state.SoftwareId}, group {state.GroupId ?? "(none)"}, " +
+                                   $"platform {state.Platform ?? "(none)"}");
 
                 if(!dryRun)
                 {
@@ -448,6 +496,7 @@ public class CoverDownloadService
         Console.WriteLine($"    Scanned:        {scanned}");
         Console.WriteLine($"    Detached/fixed: {detached}");
         Console.WriteLine($"    Already correct/skipped: {skipped}");
+        Console.WriteLine($"    Skipped (missing Software): {missing}");
         Console.WriteLine("  ────────────────────────────────────\n");
     }
 
