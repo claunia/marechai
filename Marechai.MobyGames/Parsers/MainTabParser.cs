@@ -166,6 +166,19 @@ public static partial class MainTabParser
                 if(tag is "h2") break;
 
                 if(sibling.GetAttributeValue("class", "").Contains("sideBarLinks")) break;
+
+                // Boundary markup can end up *nested inside* a sibling (e.g. when a
+                // malformed/unclosed tag makes HtmlAgilityPack swallow the rest of the
+                // page into one element). Keep only the content before the boundary.
+                var nested = sibling.SelectSingleNode(".//h2 | .//*[contains(@class,'sideBarLinks')]");
+
+                if(nested != null)
+                {
+                    RemoveNodeAndFollowing(nested, sibling);
+                    htmlParts.Add(sibling.OuterHtml);
+
+                    break;
+                }
             }
 
             htmlParts.Add(sibling.OuterHtml);
@@ -230,6 +243,32 @@ public static partial class MainTabParser
         // Defensive second pass on the converted markdown in case ReverseMarkdown
         // reorders text in a way that resurrects the phrase.
         game.Description = AdBlurbsSuffixRegex().Replace(converter.Convert(cleanedHtml), string.Empty).Trim();
+    }
+
+    /// <summary>
+    ///     Removes <paramref name="boundary" /> and every node that follows it in document
+    ///     order within <paramref name="root" />'s subtree, keeping everything before it.
+    /// </summary>
+    static void RemoveNodeAndFollowing(HtmlNode boundary, HtmlNode root)
+    {
+        var parent = boundary.ParentNode;
+
+        while(boundary.NextSibling != null)
+            parent.RemoveChild(boundary.NextSibling);
+
+        parent.RemoveChild(boundary);
+
+        var node = parent;
+
+        while(node != null && node != root)
+        {
+            var upper = node.ParentNode;
+
+            while(node.NextSibling != null)
+                upper.RemoveChild(node.NextSibling);
+
+            node = upper;
+        }
     }
 
     static void ParseGroups(HtmlDocument doc, ParsedGame game)
