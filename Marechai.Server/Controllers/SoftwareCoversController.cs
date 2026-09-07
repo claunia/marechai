@@ -98,7 +98,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                               OriginalExtension = c.OriginalExtension,
                               PlatformName = c.Release != null && c.Release.Platform != null
                                                  ? c.Release.Platform.Name
-                                                 : null,
+                                                 : context.SoftwareCoverGroups
+                                                          .Where(g => g.Id == c.GroupId)
+                                                          .Select(g => g.PlatformName)
+                                                          .FirstOrDefault(),
                               RegionNames = c.Release != null && c.Release.Regions != null
                                                 ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
                                                 : null
@@ -125,7 +128,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                           OriginalExtension = c.OriginalExtension,
                           PlatformName = c.Release != null && c.Release.Platform != null
                                              ? c.Release.Platform.Name
-                                             : null,
+                                             : context.SoftwareCoverGroups
+                                                      .Where(g => g.Id == c.GroupId)
+                                                      .Select(g => g.PlatformName)
+                                                      .FirstOrDefault(),
                           RegionNames = c.Release != null && c.Release.Regions != null
                                             ? string.Join(", ", c.Release.Regions.Select(r => r.UnM49.Name))
                                             : null
@@ -164,7 +170,10 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                                                  OriginalExtension = c.OriginalExtension,
                                                  PlatformName = c.Release != null && c.Release.Platform != null
                                                                     ? c.Release.Platform.Name
-                                                                    : null,
+                                                                    : context.SoftwareCoverGroups
+                                                                             .Where(g => g.Id == c.GroupId)
+                                                                             .Select(g => g.PlatformName)
+                                                                             .FirstOrDefault(),
                                                  RegionNames = c.Release != null && c.Release.Regions != null
                                                                    ? string.Join(", ",
                                                                        c.Release.Regions.Select(r => r.UnM49.Name))
