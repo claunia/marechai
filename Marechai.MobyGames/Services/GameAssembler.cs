@@ -15,7 +15,9 @@ public static class GameAssembler
         foreach(var row in rows)
         {
             var doc = new HtmlDocument();
-            doc.LoadHtml(row.Body);
+            // Unclosed <moby ...> tags in the source HTML derail sibling-based section walks;
+            // strip them before the DOM is built.
+            doc.LoadHtml(MainTabParser.StripMobyTags(row.Body));
 
             var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
 

@@ -11,6 +11,15 @@ namespace Marechai.MobyGames.Parsers;
 
 public static partial class MainTabParser
 {
+    /// <summary>
+    ///     Unwraps MobyGames' custom <c>&lt;moby ...&gt;</c> entity-link tags, keeping their inner
+    ///     text. Must run on the raw HTML string before <see cref="HtmlDocument.LoadHtml" />:
+    ///     the tags are sometimes unclosed, which makes HtmlAgilityPack nest the whole rest of
+    ///     the page inside them, breaking sibling-based section walks.
+    /// </summary>
+    internal static string StripMobyTags(string html) =>
+        string.IsNullOrEmpty(html) ? html : MobyTagRegex().Replace(html, string.Empty);
+
     public static void Parse(HtmlDocument doc, ParsedGame game)
     {
         game.HasMainTab = true;
@@ -489,6 +498,9 @@ public static partial class MainTabParser
     /// </summary>
     [GeneratedRegex(@"[ \t]*\(\s*from\s+Ad\s+Blurbs\s*\)", RegexOptions.IgnoreCase)]
     private static partial Regex AdBlurbsSuffixRegex();
+
+    [GeneratedRegex(@"</?moby\b[^>]*>", RegexOptions.IgnoreCase)]
+    private static partial Regex MobyTagRegex();
 
     /// <summary>
     ///     Extracts a MobyGames game slug from a single href URL.
