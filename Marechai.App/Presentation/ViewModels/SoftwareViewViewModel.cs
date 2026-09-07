@@ -1399,7 +1399,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(cover.RegionNames))
             parts.Add(cover.RegionNames);
 
-        return parts.Count > 0 ? string.Join(" - ", parts) : "Unknown";
+        if(parts.Count == 0)
+        {
+            // No release, platform, or region info (e.g. a MobyGames-imported cover group not
+            // yet manually attributed to a release) - fall back to the source group id so covers
+            // still split into their real groups instead of collapsing into one "Unknown" bucket.
+            return string.IsNullOrWhiteSpace(cover.GroupId) ? "Unknown" : $"Group #{cover.GroupId}";
+        }
+
+        if(!string.IsNullOrWhiteSpace(cover.GroupId))
+            parts.Add($"#{cover.GroupId}");
+
+        return string.Join(" - ", parts);
     }
 
     private async Task LoadScreenshotsAsync(int softwareId)
