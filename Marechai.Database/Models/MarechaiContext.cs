@@ -187,6 +187,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareScreenshotGroup>             SoftwareScreenshotGroups             { get; set; }
     public virtual DbSet<SoftwareScreenshotGroupTranslation>  SoftwareScreenshotGroupTranslations  { get; set; }
     public virtual DbSet<SoftwareCover>                      SoftwareCovers                       { get; set; }
+    public virtual DbSet<SoftwareCoverGroup>                 SoftwareCoverGroups                  { get; set; }
     public virtual DbSet<SoftwareCoverCaptionTranslation>    SoftwareCoverCaptionTranslations     { get; set; }
     public virtual DbSet<PeopleBySoftwareRoleTranslation>    PeopleBySoftwareRoleTranslations     { get; set; }
     public virtual DbSet<SoftwarePromoArt>                   SoftwarePromoArt                     { get; set; }
@@ -2778,6 +2779,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(x => x.SoftwareCompilationId)
                   .IsRequired(false)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SoftwareCoverGroup>(entity =>
+        {
+            entity.Property(x => x.Id).HasMaxLength(64);
         });
 
         modelBuilder.Entity<UnM49>(entity =>
