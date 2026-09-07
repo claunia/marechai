@@ -701,6 +701,25 @@ class Program
                 break;
             }
 
+            case "reparse-descriptions":
+            {
+                int  descReparseBatchSize = 50;
+                bool descReparseDryRun    = false;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        descReparseBatchSize = bs;
+                }
+
+                if(args.Contains("--dry-run")) descReparseDryRun = true;
+
+                var descriptionsReparseService = new DescriptionsReparseService(factory, sourceDb);
+                await descriptionsReparseService.RunAsync(descReparseBatchSize, descReparseDryRun);
+
+                break;
+            }
+
             case "cleanup-orphan-duplicates":
             {
                 bool cleanupDryRun = args.Contains("--dry-run");
@@ -939,6 +958,11 @@ class Program
                 Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
                 Console.WriteLine("    reparse-specs [--batch-size N] [--dry-run]");
                 Console.WriteLine("                                                  Reparse Specs tab from raw HTML and split multi-anchor values into one row each");
+                Console.WriteLine("    reparse-descriptions [--batch-size N] [--dry-run]");
+                Console.WriteLine("                                                  Repair SoftwareDescription rows polluted with leaked MobyGames page chrome");
+                Console.WriteLine("                                                  (sidebar links, review tables, <moby> tags) by reparsing from cached raw HTML.");
+                Console.WriteLine("                                                  Only fingerprint-matching rows are rewritten; their non-English machine");
+                Console.WriteLine("                                                  translations are deleted for later retranslation. No network access.");
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
