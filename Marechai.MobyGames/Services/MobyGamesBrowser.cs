@@ -516,6 +516,26 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
 
         if(_headless)
         {
+            // Cloudflare's managed challenge is often NON-interactive: the page runs its JavaScript
+            // for a few seconds and redirects without any checkbox. Give a real (logged-in)
+            // Chromium profile that chance before concluding a human is needed.
+            Console.WriteLine("  Cloudflare interstitial detected (headless) — waiting up to 45s for a non-interactive pass...");
+
+            DateTime autoDeadline = DateTime.UtcNow.AddSeconds(45);
+
+            while(DateTime.UtcNow < autoDeadline)
+            {
+                await Task.Delay(3000);
+
+                if(!await IsCloudflareChallengePresentAsync())
+                {
+                    Console.WriteLine("  Cloudflare challenge cleared without interaction.");
+                    await Task.Delay(1500);
+
+                    return;
+                }
+            }
+
             await DumpLoginDiagnosticsAsync("cloudflare-interstitial");
 
             throw new InvalidOperationException(
