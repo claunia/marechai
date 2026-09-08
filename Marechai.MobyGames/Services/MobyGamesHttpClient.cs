@@ -28,7 +28,13 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     readonly HttpClientHandler _handler;
     readonly int              _delayMs;
 
-    public MobyGamesHttpClient(int delayMs = 2000)
+    /// <param name="proxy">
+    ///     Optional proxy URL (<c>socks5://host:port</c> or <c>http://host:port</c>) so this client
+    ///     exits from the same IP as the browser that minted <c>cf_clearance</c>. Used by
+    ///     <c>cf-login</c> to verify the freshly minted cookies through the server's IP.
+    /// </param>
+    public MobyGamesHttpClient(int delayMs = 2000, string proxy = null, string proxyUser = null,
+                               string proxyPassword = null)
     {
         _delayMs = delayMs;
 
@@ -49,6 +55,18 @@ public sealed partial class MobyGamesHttpClient : IDisposable
             UseCookies     = true,
             CookieContainer = new CookieContainer()
         };
+
+        if(!string.IsNullOrWhiteSpace(proxy))
+        {
+            // HttpClientHandler accepts http://, https:// and socks4/4a/5:// proxy URLs on .NET 6+.
+            var webProxy = new WebProxy(proxy.Trim());
+
+            if(!string.IsNullOrEmpty(proxyUser))
+                webProxy.Credentials = new NetworkCredential(proxyUser, proxyPassword ?? "");
+
+            _handler.Proxy    = webProxy;
+            _handler.UseProxy = true;
+        }
 
         _client = new HttpClient(_handler)
         {

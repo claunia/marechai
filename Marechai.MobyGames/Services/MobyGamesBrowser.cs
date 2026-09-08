@@ -55,13 +55,36 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
     readonly string _userDataDir;
     readonly bool   _headless;
     readonly int    _rateLimitMs;
+    readonly string _proxy;
+    readonly string _proxyUser;
+    readonly string _proxyPassword;
 
     IBrowser _browser;
     IPage    _page;
     DateTime _lastRequestUtc = DateTime.MinValue;
     bool     _initialized;
 
-    public MobyGamesBrowser(IConfiguration cfg, int rateLimitMs)
+    /// <param name="headlessOverride">
+    ///     When set, wins over <c>MobyGames:Auth:Headless</c>. The <c>cf-login</c> command passes
+    ///     <c>false</c> so the operator can click the Turnstile checkbox regardless of appsettings.
+    /// </param>
+    /// <param name="proxy">
+    ///     Optional proxy for Chromium, e.g. <c>socks5://127.0.0.1:1080</c> (an <c>ssh -D 1080 server</c>
+    ///     tunnel) or <c>http://host:3128</c>. Cloudflare binds <c>cf_clearance</c> to the IP that
+    ///     solved the challenge, so routing the visible browser through the headless server's IP is
+    ///     the only way to mint a cookie the server can use.
+    /// </param>
+    /// <param name="proxyUser">Optional proxy username (applied via CDP authentication).</param>
+    /// <param name="proxyPassword">Optional proxy password.</param>
+    /// <param name="stateDir">
+    ///     Optional directory that replaces the configured cookie file and Chromium profile
+    ///     (<c>&lt;stateDir&gt;/mobygames-cookies.json</c>, <c>&lt;stateDir&gt;/puppeteer-profile</c>) so a
+    ///     session minted for another IP does not overwrite this machine's own. The Chromium
+    ///     binary cache is shared.
+    /// </param>
+    public MobyGamesBrowser(IConfiguration cfg, int rateLimitMs, bool? headlessOverride = null,
+                            string proxy = null, string proxyUser = null, string proxyPassword = null,
+                            string stateDir = null)
     {
         _rateLimitMs = rateLimitMs;
 
@@ -75,12 +98,33 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         // user passes it once (set Headless=false), the cleared profile keeps subsequent runs
         // working without manual intervention.
         _userDataDir      = auth["UserDataDir"]       ?? "state/puppeteer-profile";
-        _headless         = !bool.TryParse(auth["Headless"], out bool h) || h;
+        _headless         = headlessOverride ?? (!bool.TryParse(auth["Headless"], out bool h) || h);
+        _proxy            = string.IsNullOrWhiteSpace(proxy) ? null : proxy.Trim();
+        _proxyUser        = proxyUser;
+        _proxyPassword    = proxyPassword;
+
+        if(!string.IsNullOrWhiteSpace(stateDir))
+        {
+            _cookieCachePath = Path.Combine(stateDir, "mobygames-cookies.json");
+            _userDataDir     = Path.Combine(stateDir, "puppeteer-profile");
+        }
     }
+
+    /// <summary>Cookie cache file this instance writes (for operator instructions).</summary>
+    public string CookieCachePath => _cookieCachePath;
+
+    /// <summary>Chromium profile directory this instance uses (for operator instructions).</summary>
+    public string UserDataDir => _userDataDir;
 
     public bool IsLoggedIn { get; private set; }
 
     public bool HasMobyPlus { get; private set; }
+
+    /// <summary>
+    ///     True when this session performed the form login on <c>/user/login/</c> with the
+    ///     configured credentials (as opposed to being restored from cached cookies).
+    /// </summary>
+    public bool LoginPerformed { get; private set; }
 
     /// <summary>
     ///     Returns true once Chromium has been launched, the cached cookies (if any) loaded,
@@ -162,6 +206,14 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             opts.Env["XDG_DATA_HOME"]   = xdgData;
             opts.Env["XDG_CACHE_HOME"]  = xdgCache;
 
+            if(_proxy is not null)
+            {
+                // Route every request (including DNS for socks5h-style behaviour Chromium applies to
+                // SOCKS proxies by default) through the proxy so Cloudflare sees the proxy's IP.
+                opts.Args = [..opts.Args, $"--proxy-server={_proxy}"];
+                Console.WriteLine($"  Chromium proxy: {_proxy}");
+            }
+
             _browser = await Puppeteer.LaunchAsync(opts);
         }
         catch(Exception launchEx)
@@ -179,6 +231,9 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
 
         _page = await _browser.NewPageAsync();
         await _page.SetUserAgentAsync(DefaultUserAgent, null);
+
+        if(_proxy is not null && !string.IsNullOrEmpty(_proxyUser))
+            await _page.AuthenticateAsync(new Credentials { Username = _proxyUser, Password = _proxyPassword ?? "" });
 
         // Restore cached cookies if present.
         bool cookiesRestored = await TryRestoreCookiesAsync();
@@ -215,6 +270,7 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             _initialized = true;
 
             await LoginAsync(ct);
+            LoginPerformed = true;
             await SaveCookiesAsync();
         }
         else

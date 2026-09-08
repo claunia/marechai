@@ -28,6 +28,11 @@ class Program
         if(commandName == "convert-images")
             return RunConvertImages(args, config);
 
+        // `cf-login` also needs no database: it only mints the Cloudflare clearance + MobyGames
+        // session into state/ (optionally through a proxy so the cookie is bound to another IP).
+        if(commandName == "cf-login")
+            return await RunCfLoginAsync(args, config);
+
         string marechaiConn = config.GetConnectionString("DefaultConnection");
         string mobyConn     = config.GetConnectionString("MobyGamesSource");
 
@@ -1102,6 +1107,11 @@ class Program
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
+                Console.WriteLine("    cf-login [--proxy <url>] [--proxy-auth user:pass] [--out <dir>] [--headless]");
+                Console.WriteLine("                                                  Solve Cloudflare + log in to MobyGames in a VISIBLE browser (ignores");
+                Console.WriteLine("                                                  Auth:Headless) and save the session to state/. --proxy socks5://127.0.0.1:1080");
+                Console.WriteLine("                                                  (e.g. `ssh -D 1080 server`) binds the cf_clearance to the server's IP so");
+                Console.WriteLine("                                                  state/ can be copied to a headless server. No database needed.");
                 Console.WriteLine("    update-year (--year N | --slug <slug>) [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--force] [--since YYYY-MM-DD] [--from-cache]");
                 Console.WriteLine("                                                  Re-download every ALREADY-IMPORTED game MobyGames files under year N");
                 Console.WriteLine("                                                  (MobyGamesDiscoveredGames.ReleaseYear) and add only what is new: description");
@@ -1124,6 +1134,157 @@ class Program
 
         return 0;
     }
+    /// <summary>
+    ///     Handler for the <c>cf-login</c> command. Its ONLY job is to obtain a Cloudflare
+    ///     <c>cf_clearance</c> cookie and a logged-in MobyGames session and persist both into
+    ///     <c>state/</c> (Chromium profile + cookie JSON). It always opens a VISIBLE Chromium
+    ///     window — <c>MobyGames:Auth:Headless</c> is ignored — because Turnstile's checkbox must be
+    ///     clicked by a human. With <c>--proxy</c> the browser (and the verification HTTP request)
+    ///     exit through the proxy, e.g. an <c>ssh -D 1080 server</c> SOCKS tunnel, so the cookie is
+    ///     bound to the headless server's IP and the resulting <c>state/</c> can be copied there.
+    /// </summary>
+    static async Task<int> RunCfLoginAsync(string[] args, IConfiguration config)
+    {
+        string proxy         = null;
+        string proxyUser     = null;
+        string proxyPassword = null;
+        string outDir        = null;
+        bool   headless      = false;
+        int    delayMs       = config.GetValue("MobyGames:DelayMs", 2000);
+
+        for(int i = 1; i < args.Length; i++)
+        {
+            if(args[i] == "--proxy" && i + 1 < args.Length)
+                proxy = args[i + 1];
+            else if(args[i] == "--out" && i + 1 < args.Length)
+                outDir = args[i + 1];
+            else if(args[i] == "--proxy-auth" && i + 1 < args.Length)
+            {
+                string[] parts = args[i + 1].Split(':', 2);
+                proxyUser     = parts[0];
+                proxyPassword = parts.Length > 1 ? parts[1] : "";
+            }
+            else if(args[i] == "--headless")
+                headless = true; // only useful when the profile already holds a valid cf_clearance
+            else if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dm))
+                delayMs = dm;
+            else if(args[i] is "--help" or "-h")
+            {
+                PrintCfLoginUsage();
+
+                return 0;
+            }
+        }
+
+        IConfigurationSection auth = config.GetSection("MobyGames:Auth");
+
+        if(string.IsNullOrWhiteSpace(auth["Email"]) || string.IsNullOrWhiteSpace(auth["Password"]))
+        {
+            Console.WriteLine("\e[31;1mMobyGames:Auth:Email / Password must be set in appsettings.json.\e[0m");
+
+            return 1;
+        }
+
+        if(proxy is not null && !proxy.Contains("://"))
+        {
+            Console.WriteLine("\e[31;1m--proxy must be a URL such as socks5://127.0.0.1:1080 or http://host:3128\e[0m");
+
+            return 1;
+        }
+
+        Console.WriteLine($"  Mode:  {(headless ? "headless (reusing an existing clearance)" : "VISIBLE browser — click the Turnstile checkbox when it appears")}");
+        Console.WriteLine($"  Proxy: {proxy ?? "(none — cookie will be bound to THIS machine's public IP)"}");
+        Console.WriteLine($"  State: {(outDir is null ? "state/ (this machine's own session will be replaced)" : System.IO.Path.GetFullPath(outDir))}");
+
+        // Show which public IP the proxy exits from so the operator can confirm it is the server's.
+        using(var probe = new MobyGamesHttpClient(0, proxy, proxyUser, proxyPassword))
+        {
+            string ip = await probe.FetchPageAsync("https://api.ipify.org/");
+            Console.WriteLine($"  Public IP seen by the network: {(string.IsNullOrWhiteSpace(ip) ? "(lookup failed)" : ip.Trim())}");
+        }
+
+        await using var browser = new MobyGamesBrowser(config, delayMs, headlessOverride: headless,
+                                                       proxy: proxy, proxyUser: proxyUser,
+                                                       proxyPassword: proxyPassword, stateDir: outDir);
+
+        try
+        {
+            await browser.InitializeAsync();
+            await browser.SaveCookiesAsync();
+
+            Console.WriteLine(browser.LoginPerformed
+                                  ? $"  Logged in via /user/login/ with the credentials from appsettings ({auth["Email"]})."
+                                  : "  Session restored from the existing profile cookies (already logged in; no form login needed).");
+            Console.WriteLine($"  Session saved: MobyPlus={(browser.HasMobyPlus ? "yes" : "no")}");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[31;1m  cf-login failed: {ex.GetType().Name}: {ex.Message}\e[0m");
+
+            for(Exception inner = ex.InnerException; inner != null; inner = inner.InnerException)
+                Console.WriteLine($"\e[31m    caused by {inner.GetType().Name}: {inner.Message}\e[0m");
+
+            return 1;
+        }
+
+        // Verify on the plain HTTP path (same UA, same exit IP) that the minted cookies really
+        // clear Cloudflare — this is what every other command relies on.
+        using(var verify = new MobyGamesHttpClient(delayMs, proxy, proxyUser, proxyPassword))
+        {
+            IReadOnlyList<PuppeteerSharp.CookieParam> cookies = await browser.ExportCookiesAsync();
+            verify.ImportCookies(cookies);
+
+            // A clearance minted seconds ago can still be rejected at the edge for a short while
+            // (observed: 403 immediately after the click, 200 a minute later) — retry with backoff.
+            bool ok = false;
+
+            for(int attempt = 1; attempt <= 4 && !ok; attempt++)
+            {
+                if(attempt > 1)
+                {
+                    int waitSeconds = 10 * (attempt - 1);
+                    Console.WriteLine($"  Verification attempt {attempt - 1} got no page; waiting {waitSeconds}s for the clearance to propagate...");
+                    await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
+                }
+
+                string body = await verify.FetchPageAsync("https://www.mobygames.com/game/30533/stranglehold/");
+
+                ok = !string.IsNullOrEmpty(body) && !body.Contains("Just a moment", StringComparison.OrdinalIgnoreCase);
+            }
+
+            Console.WriteLine(ok
+                                  ? "  \e[32;1mVerification OK:\e[0m a game page was fetched through the HTTP client with the new cookies."
+                                  : "  \e[31;1mVerification FAILED:\e[0m the HTTP client still hits Cloudflare. If a proxy was used, make sure " +
+                                    "the SAME proxy/IP is used by the machine that will run the importer.");
+
+            if(!ok) return 1;
+        }
+
+        string stateDir = System.IO.Path.GetFullPath(System.IO.Path.Combine(browser.UserDataDir, ".."));
+
+        Console.WriteLine();
+        Console.WriteLine("  Done. To use this session on the headless server copy BOTH of these (Chromium itself is not needed):");
+        Console.WriteLine($"    {System.IO.Path.GetFullPath(browser.UserDataDir)}/   -> <server>/Marechai.MobyGames/state/puppeteer-profile/");
+        Console.WriteLine($"    {System.IO.Path.GetFullPath(browser.CookieCachePath)} -> <server>/Marechai.MobyGames/state/mobygames-cookies.json");
+        Console.WriteLine($"  e.g.  rsync -a --delete --exclude 'Singleton*' {stateDir}/puppeteer-profile {stateDir}/mobygames-cookies.json user@server:/path/to/Marechai.MobyGames/state/");
+        Console.WriteLine("  The clearance is bound to the exit IP and to the tool's user agent; it typically lasts ~30 days.");
+
+        return 0;
+    }
+
+    static void PrintCfLoginUsage()
+    {
+        Console.WriteLine("  Usage: cf-login [--proxy <url>] [--proxy-auth user:pass] [--out <dir>] [--headless] [--delay-ms N]");
+        Console.WriteLine("    --out <dir>                       write the session to <dir>/ instead of state/ (keeps this");
+        Console.WriteLine("                                      machine's own clearance intact; copy <dir>/ to the server's state/).");
+        Console.WriteLine("    Opens a VISIBLE Chromium (ignores MobyGames:Auth:Headless), lets you solve Cloudflare's");
+        Console.WriteLine("    \"Verify you are human\", logs in to MobyGames and saves the session into state/.");
+        Console.WriteLine("    --proxy socks5://127.0.0.1:1080   route the browser through e.g. `ssh -D 1080 user@server`");
+        Console.WriteLine("                                      so the cookie is bound to the server's public IP.");
+        Console.WriteLine("    --proxy http://host:3128          HTTP proxy; --proxy-auth for authenticated proxies.");
+        Console.WriteLine("    --headless                        only when state/ already holds a valid clearance.");
+    }
+
     /// <summary>
     /// Synchronous, fully offline handler for the `convert-images` command. Walks
     /// the asset root's photos/<type>/originals/ tree and runs the ImageMagick
