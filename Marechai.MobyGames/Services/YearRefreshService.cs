@@ -297,6 +297,18 @@ public class YearRefreshService
                         consecutiveMainFailures++;
                         Console.WriteLine("    \e[31m✗\e[0m main page fetch failed (removed / renamed / rate-limited?) — cache untouched");
 
+                        // The HTTP client already slept through its whole challenge backoff schedule
+                        // and Cloudflare is STILL challenging this IP: nothing in this batch can
+                        // succeed right now. Stop here; unstamped games are retried next run.
+                        if(_http.LastRequestChallenged)
+                        {
+                            Console.WriteLine("\n  \e[31;1mABORTING: Cloudflare keeps challenging this IP after the full backoff — " +
+                                              "let the traffic score decay and re-run later (or re-run cf-login).\e[0m");
+                            aborted = true;
+
+                            continue;
+                        }
+
                         if(consecutiveMainFailures >= MaxConsecutiveMainFailures)
                         {
                             Console.WriteLine($"\n  \e[31;1mABORTING: {MaxConsecutiveMainFailures} consecutive main-page failures — " +

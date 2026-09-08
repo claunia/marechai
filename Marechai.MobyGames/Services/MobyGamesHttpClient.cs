@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -27,6 +28,93 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     readonly HttpClient       _client;
     readonly SocketsHttpHandler _handler;
     string                      _lastRemote;
+
+    /// <summary>
+    ///     Wait schedule applied when Cloudflare answers a request with a managed challenge
+    ///     (HTTP 403 + <c>cf-mitigated: challenge</c>). The challenge is a traffic score on the
+    ///     (IP, TLS fingerprint) pair that decays over minutes, so the right reaction is to stop
+    ///     hammering and come back later, not to mark the item failed. Empty disables the backoff
+    ///     (used by <c>cf-login</c>'s own quick verification loop). Default: 1, 2, 4, 8 minutes.
+    /// </summary>
+    public TimeSpan[] ChallengeBackoff { get; set; } = DefaultChallengeBackoff();
+
+    /// <summary>
+    ///     1, 2, 4, 8 minutes unless <c>MOBYGAMES_CHALLENGE_BACKOFF</c> lists comma-separated seconds
+    ///     (e.g. <c>30,60,120</c>); an empty value disables the backoff.
+    /// </summary>
+    static TimeSpan[] DefaultChallengeBackoff()
+    {
+        string env = Environment.GetEnvironmentVariable("MOBYGAMES_CHALLENGE_BACKOFF");
+
+        if(env is null)
+            return [TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(4), TimeSpan.FromMinutes(8)];
+
+        return env.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                  .Select(s => double.TryParse(s, System.Globalization.NumberStyles.Float,
+                                               System.Globalization.CultureInfo.InvariantCulture, out double sec)
+                                   ? TimeSpan.FromSeconds(sec)
+                                   : (TimeSpan?)null)
+                  .Where(t => t.HasValue)
+                  .Select(t => t.Value)
+                  .ToArray();
+    }
+
+    /// <summary>
+    ///     True when the most recent request ended in a Cloudflare challenge even after the whole
+    ///     <see cref="ChallengeBackoff" /> schedule was exhausted. Callers use it to stop a batch
+    ///     early instead of burning through it while the IP is being challenged.
+    /// </summary>
+    public bool LastRequestChallenged { get; private set; }
+
+    static bool IsChallenge(HttpResponseMessage response) =>
+        response.StatusCode == HttpStatusCode.Forbidden &&
+        response.Headers.TryGetValues("cf-mitigated", out var v) &&
+        v.Any(x => x.Contains("challenge", StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    ///     Sends <paramref name="makeRequest" />() and, on a Cloudflare challenge, sleeps through
+    ///     <see cref="ChallengeBackoff" /> re-issuing it after every pause. Returns the last
+    ///     response (possibly still a challenge) so callers keep their existing status handling.
+    /// </summary>
+    async Task<HttpResponseMessage> SendWithBackoffAsync(Func<HttpRequestMessage> makeRequest,
+                                                         HttpCompletionOption option,
+                                                         string url)
+    {
+        for(int attempt = 0;; attempt++)
+        {
+            using HttpRequestMessage req = makeRequest();
+            HttpResponseMessage response = await _client.SendAsync(req, option);
+
+            if(!IsChallenge(response))
+            {
+                LastRequestChallenged = false;
+
+                return response;
+            }
+
+            if(attempt >= ChallengeBackoff.Length)
+            {
+                LastRequestChallenged = true;
+
+                return response;
+            }
+
+            response.Dispose();
+
+            TimeSpan wait = ChallengeBackoff[attempt];
+
+            Console.WriteLine($"\e[33m  Cloudflare challenge on {url}" +
+                              (_lastRemote is not null ? $" [remote {_lastRemote}]" : "") +
+                              $" — backing off {(wait.TotalSeconds < 60 ? $"{wait.TotalSeconds:0}s" : $"{wait.TotalMinutes:0.#} min")} " +
+                              $"({attempt + 1}/{ChallengeBackoff.Length}) before retrying...\e[0m");
+
+            await Task.Delay(wait);
+        }
+    }
+
+    Task<HttpResponseMessage> GetWithBackoffAsync(string url,
+                                                  HttpCompletionOption option = HttpCompletionOption.ResponseContentRead) =>
+        SendWithBackoffAsync(() => new HttpRequestMessage(HttpMethod.Get, url), option, url);
     readonly int              _delayMs;
 
     /// <param name="proxy">
@@ -172,7 +260,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var response = await _client.GetAsync(url);
+            using var response = await GetWithBackoffAsync(url);
 
             if(!response.IsSuccessStatusCode)
             {
@@ -218,7 +306,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await GetWithBackoffAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
             if(!response.IsSuccessStatusCode)
             {
@@ -286,7 +374,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var response = await _client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await GetWithBackoffAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
             if(!response.IsSuccessStatusCode)
             {
@@ -548,7 +636,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var response = await _client.GetAsync(url);
+            using var response = await GetWithBackoffAsync(url);
 
             if(!response.IsSuccessStatusCode) return null;
 
@@ -654,7 +742,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var response = await _client.GetAsync(url);
+            using var response = await GetWithBackoffAsync(url);
             string    finalUrl = response.RequestMessage?.RequestUri?.ToString();
 
             if(string.IsNullOrWhiteSpace(finalUrl)) return null;
@@ -768,10 +856,13 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         try
         {
-            using var req = new HttpRequestMessage(HttpMethod.Get, url);
-            req.Headers.TryAddWithoutValidation("Accept", "application/json,*/*;q=0.1");
+            using HttpResponseMessage response = await SendWithBackoffAsync(() =>
+            {
+                var req = new HttpRequestMessage(HttpMethod.Get, url);
+                req.Headers.TryAddWithoutValidation("Accept", "application/json,*/*;q=0.1");
 
-            using HttpResponseMessage response = await _client.SendAsync(req);
+                return req;
+            }, HttpCompletionOption.ResponseContentRead, url);
 
             if(!response.IsSuccessStatusCode)
             {

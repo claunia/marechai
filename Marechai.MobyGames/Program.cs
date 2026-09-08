@@ -1197,7 +1197,7 @@ class Program
         Console.WriteLine($"  State: {(outDir is null ? "state/ (this machine's own session will be replaced)" : System.IO.Path.GetFullPath(outDir))}");
 
         // Show which public IP the proxy exits from so the operator can confirm it is the server's.
-        using(var probe = new MobyGamesHttpClient(0, proxy, proxyUser, proxyPassword))
+        using(var probe = new MobyGamesHttpClient(0, proxy, proxyUser, proxyPassword) { ChallengeBackoff = [] })
         {
             string ip = await probe.FetchPageAsync("https://api.ipify.org/");
             Console.WriteLine($"  Public IP seen by the network: {(string.IsNullOrWhiteSpace(ip) ? "(lookup failed)" : ip.Trim())}");
@@ -1229,7 +1229,9 @@ class Program
 
         // Verify on the plain HTTP path (same UA, same exit IP) that the minted cookies really
         // clear Cloudflare — this is what every other command relies on.
-        using(var verify = new MobyGamesHttpClient(delayMs, proxy, proxyUser, proxyPassword))
+        // cf-login has its own short verification loop below; the minutes-long challenge backoff
+        // is for unattended batch runs, not for an operator sitting at the terminal.
+        using(var verify = new MobyGamesHttpClient(delayMs, proxy, proxyUser, proxyPassword) { ChallengeBackoff = [] })
         {
             IReadOnlyList<PuppeteerSharp.CookieParam> cookies = await browser.ExportCookiesAsync();
             verify.ImportCookies(cookies);
