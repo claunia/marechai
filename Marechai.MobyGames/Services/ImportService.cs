@@ -1342,261 +1342,680 @@ public class ImportService
 
             foreach(var release in platformGroup)
             {
-                var (publisher, _) = await _companyMatcher.MatchOrCreateAsync(
-                    release.Publisher ?? game.Publishers.FirstOrDefault());
+                SoftwareRelease dbRelease = await CreateReleaseAsync(context, softwareId, game, release, platform,
+                                                                     platformGroup.Key, addedCompanyRoles,
+                                                                     addedProductCodes, addedBarcodes,
+                                                                     softwareCompilationId, compilationTitle,
+                                                                     writeSpecsAndRatings: true);
 
-                if(publisher is null) continue;
-
-                var (releaseDate, precision) = ParseDate(release.ReleaseDate);
-
-                var dbRelease = new SoftwareRelease
-                {
-                    SoftwareId            = softwareCompilationId is not null ? null : softwareId,
-                    PlatformId            = platform?.Id,
-                    PublisherId           = publisher.Id,
-                    ReleaseDate           = releaseDate,
-                    ReleaseDatePrecision  = precision,
-                    SoftwareCompilationId = softwareCompilationId,
-                    Title                 = softwareCompilationId is not null ? compilationTitle : release.Comments
-                };
-
-                context.SoftwareReleases.Add(dbRelease);
-                await context.SaveChangesAsync();
-                createdReleases.Add(dbRelease);
-
-                // Barcodes
-                foreach(var barcode in release.Barcodes)
-                {
-                    var barcodeType = barcode.Type switch
-                    {
-                        "UPC-A"  => BarcodeType.UPC_A,
-                        "EAN-13" => BarcodeType.EAN_13,
-                        _        => BarcodeType.Unknown
-                    };
-
-                    // Check for existing barcode
-                    bool exists = await context.SoftwareBarcodes
-                                               .AnyAsync(b => b.Code == barcode.Code);
-
-                    if(exists) continue;
-
-                    if(!addedBarcodes.Add(barcode.Code)) continue;
-
-                    context.SoftwareBarcodes.Add(new SoftwareBarcode
-                    {
-                        ReleaseId = dbRelease.Id,
-                        Code      = barcode.Code,
-                        Type      = barcodeType
-                    });
-                }
-
-                // Product codes
-                foreach(var productCode in release.ProductCodes)
-                {
-                    ProductCodeIssuer issuer;
-
-                    switch(productCode.Type)
-                    {
-                        case "Sony PN":         issuer = ProductCodeIssuer.Sony;       break;
-                        case "PSN/SEN Code":    issuer = ProductCodeIssuer.PSN;        break;
-                        case "Microsoft PN":    issuer = ProductCodeIssuer.Microsoft;  break;
-                        case "Nintendo PN":     issuer = ProductCodeIssuer.Nintendo;   break;
-                        case "Nintendo Media PN": issuer = ProductCodeIssuer.Nintendo; break;
-                        case "Sega PN":         issuer = ProductCodeIssuer.Sega;       break;
-                        case "Sega Region Code": issuer = ProductCodeIssuer.Sega;      break;
-                        case "Activision PN":   issuer = ProductCodeIssuer.Activision; break;
-                        case "Amazon ASIN":     issuer = ProductCodeIssuer.Amazon;     break;
-                        case "eBay Item No.":   issuer = ProductCodeIssuer.eBay;       break;
-
-                        default:
-                            // Unknown Type — ask the user to map it instead of silently
-                            // defaulting to ProductCodeIssuer.Other.
-                            if(!TryResolveProductCodeIssuer(productCode.Type, out issuer))
-                                continue; // user chose [S]kip
-
-                            break;
-                    }
-
-                    bool codeExists = await context.SoftwareProductCodes
-                                                   .AnyAsync(c => c.Issuer == issuer &&
-                                                                   c.Code == productCode.Code);
-
-                    if(codeExists) continue;
-
-                    if(!addedProductCodes.Add((issuer, productCode.Code))) continue;
-
-                    context.SoftwareProductCodes.Add(new SoftwareProductCode
-                    {
-                        ReleaseId = dbRelease.Id,
-                        Issuer    = issuer,
-                        Code      = productCode.Code
-                    });
-                }
-
-                // Countries → UnM49 regions
-                var addedRegions = new HashSet<short>();
-
-                foreach(string country in release.Countries)
-                {
-                    var region = _countryMatcher.Match(country);
-
-                    if(region != null && addedRegions.Add(region.Id))
-                    {
-                        bool exists = await context.UnM49BySoftwareRelease
-                                                   .AnyAsync(u => u.SoftwareReleaseId == dbRelease.Id &&
-                                                                  u.UnM49Id == region.Id);
-
-                        if(!exists)
-                        {
-                            context.UnM49BySoftwareRelease.Add(new UnM49BySoftwareRelease
-                            {
-                                SoftwareReleaseId = dbRelease.Id,
-                                UnM49Id           = region.Id
-                            });
-                        }
-                    }
-                }
-
-                // Distributor/Localizer company roles on the software (skip for compilations)
-                if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Distributor))
-                {
-                    var (dist, _) = await _companyMatcher.MatchOrCreateAsync(release.Distributor);
-
-                    if(dist != null)
-                    {
-                        var roleKey = (softwareId.Value, dist.Id, "dis");
-
-                        if(addedCompanyRoles.Add(roleKey))
-                        {
-                            bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
-                                                                      r.CompanyId == dist.Id &&
-                                                                      r.RoleId == "dis");
-
-                            if(!exists)
-                            {
-                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
-                                {
-                                    SoftwareId = softwareId.Value,
-                                    CompanyId  = dist.Id,
-                                    RoleId     = "dis"
-                                });
-                            }
-                        }
-                    }
-                }
-
-                if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Localizer))
-                {
-                    var (loc, _) = await _companyMatcher.MatchOrCreateAsync(release.Localizer);
-
-                    if(loc != null)
-                    {
-                        var roleKey = (softwareId.Value, loc.Id, "loc");
-
-                        if(addedCompanyRoles.Add(roleKey))
-                        {
-                            bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
-                                                                      r.CompanyId == loc.Id &&
-                                                                      r.RoleId == "loc");
-
-                            if(!exists)
-                            {
-                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
-                                {
-                                    SoftwareId = softwareId.Value,
-                                    CompanyId  = loc.Id,
-                                    RoleId     = "loc"
-                                });
-                            }
-                        }
-                    }
-                }
-
-                // Extra company roles from releases tab (e.g., "Ported by", etc.)
-                if(softwareId.HasValue)
-                foreach(var (roleLabel, companyName) in release.CompanyRoles)
-                {
-                    string roleId = MapRoleLabel(roleLabel);
-
-                    // Unknown role labels return null. RoleId is part of the
-                    // SoftwareCompanyRole composite primary key so EF rejects a null with
-                    // "Unable to track an entity ... because its primary key property
-                    // 'RoleId' is null." Skip the row entirely (and don't waste a
-                    // CompanyMatcher prompt creating a fresh Company for a role we won't
-                    // record). Mirrors the same guard in WouldRequireUserInputAsync.
-                    if(string.IsNullOrEmpty(roleId))
-                    {
-                        Console.WriteLine($"    Skipping unknown company-role label '{roleLabel}' for '{companyName}'");
-
-                        continue;
-                    }
-
-                    var (roleCompany, _) = await _companyMatcher.MatchOrCreateAsync(companyName);
-
-                    if(roleCompany != null)
-                    {
-                        var roleKey = (softwareId.Value, roleCompany.Id, roleId);
-
-                        if(addedCompanyRoles.Add(roleKey))
-                        {
-                            bool exists = await context.SoftwareCompanyRoles
-                                                       .AnyAsync(r => r.SoftwareId == softwareId.Value &&
-                                                                      r.CompanyId == roleCompany.Id &&
-                                                                      r.RoleId == roleId);
-
-                            if(!exists)
-                            {
-                                context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
-                                {
-                                    SoftwareId = softwareId.Value,
-                                    CompanyId  = roleCompany.Id,
-                                    RoleId     = roleId
-                                });
-                            }
-                        }
-                    }
-                }
-
-                // Specs for this platform
-                foreach(var spec in game.Specs.Where(s => s.Platform == platformGroup.Key))
-                {
-                    // MobyGames serves cells like `3D&nbsp;Accelerator`; HtmlDecode turns &nbsp; into
-                    // U+00A0, and MariaDB's utf8mb4_*_ci collations treat U+00A0 != U+0020, breaking
-                    // exact-match search. Normalise NBSP -> regular space on the way into the DB.
-                    context.SoftwareAttributes.Add(new SoftwareAttribute
-                    {
-                        SoftwareReleaseId = dbRelease.Id,
-                        Category          = "Spec",
-                        Key               = spec.Key.Replace('\u00A0',   ' '),
-                        Value             = spec.Value.Replace('\u00A0', ' ')
-                    });
-                }
-
-                // Ratings for this platform
-                foreach(var rating in game.Ratings.Where(r => r.Platform == platformGroup.Key))
-                {
-                    // Same NBSP normalisation as the Spec write above; descriptors get folded into
-                    // the value string, so strip there too before concatenation.
-                    string value = rating.Rating.Replace('\u00A0', ' ');
-
-                    if(!string.IsNullOrWhiteSpace(rating.Descriptors))
-                        value += $" ({rating.Descriptors.Replace('\u00A0', ' ')})";
-
-                    context.SoftwareAttributes.Add(new SoftwareAttribute
-                    {
-                        SoftwareReleaseId = dbRelease.Id,
-                        Category          = "Rating",
-                        Key               = rating.System.Replace('\u00A0', ' '),
-                        Value             = value
-                    });
-                }
+                if(dbRelease is not null)
+                    createdReleases.Add(dbRelease);
             }
         }
 
         return createdReleases;
     }
+
+    /// <summary>
+    ///     Creates ONE <see cref="SoftwareRelease" /> (plus its barcodes, product codes, regions,
+    ///     company roles and — when <paramref name="writeSpecsAndRatings" /> — its Spec/Rating
+    ///     attributes) from a parsed release. Shared by the initial import path
+    ///     (<see cref="ImportReleasesInternalAsync" />) and the refresh path
+    ///     (<see cref="ApplyRefreshAsync" />). Performs NO existence check on the release itself —
+    ///     callers are responsible for deduplication. Returns <c>null</c> when the publisher could
+    ///     not be resolved (release not created).
+    /// </summary>
+    async Task<SoftwareRelease> CreateReleaseAsync(
+        MarechaiContext context, ulong? softwareId, ParsedGame game, ParsedRelease release,
+        SoftwarePlatform platform, string platformKey,
+        HashSet<(ulong, int, string)> addedCompanyRoles,
+        HashSet<(ProductCodeIssuer, string)> addedProductCodes, HashSet<string> addedBarcodes,
+        ulong? softwareCompilationId, string compilationTitle, bool writeSpecsAndRatings)
+    {
+        var (publisher, _) = await _companyMatcher.MatchOrCreateAsync(
+            release.Publisher ?? game.Publishers.FirstOrDefault());
+
+        if(publisher is null) return null;
+
+        var (releaseDate, precision) = ParseDate(release.ReleaseDate);
+
+        var dbRelease = new SoftwareRelease
+        {
+            SoftwareId            = softwareCompilationId is not null ? null : softwareId,
+            PlatformId            = platform?.Id,
+            PublisherId           = publisher.Id,
+            ReleaseDate           = releaseDate,
+            ReleaseDatePrecision  = precision,
+            SoftwareCompilationId = softwareCompilationId,
+            Title                 = softwareCompilationId is not null ? compilationTitle : release.Comments
+        };
+
+        context.SoftwareReleases.Add(dbRelease);
+        await context.SaveChangesAsync();
+
+        // Barcodes
+        foreach(var barcode in release.Barcodes)
+        {
+            var barcodeType = barcode.Type switch
+            {
+                "UPC-A"  => BarcodeType.UPC_A,
+                "EAN-13" => BarcodeType.EAN_13,
+                _        => BarcodeType.Unknown
+            };
+
+            // Check for existing barcode
+            bool exists = await context.SoftwareBarcodes
+                                       .AnyAsync(b => b.Code == barcode.Code);
+
+            if(exists) continue;
+
+            if(!addedBarcodes.Add(barcode.Code)) continue;
+
+            context.SoftwareBarcodes.Add(new SoftwareBarcode
+            {
+                ReleaseId = dbRelease.Id,
+                Code      = barcode.Code,
+                Type      = barcodeType
+            });
+        }
+
+        // Product codes
+        foreach(var productCode in release.ProductCodes)
+        {
+            ProductCodeIssuer issuer;
+
+            if(MapKnownProductCodeIssuer(productCode.Type) is ProductCodeIssuer known)
+                issuer = known;
+            else if(!TryResolveProductCodeIssuer(productCode.Type, out issuer))
+            {
+                // Unknown Type — ask the user to map it instead of silently
+                // defaulting to ProductCodeIssuer.Other. User chose [S]kip.
+                continue;
+            }
+
+            bool codeExists = await context.SoftwareProductCodes
+                                           .AnyAsync(c => c.Issuer == issuer &&
+                                                           c.Code == productCode.Code);
+
+            if(codeExists) continue;
+
+            if(!addedProductCodes.Add((issuer, productCode.Code))) continue;
+
+            context.SoftwareProductCodes.Add(new SoftwareProductCode
+            {
+                ReleaseId = dbRelease.Id,
+                Issuer    = issuer,
+                Code      = productCode.Code
+            });
+        }
+
+        // Countries → UnM49 regions
+        var addedRegions = new HashSet<short>();
+
+        foreach(string country in release.Countries)
+        {
+            var region = _countryMatcher.Match(country);
+
+            if(region != null && addedRegions.Add(region.Id))
+            {
+                bool exists = await context.UnM49BySoftwareRelease
+                                           .AnyAsync(u => u.SoftwareReleaseId == dbRelease.Id &&
+                                                          u.UnM49Id == region.Id);
+
+                if(!exists)
+                {
+                    context.UnM49BySoftwareRelease.Add(new UnM49BySoftwareRelease
+                    {
+                        SoftwareReleaseId = dbRelease.Id,
+                        UnM49Id           = region.Id
+                    });
+                }
+            }
+        }
+
+        // Distributor/Localizer company roles on the software (skip for compilations)
+        if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Distributor))
+        {
+            var (dist, _) = await _companyMatcher.MatchOrCreateAsync(release.Distributor);
+
+            if(dist != null)
+            {
+                var roleKey = (softwareId.Value, dist.Id, "dis");
+
+                if(addedCompanyRoles.Add(roleKey))
+                {
+                    bool exists = await context.SoftwareCompanyRoles
+                                               .AnyAsync(r => r.SoftwareId == softwareId.Value &&
+                                                              r.CompanyId == dist.Id &&
+                                                              r.RoleId == "dis");
+
+                    if(!exists)
+                    {
+                        context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                        {
+                            SoftwareId = softwareId.Value,
+                            CompanyId  = dist.Id,
+                            RoleId     = "dis"
+                        });
+                    }
+                }
+            }
+        }
+
+        if(softwareId.HasValue && !string.IsNullOrWhiteSpace(release.Localizer))
+        {
+            var (loc, _) = await _companyMatcher.MatchOrCreateAsync(release.Localizer);
+
+            if(loc != null)
+            {
+                var roleKey = (softwareId.Value, loc.Id, "loc");
+
+                if(addedCompanyRoles.Add(roleKey))
+                {
+                    bool exists = await context.SoftwareCompanyRoles
+                                               .AnyAsync(r => r.SoftwareId == softwareId.Value &&
+                                                              r.CompanyId == loc.Id &&
+                                                              r.RoleId == "loc");
+
+                    if(!exists)
+                    {
+                        context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                        {
+                            SoftwareId = softwareId.Value,
+                            CompanyId  = loc.Id,
+                            RoleId     = "loc"
+                        });
+                    }
+                }
+            }
+        }
+
+        // Extra company roles from releases tab (e.g., "Ported by", etc.)
+        if(softwareId.HasValue)
+        foreach(var (roleLabel, companyName) in release.CompanyRoles)
+        {
+            string roleId = MapRoleLabel(roleLabel);
+
+            // Unknown role labels return null. RoleId is part of the
+            // SoftwareCompanyRole composite primary key so EF rejects a null with
+            // "Unable to track an entity ... because its primary key property
+            // 'RoleId' is null." Skip the row entirely (and don't waste a
+            // CompanyMatcher prompt creating a fresh Company for a role we won't
+            // record). Mirrors the same guard in WouldRequireUserInputAsync.
+            if(string.IsNullOrEmpty(roleId))
+            {
+                Console.WriteLine($"    Skipping unknown company-role label '{roleLabel}' for '{companyName}'");
+
+                continue;
+            }
+
+            var (roleCompany, _) = await _companyMatcher.MatchOrCreateAsync(companyName);
+
+            if(roleCompany != null)
+            {
+                var roleKey = (softwareId.Value, roleCompany.Id, roleId);
+
+                if(addedCompanyRoles.Add(roleKey))
+                {
+                    bool exists = await context.SoftwareCompanyRoles
+                                               .AnyAsync(r => r.SoftwareId == softwareId.Value &&
+                                                              r.CompanyId == roleCompany.Id &&
+                                                              r.RoleId == roleId);
+
+                    if(!exists)
+                    {
+                        context.SoftwareCompanyRoles.Add(new SoftwareCompanyRole
+                        {
+                            SoftwareId = softwareId.Value,
+                            CompanyId  = roleCompany.Id,
+                            RoleId     = roleId
+                        });
+                    }
+                }
+            }
+        }
+
+        if(writeSpecsAndRatings)
+        {
+            // Specs for this platform
+            foreach(var spec in game.Specs.Where(s => s.Platform == platformKey))
+            {
+                // MobyGames serves cells like `3D&nbsp;Accelerator`; HtmlDecode turns &nbsp; into
+                // U+00A0, and MariaDB's utf8mb4_*_ci collations treat U+00A0 != U+0020, breaking
+                // exact-match search. Normalise NBSP -> regular space on the way into the DB.
+                context.SoftwareAttributes.Add(new SoftwareAttribute
+                {
+                    SoftwareReleaseId = dbRelease.Id,
+                    Category          = "Spec",
+                    Key               = spec.Key.Replace('\u00A0',   ' '),
+                    Value             = spec.Value.Replace('\u00A0', ' ')
+                });
+            }
+
+            // Ratings for this platform
+            foreach(var rating in game.Ratings.Where(r => r.Platform == platformKey))
+            {
+                // Same NBSP normalisation as the Spec write above; descriptors get folded into
+                // the value string, so strip there too before concatenation.
+                string value = rating.Rating.Replace('\u00A0', ' ');
+
+                if(!string.IsNullOrWhiteSpace(rating.Descriptors))
+                    value += $" ({rating.Descriptors.Replace('\u00A0', ' ')})";
+
+                context.SoftwareAttributes.Add(new SoftwareAttribute
+                {
+                    SoftwareReleaseId = dbRelease.Id,
+                    Category          = "Rating",
+                    Key               = rating.System.Replace('\u00A0', ' '),
+                    Value             = value
+                });
+            }
+        }
+
+        return dbRelease;
+    }
+
+
+    /// <summary>
+    ///     Maps the well-known MobyGames product-code type labels to <see cref="ProductCodeIssuer" />.
+    ///     Returns <c>null</c> for labels that need an operator decision (see
+    ///     <see cref="TryResolveProductCodeIssuer" />).
+    /// </summary>
+    static ProductCodeIssuer? MapKnownProductCodeIssuer(string type) => type switch
+    {
+        "Sony PN"           => ProductCodeIssuer.Sony,
+        "PSN/SEN Code"      => ProductCodeIssuer.PSN,
+        "Microsoft PN"      => ProductCodeIssuer.Microsoft,
+        "Nintendo PN"       => ProductCodeIssuer.Nintendo,
+        "Nintendo Media PN" => ProductCodeIssuer.Nintendo,
+        "Sega PN"           => ProductCodeIssuer.Sega,
+        "Sega Region Code"  => ProductCodeIssuer.Sega,
+        "Activision PN"     => ProductCodeIssuer.Activision,
+        "Amazon ASIN"       => ProductCodeIssuer.Amazon,
+        "eBay Item No."     => ProductCodeIssuer.eBay,
+        _                   => null
+    };
+
+    #region Refresh (update-year) path
+
+    /// <summary>Outcome counters of one <see cref="ApplyRefreshAsync" /> call.</summary>
+    public sealed class RefreshResult
+    {
+        public bool DescriptionAdded    { get; set; }
+        public bool DescriptionExisted  { get; set; }
+        public int  ReleasesOnTab       { get; set; }
+        public int  ReleasesCreated     { get; set; }
+        public int  SkippedStrong       { get; set; }
+        public int  SkippedStrict       { get; set; }
+        public int  SkippedLoose        { get; set; }
+        public int  SkippedNoPublisher  { get; set; }
+        public int  SkippedUnresolvable { get; set; }
+    }
+
+    /// <summary>One existing <see cref="SoftwareRelease" /> projected into identity-comparison form.</summary>
+    sealed class ExistingReleaseKey
+    {
+        public ulong                                Id           { get; init; }
+        public ulong?                               PlatformId   { get; init; }
+        public int                                  PublisherId  { get; init; }
+        public DateTime?                            Date         { get; init; }
+        public DatePrecision                        Precision    { get; init; }
+        public string                               NormTitle    { get; init; }
+        public string                               RegionKey    { get; init; }
+        public HashSet<string>                      Barcodes     { get; init; }
+        public HashSet<(ProductCodeIssuer, string)> ProductCodes { get; init; }
+
+        /// <summary>
+        ///     Rows created by <see cref="ImportBasicReleaseInternalAsync" /> (Main-tab fallback) carry
+        ///     neither a title nor regions; they are the target of the loose-key tier.
+        /// </summary>
+        public bool IsBasic => NormTitle.Length == 0 && RegionKey.Length == 0;
+
+        public (ulong?, int, DateTime?, DatePrecision, string, string) StrictKey =>
+            (PlatformId, PublisherId, Date, Precision, NormTitle, RegionKey);
+
+        public (ulong?, int, DateTime?, DatePrecision) LooseKey => (PlatformId, PublisherId, Date, Precision);
+
+        /// <summary>Strict key minus the publisher — catches publisher-name drift on MobyGames.</summary>
+        public (ulong?, DateTime?, DatePrecision, string, string) PublisherAgnosticKey =>
+            (PlatformId, Date, Precision, NormTitle, RegionKey);
+
+        /// <summary>Loose key minus the publisher, used only against basic rows for basic parsed releases.</summary>
+        public (ulong?, DateTime?, DatePrecision) PublisherAgnosticLooseKey => (PlatformId, Date, Precision);
+    }
+
+    /// <summary>
+    ///     Software-local publisher resolution. MobyGames renames companies over time ("Midway Games"
+    ///     → "Midway Games Limited"); the global matcher would then see several Soundex candidates and,
+    ///     unattended, create a duplicate company — and every release under it would look new. Before
+    ///     asking the matcher we therefore compare the parsed name against the publishers ALREADY on
+    ///     this software's releases and accept a unique match on: equal names, equal after stripping
+    ///     one corporate suffix from either side, or one name being the other plus a suffix word.
+    /// </summary>
+    static Company MatchLocalPublisher(string parsedName, IReadOnlyCollection<Company> localPublishers)
+    {
+        if(string.IsNullOrWhiteSpace(parsedName) || localPublishers.Count == 0) return null;
+
+        string p  = NormalizeTitle(parsedName);
+        string ps = NormalizeTitle(CompanyMatcher.StripCompanySuffix(parsedName));
+
+        var hits = new List<Company>();
+
+        foreach(Company c in localPublishers)
+        {
+            string e  = NormalizeTitle(c.Name);
+            string es = NormalizeTitle(CompanyMatcher.StripCompanySuffix(c.Name));
+
+            bool match = p == e || ps == es || ps == e || p == es ||
+                         p.StartsWith(e + " ", StringComparison.Ordinal) ||
+                         p.StartsWith(e + ",", StringComparison.Ordinal) ||
+                         e.StartsWith(p + " ", StringComparison.Ordinal) ||
+                         e.StartsWith(p + ",", StringComparison.Ordinal);
+
+            if(match && hits.All(h => h.Id != c.Id)) hits.Add(c);
+        }
+
+        return hits.Count == 1 ? hits[0] : null;
+    }
+
+    static string NormalizeTitle(string title)
+    {
+        if(string.IsNullOrWhiteSpace(title)) return "";
+
+        string collapsed = System.Text.RegularExpressions.Regex.Replace(title.Replace('\u00A0', ' '), @"\s+", " ");
+
+        return collapsed.Trim().ToUpperInvariant();
+    }
+
+    async Task<List<ExistingReleaseKey>> LoadExistingReleaseKeysAsync(MarechaiContext context, ulong softwareId)
+    {
+        var rows = await context.SoftwareReleases
+                                .Where(r => r.SoftwareId == softwareId)
+                                .Select(r => new
+                                 {
+                                     r.Id,
+                                     r.PlatformId,
+                                     r.PublisherId,
+                                     r.ReleaseDate,
+                                     r.ReleaseDatePrecision,
+                                     r.Title,
+                                     Regions      = r.Regions.Select(x => x.UnM49Id).ToList(),
+                                     Barcodes     = r.Barcodes.Select(b => b.Code).ToList(),
+                                     ProductCodes = r.ProductCodes.Select(p => new { p.Issuer, p.Code }).ToList()
+                                 })
+                                .ToListAsync();
+
+        return rows.Select(r => new ExistingReleaseKey
+                    {
+                        Id           = r.Id,
+                        PlatformId   = r.PlatformId,
+                        PublisherId  = r.PublisherId,
+                        Date         = r.ReleaseDate?.Date,
+                        Precision    = r.ReleaseDatePrecision,
+                        NormTitle    = NormalizeTitle(r.Title),
+                        RegionKey    = string.Join(",", r.Regions.OrderBy(x => x)),
+                        Barcodes     = new HashSet<string>(r.Barcodes, StringComparer.OrdinalIgnoreCase),
+                        ProductCodes = new HashSet<(ProductCodeIssuer, string)>(
+                            r.ProductCodes.Select(p => (p.Issuer, p.Code)))
+                    })
+                   .ToList();
+    }
+
+    /// <summary>
+    ///     Refresh entry point used by <c>update-year</c> for a game that is ALREADY imported and
+    ///     linked to <paramref name="softwareId" />. Adds the English description when the software
+    ///     has none, and adds only those releases from the (freshly re-scraped) Releases tab that do
+    ///     not match an existing release of this software. It deliberately never enters
+    ///     <see cref="ImportGameAsync" /> / <see cref="ImportGameBySlugAsync" />, so the name-matching
+    ///     "create new Software" branches are unreachable and <see cref="YesToAll" /> only ever
+    ///     affects company / platform creation for genuinely new releases.
+    ///     <para>
+    ///         Release identity is checked in three tiers, any hit meaning "already present":
+    ///         (1) strong evidence — a barcode or (issuer, code) product code already on any release
+    ///         of this software; (2) strict key — platform, publisher, date, precision, normalised
+    ///         comments/title and the sorted region set; (3) loose key — platform, publisher, date,
+    ///         precision, matched against releases that carry neither title nor regions (legacy
+    ///         Main-tab fallback rows), or against every release when the parsed release itself has
+    ///         no comments and no countries. When in doubt the release is NOT created.
+    ///     </para>
+    ///     <para>
+    ///         With <paramref name="dryRun" /> nothing is written: publishers/platforms are resolved
+    ///         through the lookup-only matchers and unresolvable ones are reported as "would create".
+    ///     </para>
+    /// </summary>
+    public async Task<RefreshResult> ApplyRefreshAsync(ulong softwareId, ParsedGame game, bool dryRun)
+    {
+        // Lazy: the CLI normally pre-loads these once; reloading per game would rebuild the
+        // Soundex indexes for every title.
+        if(!_companyMatcher.IsLoaded) await _companyMatcher.LoadAsync();
+        if(!_platformMatcher.IsLoaded) await _platformMatcher.LoadAsync();
+        if(!_countryMatcher.IsLoaded) await _countryMatcher.LoadAsync();
+
+        var result = new RefreshResult();
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        // 1. Description — add only when the software has no English description at all.
+        if(!string.IsNullOrWhiteSpace(game.Description))
+        {
+            bool descExists = await context.SoftwareDescriptions
+                                           .AnyAsync(d => d.SoftwareId == softwareId && d.LanguageCode == "eng");
+
+            if(descExists)
+                result.DescriptionExisted = true;
+            else
+            {
+                result.DescriptionAdded = true;
+
+                if(!dryRun)
+                {
+                    context.SoftwareDescriptions.Add(new SoftwareDescription
+                    {
+                        SoftwareId   = softwareId,
+                        LanguageCode = "eng",
+                        Text         = game.Description,
+                        Html         = game.DescriptionHtml
+                    });
+
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
+        // 2. Releases — only from the Releases tab. If the tab is absent/empty there is nothing to
+        //    diff against; the game already has its Main-tab fallback release from the original import.
+        result.ReleasesOnTab = game.Releases.Count;
+
+        if(game.Releases.Count == 0) return result;
+
+        List<ExistingReleaseKey> existing = await LoadExistingReleaseKeysAsync(context, softwareId);
+
+        var strictIndex    = new HashSet<(ulong?, int, DateTime?, DatePrecision, string, string)>(existing.Select(e => e.StrictKey));
+        var agnosticIndex  = new HashSet<(ulong?, DateTime?, DatePrecision, string, string)>(existing.Select(e => e.PublisherAgnosticKey));
+        var looseBasic     = new HashSet<(ulong?, int, DateTime?, DatePrecision)>(existing.Where(e => e.IsBasic).Select(e => e.LooseKey));
+        var looseAll       = new HashSet<(ulong?, int, DateTime?, DatePrecision)>(existing.Select(e => e.LooseKey));
+        var agnosticBasic  = new HashSet<(ulong?, DateTime?, DatePrecision)>(existing.Where(e => e.IsBasic).Select(e => e.PublisherAgnosticLooseKey));
+        var allBarcodes    = new HashSet<string>(existing.SelectMany(e => e.Barcodes), StringComparer.OrdinalIgnoreCase);
+        var allCodes       = new HashSet<(ProductCodeIssuer, string)>(existing.SelectMany(e => e.ProductCodes));
+
+        // Publishers already attached to this software's releases, for local name resolution.
+        var localPublisherIds = existing.Select(e => e.PublisherId).Distinct().ToList();
+
+        List<Company> localPublishers = localPublisherIds.Count == 0
+                                            ? []
+                                            : await context.Companies
+                                                           .Where(c => localPublisherIds.Contains(c.Id))
+                                                           .Select(c => new Company { Id = c.Id, Name = c.Name, LegalName = c.LegalName })
+                                                           .ToListAsync();
+
+        var addedCompanyRoles = new HashSet<(ulong, int, string)>();
+        var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
+        var addedBarcodes     = new HashSet<string>();
+
+        foreach(var platformGroup in game.Releases.GroupBy(r => r.Platform ?? "Unknown"))
+        {
+            SoftwarePlatform platform = dryRun
+                                            ? _platformMatcher.TryMatch(platformGroup.Key)
+                                            : await _platformMatcher.MatchOrCreateAsync(platformGroup.Key);
+
+            foreach(ParsedRelease release in platformGroup)
+            {
+                string publisherName = release.Publisher ?? game.Publishers.FirstOrDefault();
+
+                // Tier 1: strong evidence via barcodes / product codes.
+                bool strongHit = release.Barcodes.Any(b => !string.IsNullOrWhiteSpace(b.Code) && allBarcodes.Contains(b.Code)) ||
+                                 release.ProductCodes.Any(p => MapKnownProductCodeIssuer(p.Type) is ProductCodeIssuer iss &&
+                                                               allCodes.Contains((iss, p.Code)));
+
+                if(strongHit)
+                {
+                    result.SkippedStrong++;
+
+                    continue;
+                }
+
+                Company publisher = null;
+
+                if(!string.IsNullOrWhiteSpace(publisherName))
+                {
+                    // Software-local resolution first (handles MobyGames renaming a publisher), and
+                    // pin it in the matcher so CreateReleaseAsync resolves the same company.
+                    publisher = MatchLocalPublisher(publisherName, localPublishers);
+
+                    if(publisher is not null)
+                        _companyMatcher.Remember(publisherName, publisher);
+                    else if(dryRun)
+                        publisher = _companyMatcher.TryMatch(publisherName);
+                }
+
+                var (date, precision) = ParseDate(release.ReleaseDate);
+                date = date?.Date;
+
+                string normTitle = NormalizeTitle(release.Comments);
+
+                string regionKey = string.Join(",",
+                                               release.Countries.Select(c => _countryMatcher.Match(c)?.Id)
+                                                      .Where(id => id.HasValue)
+                                                      .Select(id => id.Value)
+                                                      .Distinct()
+                                                      .OrderBy(id => id));
+
+                bool parsedIsBasic = normTitle.Length == 0 && regionKey.Length == 0;
+
+                // Tier 2b: publisher-agnostic strict key. Same platform, date, precision, comments and
+                // region set as an existing release is the same release even if MobyGames now names
+                // the publisher differently. Checked BEFORE any company could be created.
+                if(platform is not null || dryRun)
+                {
+                    var agnosticKey = (platform?.Id, date, precision, normTitle, regionKey);
+
+                    if(agnosticIndex.Contains(agnosticKey) ||
+                       (parsedIsBasic && agnosticBasic.Contains((platform?.Id, date, precision))))
+                    {
+                        if(publisher is null)
+                            Console.WriteLine($"      [publisher-variant] {platformGroup.Key} / \"{publisherName}\" / " +
+                                              $"{release.ReleaseDate ?? "(no date)"}: matches an existing release under " +
+                                              "another publisher name — not created");
+
+                        result.SkippedStrict++;
+
+                        continue;
+                    }
+                }
+
+                if(publisher is null && !dryRun && !string.IsNullOrWhiteSpace(publisherName))
+                    (publisher, _) = await _companyMatcher.MatchOrCreateAsync(publisherName);
+
+                if(publisher is null)
+                {
+                    if(dryRun && !string.IsNullOrWhiteSpace(publisherName))
+                    {
+                        // Unknown publisher in dry-run: cannot build a key, but a real run would
+                        // create the company and (unless a barcode matched above) the release.
+                        Console.WriteLine($"      [dry-run] {platformGroup.Key} / {release.ReleaseDate ?? "(no date)"}: " +
+                                          $"publisher \"{publisherName}\" not in DB — would create company + release");
+                        result.SkippedUnresolvable++;
+                        result.ReleasesCreated++;
+                    }
+                    else
+                        result.SkippedNoPublisher++;
+
+                    continue;
+                }
+
+                if(platform is null && dryRun)
+                {
+                    Console.WriteLine($"      [dry-run] platform \"{platformGroup.Key}\" not in DB — would create platform + release");
+                    result.SkippedUnresolvable++;
+                    result.ReleasesCreated++;
+
+                    continue;
+                }
+
+                var strictKey = (platform?.Id, publisher.Id, date, precision, normTitle, regionKey);
+                var looseKey  = (platform?.Id, publisher.Id, date, precision);
+
+                // Tier 2: strict key.
+                if(strictIndex.Contains(strictKey))
+                {
+                    result.SkippedStrict++;
+
+                    continue;
+                }
+
+                // Tier 3: loose key against legacy basic rows, or against everything when the parsed
+                // release itself carries no distinguishing comments/countries.
+                if(looseBasic.Contains(looseKey) || (parsedIsBasic && looseAll.Contains(looseKey)))
+                {
+                    Console.WriteLine($"      [loose-match] {platformGroup.Key} / {publisher.Name} / " +
+                                      $"{release.ReleaseDate ?? "(no date)"}: matches an existing release without " +
+                                      $"title/regions — not created");
+                    result.SkippedLoose++;
+
+                    continue;
+                }
+
+                Console.WriteLine($"      {(dryRun ? "[dry-run] would create" : "creating")} release: " +
+                                  $"{platformGroup.Key} / {publisher.Name} / {release.ReleaseDate ?? "(no date)"}" +
+                                  (normTitle.Length > 0 ? $" / \"{release.Comments}\"" : "") +
+                                  (release.Countries.Count > 0 ? $" [{string.Join(", ", release.Countries)}]" : ""));
+
+                result.ReleasesCreated++;
+
+                // Same release listed twice on the tab, or already created earlier this pass.
+                strictIndex.Add(strictKey);
+                agnosticIndex.Add((platform?.Id, date, precision, normTitle, regionKey));
+                looseAll.Add(looseKey);
+
+                if(parsedIsBasic)
+                {
+                    looseBasic.Add(looseKey);
+                    agnosticBasic.Add((platform?.Id, date, precision));
+                }
+
+                localPublishers.Add(publisher);
+
+                foreach(ParsedBarcode b in release.Barcodes) allBarcodes.Add(b.Code);
+
+                foreach(ParsedProductCode p in release.ProductCodes)
+                    if(MapKnownProductCodeIssuer(p.Type) is ProductCodeIssuer iss)
+                        allCodes.Add((iss, p.Code));
+
+                if(dryRun) continue;
+
+                await CreateReleaseAsync(context, softwareId, game, release, platform, platformGroup.Key,
+                                         addedCompanyRoles, addedProductCodes, addedBarcodes,
+                                         softwareCompilationId: null, compilationTitle: null,
+                                         writeSpecsAndRatings: true);
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        return result;
+    }
+
+    #endregion
 
     async Task ImportBasicReleaseAsync(MarechaiContext context, Software software, ParsedGame game)
     {
@@ -1643,7 +2062,7 @@ public class ImportService
         return createdReleases;
     }
 
-    static (DateTime? date, DatePrecision precision) ParseDate(string dateStr)
+    internal static (DateTime? date, DatePrecision precision) ParseDate(string dateStr)
     {
         if(string.IsNullOrWhiteSpace(dateStr))
             return (null, DatePrecision.Full);
