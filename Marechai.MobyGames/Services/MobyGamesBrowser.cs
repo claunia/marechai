@@ -298,84 +298,125 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
 
         await WaitForCloudflareAsync();
 
-        // MobyGames' form field names have shifted over time; try each known variant and the
-        // first one that matches wins. The current site exposes `login` for the username and
-        // `password` for the secret, but older builds used `username`/`email`.
-        string[] userSelectors =
+        try
         {
-            "input[name='login']", "input[name='username']", "input[name='email']", "input[type='email']"
-        };
+            // MobyGames' form field names have shifted over time; try each known variant and the
+            // first one that matches wins. The current site exposes `login` for the username and
+            // `password` for the secret, but older builds used `username`/`email`.
+            string[] userSelectors =
+            {
+                "input[name='login']", "input[name='username']", "input[name='email']", "input[type='email']"
+            };
 
-        string usernameSelector = null;
+            string usernameSelector = null;
 
-        foreach(string sel in userSelectors)
-        {
+            foreach(string sel in userSelectors)
+            {
+                try
+                {
+                    await _page.WaitForSelectorAsync(sel,
+                                                     new WaitForSelectorOptions { Visible = true, Timeout = 15_000 });
+
+                    usernameSelector = sel;
+
+                    break;
+                }
+                catch(WaitTaskTimeoutException) { /* try next */ }
+            }
+
+            if(usernameSelector is null)
+            {
+                await DumpLoginDiagnosticsAsync("login-form-not-found");
+
+                throw new InvalidOperationException(
+                    "MobyGames login form not found — no known username-field selector matched. " +
+                    "Cloudflare may have served an interstitial; see state/mobygames-login-* diagnostics.");
+            }
+
+            await _page.TypeAsync(usernameSelector, _email);
+            await _page.TypeAsync("input[name='password']", _password);
+
+            // MobyGames uses htmx for form submission and injects a per-page CSRF token via an
+            // `htmx:configRequest` listener that adds the `X-CSRF-Token` header. If we click submit
+            // before htmx's script has registered the listener, the server returns
+            // "No CSRF token submitted." Wait until htmx is loaded AND its listener is attached.
             try
             {
-                await _page.WaitForSelectorAsync(sel,
-                                                 new WaitForSelectorOptions { Visible = true, Timeout = 15_000 });
-
-                usernameSelector = sel;
-
-                break;
+                await _page.WaitForFunctionAsync(
+                    "() => typeof window.htmx !== 'undefined'",
+                    new WaitForFunctionOptions { Timeout = 30_000 });
             }
-            catch(WaitTaskTimeoutException) { /* try next */ }
+            catch(WaitTaskTimeoutException)
+            {
+                // htmx not detected — the form may be a vanilla POST. Continue and let the click
+                // either succeed (vanilla form) or fail with the same CSRF message (in which case
+                // diagnostics get dumped below).
+            }
+
+            // MobyGames uses htmx to submit the form: the click fires an AJAX POST that swaps the
+            // page body in place rather than navigating, so WaitForNavigationAsync can time out
+            // even on a successful login. Instead we poll for the logged-in marker (a logout link)
+            // and surface a clear failure if it never appears.
+            // The page may already have moved on (htmx swap / redirect to the profile page) by the
+            // time we get here, in which case the submit button no longer exists. Never fail on
+            // that: if a logout link is visible we are done; otherwise try any submit control and
+            // finally the Enter key in the password field.
+            bool alreadyLoggedIn = await _page.QuerySelectorAsync("a[href='/user/logout/']") is not null;
+
+            if(!alreadyLoggedIn)
+            {
+                IElementHandle submit = await _page.QuerySelectorAsync("form button.btn.btn-primary")
+                                        ?? await _page.QuerySelectorAsync("form button[type='submit']")
+                                        ?? await _page.QuerySelectorAsync("form input[type='submit']");
+
+                if(submit is not null)
+                    await submit.ClickAsync();
+                else
+                {
+                    Console.WriteLine("\e[33m  Submit button not found — pressing Enter in the password field.\e[0m");
+                    await _page.FocusAsync("input[name='password']");
+                    await _page.Keyboard.PressAsync("Enter");
+                }
+            }
+
+            try
+            {
+                await _page.WaitForFunctionAsync(
+                    @"() => {
+                        if (document.querySelector('a[href=""/user/logout/""]')) return true;
+                        // Surface explicit server-rendered failures so we can fail fast.
+                        const text = document.body ? document.body.innerText : '';
+                        if (/no csrf token|invalid credentials|incorrect password|invalid username/i.test(text)) return true;
+                        return false;
+                    }",
+                    new WaitForFunctionOptions { Timeout = 60_000 });
+            }
+            catch(WaitTaskTimeoutException)
+            {
+                await DumpLoginDiagnosticsAsync("login-timeout");
+
+                throw new InvalidOperationException(
+                    "MobyGames login form submitted but the page did not update within 60s. " +
+                    "See state/mobygames-login-timeout.* diagnostics.");
+            }
         }
-
-        if(usernameSelector is null)
+        catch(Exception ex) when(IsTargetClosed(ex))
         {
-            await DumpLoginDiagnosticsAsync("login-form-not-found");
+            // Observed in headful mode behind a proxy: the POST lands and the session cookie is
+            // written to the profile, but the tab is replaced/closed (Target.detachedFromTarget)
+            // before the logout link can be observed. The login usually DID succeed — re-acquire a
+            // tab, land on the homepage and let the login-state probe below decide.
+            Console.WriteLine("\e[33m  Login tab was closed while waiting for the response — re-checking the session...\e[0m");
 
-            throw new InvalidOperationException(
-                "MobyGames login form not found — no known username-field selector matched. " +
-                "Cloudflare may have served an interstitial; see state/mobygames-login-* diagnostics.");
-        }
+            IPage page = await GetLivePageAsync();
 
-        await _page.TypeAsync(usernameSelector, _email);
-        await _page.TypeAsync("input[name='password']", _password);
+            await page.GoToAsync("https://www.mobygames.com/", new NavigationOptions
+            {
+                Timeout   = 60_000,
+                WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+            });
 
-        // MobyGames uses htmx for form submission and injects a per-page CSRF token via an
-        // `htmx:configRequest` listener that adds the `X-CSRF-Token` header. If we click submit
-        // before htmx's script has registered the listener, the server returns
-        // "No CSRF token submitted." Wait until htmx is loaded AND its listener is attached.
-        try
-        {
-            await _page.WaitForFunctionAsync(
-                "() => typeof window.htmx !== 'undefined'",
-                new WaitForFunctionOptions { Timeout = 30_000 });
-        }
-        catch(WaitTaskTimeoutException)
-        {
-            // htmx not detected — the form may be a vanilla POST. Continue and let the click
-            // either succeed (vanilla form) or fail with the same CSRF message (in which case
-            // diagnostics get dumped below).
-        }
-
-        // MobyGames uses htmx to submit the form: the click fires an AJAX POST that swaps the
-        // page body in place rather than navigating, so WaitForNavigationAsync can time out
-        // even on a successful login. Instead we poll for the logged-in marker (a logout link)
-        // and surface a clear failure if it never appears.
-        await _page.ClickAsync("form button.btn.btn-primary", null);
-
-        try
-        {
-            await _page.WaitForFunctionAsync(
-                @"() => {
-                    if (document.querySelector('a[href=""/user/logout/""]')) return true;
-                    // Surface explicit server-rendered failures so we can fail fast.
-                    const text = document.body ? document.body.innerText : '';
-                    if (/no csrf token|invalid credentials|incorrect password|invalid username/i.test(text)) return true;
-                    return false;
-                }",
-                new WaitForFunctionOptions { Timeout = 60_000 });
-        }
-        catch(WaitTaskTimeoutException)
-        {
-            await DumpLoginDiagnosticsAsync("login-timeout");
-
-            throw new InvalidOperationException(
-                "MobyGames login form submitted but the page did not update within 60s. " +
-                "See state/mobygames-login-timeout.* diagnostics.");
+            await WaitForCloudflareAsync();
         }
 
         await UpdateLoginStateAsync();
@@ -440,7 +481,9 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
     {
         try
         {
-            return await _page.EvaluateFunctionAsync<bool>(
+            IPage page = await GetLivePageAsync();
+
+            return await page.EvaluateFunctionAsync<bool>(
                 @"() => {
                     const title = (document.title || '').toLowerCase();
                     if (/just a moment|attention required|cloudflare/.test(title)) return true;
@@ -525,8 +568,11 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
     {
         await EnsureInitializedAsync(CancellationToken.None);
 
-        // Pull cookies for both apex and www subdomain so HttpClient sees all of them.
-        CookieParam[] cookies = await _page.GetCookiesAsync(
+        // Pull cookies for both apex and www subdomain so HttpClient sees all of them. Use a
+        // live page: the original tab may have been swapped away by Cloudflare/htmx.
+        IPage page = await GetLivePageAsync();
+
+        CookieParam[] cookies = await page.GetCookiesAsync(
             "https://www.mobygames.com/",
             "https://mobygames.com/");
 
@@ -740,9 +786,77 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         }
     }
 
+    /// <summary>True when the exception (or anything in its chain) means the CDP target/session went away.</summary>
+    static bool IsTargetClosed(Exception ex)
+    {
+        for(Exception e = ex; e != null; e = e.InnerException)
+        {
+            if(e is TargetClosedException) return true;
+
+            if(e.Message.Contains("Target closed", StringComparison.OrdinalIgnoreCase) ||
+               e.Message.Contains("Session closed", StringComparison.OrdinalIgnoreCase) ||
+               e.Message.Contains("detachedFromTarget", StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Returns a usable page. Cloudflare's managed challenge (and MobyGames' htmx login) can
+    ///     replace the tab's CDP target mid-flow (<c>Target.detachedFromTarget</c>), which makes every
+    ///     call on the old <see cref="IPage" /> throw "Target closed". Instead of failing, look for the
+    ///     replacement tab in the browser; if none is left (window closed), open a fresh one on the
+    ///     homepage — the profile already holds whatever cookies were written before the swap.
+    /// </summary>
+    async Task<IPage> GetLivePageAsync()
+    {
+        if(_page is { IsClosed: false })
+        {
+            try
+            {
+                await _page.EvaluateExpressionAsync<string>("document.readyState");
+
+                return _page;
+            }
+            catch(Exception ex) when(IsTargetClosed(ex)) { /* fall through and re-acquire */ }
+        }
+
+        IPage[] pages = await _browser.PagesAsync();
+
+        IPage candidate = pages.LastOrDefault(p => !p.IsClosed &&
+                                                    p.Url.Contains("mobygames.com", StringComparison.OrdinalIgnoreCase))
+                          ?? pages.LastOrDefault(p => !p.IsClosed && p.Url != "about:blank");
+
+        if(candidate is null)
+        {
+            Console.WriteLine("\e[33m  Browser tab is gone — opening a new one on the MobyGames homepage...\e[0m");
+
+            candidate = await _browser.NewPageAsync();
+            await candidate.SetUserAgentAsync(DefaultUserAgent, null);
+
+            if(_proxy is not null && !string.IsNullOrEmpty(_proxyUser))
+                await candidate.AuthenticateAsync(new Credentials { Username = _proxyUser, Password = _proxyPassword ?? "" });
+
+            await candidate.GoToAsync("https://www.mobygames.com/", new NavigationOptions
+            {
+                Timeout   = 60_000,
+                WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+            });
+        }
+        else if(!ReferenceEquals(candidate, _page))
+            Console.WriteLine("\e[33m  Browser tab was replaced — continuing on the new tab.\e[0m");
+
+        _page = candidate;
+
+        return _page;
+    }
+
     async Task UpdateLoginStateAsync()
     {
-        IElementHandle logoutLink = await _page.QuerySelectorAsync("a[href='/user/logout/']");
+        IPage page = await GetLivePageAsync();
+
+        IElementHandle logoutLink = await page.QuerySelectorAsync("a[href='/user/logout/']");
         IsLoggedIn = logoutLink is not null;
 
         if(!IsLoggedIn)
@@ -752,7 +866,7 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             return;
         }
 
-        IElementHandle mobyPlusMarker = await _page.QuerySelectorAsync("[data-has-mobyplus='true']");
+        IElementHandle mobyPlusMarker = await page.QuerySelectorAsync("[data-has-mobyplus='true']");
         HasMobyPlus = mobyPlusMarker is not null;
     }
 
