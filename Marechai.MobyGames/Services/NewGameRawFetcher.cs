@@ -55,12 +55,12 @@ namespace Marechai.MobyGames.Services;
 /// </summary>
 public class NewGameRawFetcher
 {
-    const    int                   ChunkMain     = 0;
-    const    int                   ChunkCredits  = 1;
-    const    int                   ChunkReleases = 2;
-    const    int                   ChunkSpecs    = 3;
-    const    int                   ChunkCovers   = 4;
-    const    int                   ChunkReviews  = 5;
+    internal const int             ChunkMain     = 0;
+    internal const int             ChunkCredits  = 1;
+    internal const int             ChunkReleases = 2;
+    internal const int             ChunkSpecs    = 3;
+    internal const int             ChunkCovers   = 4;
+    internal const int             ChunkReviews  = 5;
     internal const int             ChunkPromo       = 10;
     internal const int             ChunkScreenshots = 11;
     internal const int             ChunkMedia       = 12;

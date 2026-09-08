@@ -750,6 +750,119 @@ class Program
                 break;
             }
 
+            case "update-year":
+            {
+                int?      updYear         = null;
+                int       updBatchSize    = config.GetValue("Import:BatchSize", 500);
+                int       updDelayMs      = config.GetValue("MobyGames:DelayMs", 2000);
+                string    updAssetRoot    = config.GetValue<string>("MobyGames:AssetRootPath");
+                bool      updDryRun       = false;
+                bool      updDownloadOnly = false;
+                bool      updForce        = false;
+                DateTime? updSince        = null;
+                string    updSlug         = null;
+                bool      updFromCache    = false;
+
+                for(int i = 1; i < args.Length; i++)
+                {
+                    if(args[i] == "--year" && i + 1 < args.Length && int.TryParse(args[i + 1], out int y))
+                        updYear = y;
+                    else if(args[i] == "--slug" && i + 1 < args.Length)
+                        updSlug = args[i + 1];
+                    else if(args[i] == "--batch-size" && i + 1 < args.Length && int.TryParse(args[i + 1], out int bs))
+                        updBatchSize = bs;
+                    else if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int dm))
+                        updDelayMs = dm;
+                    else if(args[i] == "--since" && i + 1 < args.Length &&
+                            DateTime.TryParse(args[i + 1], System.Globalization.CultureInfo.InvariantCulture,
+                                              System.Globalization.DateTimeStyles.AssumeUniversal |
+                                              System.Globalization.DateTimeStyles.AdjustToUniversal, out DateTime since))
+                        updSince = since;
+                    else if(args[i] == "--dry-run")
+                        updDryRun = true;
+                    else if(args[i] == "--download-only")
+                        updDownloadOnly = true;
+                    else if(args[i] == "--force")
+                        updForce = true;
+                    else if(args[i] == "--from-cache")
+                        updFromCache = true;
+                }
+
+                if(updYear is null && string.IsNullOrWhiteSpace(updSlug))
+                {
+                    Console.WriteLine("  Usage: update-year (--year N | --slug <slug>) [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--force] [--since YYYY-MM-DD]");
+
+                    return 1;
+                }
+
+                if(!updDryRun && string.IsNullOrEmpty(updAssetRoot))
+                {
+                    Console.WriteLine("\e[31;1mMissing MobyGames:AssetRootPath in appsettings.json\e[0m");
+
+                    return 1;
+                }
+
+                // Live pages are fetched even in dry-run (that is the whole point of the diff),
+                // so the cookied client is always needed — except for a --from-cache dry-run,
+                // which touches neither the network nor the databases.
+                using MobyGamesHttpClient updHttp = updFromCache && updDryRun
+                                                        ? null
+                                                        : await MobyGamesHttpClient.CreateAsync(config, updDelayMs);
+
+                if(!updDryRun)
+                {
+                    ImageConverter.EnsureDirectoriesCreated(updAssetRoot);
+                    ImageConverter.EnsureDirectoriesCreated(updAssetRoot, "software-promo-art");
+                    ImageConverter.EnsureDirectoriesCreated(updAssetRoot, "software-screenshots");
+                }
+
+                await companyMatcher.LoadAsync();
+                await personMatcher.LoadAsync();
+                await platformMatcher.LoadAsync();
+                await countryMatcher.LoadAsync();
+
+                // Fully unattended: unmatched publishers on genuinely new releases are auto-created.
+                // ImportService.ApplyRefreshAsync never reaches the Software name-matching path, so
+                // YesToAll cannot create a Software here.
+                companyMatcher.Unattended = true;
+                companyMatcher.YesToAll   = true;
+
+                var updImportService = new ImportService(factory, sourceDb, companyMatcher, personMatcher,
+                                                         platformMatcher, countryMatcher, stateService,
+                                                         mobyHttpClient: updHttp, adminMessenger: adminMessenger)
+                {
+                    Unattended = true,
+                    YesToAll   = true
+                };
+
+                var updCoverState      = new CoverStateService(factory);
+                var updScreenshotState = new ScreenshotStateService(factory);
+                var updPromoState      = new PromoArtStateService(factory);
+                var updVideoState      = new VideoStateService(factory);
+                var updReviewState     = new ReviewStateService(factory);
+                var updMagazineMatcher = new MagazineMatcher(factory, countryMatcher, updHttp);
+
+                var updCovers      = new CoverDownloadService(factory, sourceDb, updCoverState, updHttp, updAssetRoot ?? "");
+                var updScreenshots = new ScreenshotDownloadService(factory, sourceDb, updScreenshotState, platformMatcher,
+                                                                   updHttp, updAssetRoot ?? "");
+                var updPromoArt    = new PromoArtDownloadService(factory, sourceDb, updPromoState, updHttp, updAssetRoot ?? "");
+                var updVideos      = new VideoImportService(factory, sourceDb, updVideoState);
+                var updReviews     = new ReviewImportService(factory, sourceDb, platformMatcher, updMagazineMatcher,
+                                                             updReviewState, countryMatcher);
+
+                await updMagazineMatcher.LoadAsync();
+
+                var yearRefresh = new YearRefreshService(factory, sourceDb, updHttp, updImportService, updCovers,
+                                                         updScreenshots, updPromoArt, updVideos, updReviews,
+                                                         updCoverState, updScreenshotState, updPromoState,
+                                                         updVideoState);
+
+                await yearRefresh.RunAsync(updYear ?? 0, updBatchSize, updDryRun, updDownloadOnly, updForce, updSince,
+                                           updSlug, updFromCache);
+
+                break;
+            }
+
             case "refresh-slug":
             {
                 string refreshSlug    = null;
@@ -989,6 +1102,15 @@ class Program
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
+                Console.WriteLine("    update-year (--year N | --slug <slug>) [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--force] [--since YYYY-MM-DD] [--from-cache]");
+                Console.WriteLine("                                                  Re-download every ALREADY-IMPORTED game MobyGames files under year N");
+                Console.WriteLine("                                                  (MobyGamesDiscoveredGames.ReleaseYear) and add only what is new: description");
+                Console.WriteLine("                                                  (if missing), releases, covers, screenshots, promo art, videos, critic reviews.");
+                Console.WriteLine("                                                  Never creates Software. Skips games stamped LastRefreshedAt unless --force");
+                Console.WriteLine("                                                  or --since. --dry-run fetches live pages and reports the diff without writing.");
+                Console.WriteLine("                                                  --slug <slug> refreshes that one imported game regardless of year / stamp.");
+                Console.WriteLine("                                                  --from-cache runs the same diff against the cached HTML instead of the live");
+                Console.WriteLine("                                                  site (no network, cache untouched); a second pass must add nothing.");
                 Console.WriteLine("    refresh-slug --slug <slug> [--id <numericId>] [--delay-ms N]");
                 Console.WriteLine("                                                  Re-download ALL chunks for one slug from the live site, deleting any");
                 Console.WriteLine("                                                  cached rows under both '<slug>' and '-<slug>' first. Use to evict stale");
