@@ -21,22 +21,22 @@ namespace Marechai.MobyGames.Parsers.NewSite;
 /// </remarks>
 public static partial class MediaPresenceDetector
 {
-    [GeneratedRegex(@"href=""/game/(\d+)/([a-z0-9][a-z0-9_-]*)/screenshots/""", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/screenshots/""", RegexOptions.IgnoreCase)]
     private static partial Regex ScreenshotsRegex();
 
-    [GeneratedRegex(@"href=""/game/(\d+)/([a-z0-9][a-z0-9_-]*)/promo/""", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/promo/""", RegexOptions.IgnoreCase)]
     private static partial Regex PromoRegex();
 
-    [GeneratedRegex(@"href=""/game/(\d+)/([a-z0-9][a-z0-9_-]*)/covers/""", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/covers/""", RegexOptions.IgnoreCase)]
     private static partial Regex CoversRegex();
 
-    [GeneratedRegex(@"href=""/game/(\d+)/([a-z0-9][a-z0-9_-]*)/videos?/""", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/videos?/""", RegexOptions.IgnoreCase)]
     private static partial Regex MediaRegex();
 
-    [GeneratedRegex(@"href=""/game/(\d+)/([a-z0-9][a-z0-9_-]*)/reviews/""", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/reviews/""", RegexOptions.IgnoreCase)]
     private static partial Regex ReviewsRegex();
 
-    [GeneratedRegex(@"/game/(\d+)/([a-z0-9][a-z0-9_-]*)/", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"/game/(\d+)/([^/""]+)/", RegexOptions.IgnoreCase)]
     private static partial Regex AnyGameAnchorRegex();
 
     public static bool HasScreenshots(string html) => html != null && ScreenshotsRegex().IsMatch(html);
