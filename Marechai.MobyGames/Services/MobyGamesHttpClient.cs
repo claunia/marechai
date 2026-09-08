@@ -273,7 +273,8 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         if(MobyGamesBrowser.IsAttendedMode(cfg))
         {
             client.ChallengeResolver = url => MobyGamesBrowser.SolveChallengeInteractivelyAsync(cfg, client, url, delayMs, ct);
-            Console.WriteLine("  Attended mode (Auth:Headless=false): Cloudflare challenges will open the browser for you to solve.");
+            Console.WriteLine("  Headful mode (Auth:Headless=false): Cloudflare challenges are solved in the browser " +
+                              "(automatic Turnstile click, Xvfb when there is no DISPLAY; click it yourself if that fails).");
         }
 
         return client;

@@ -1108,10 +1108,11 @@ class Program
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
                 Console.WriteLine("    cf-login [--proxy <url>] [--proxy-auth user:pass] [--out <dir>] [--headless]");
-                Console.WriteLine("                                                  Solve Cloudflare + log in to MobyGames in a VISIBLE browser (ignores");
-                Console.WriteLine("                                                  Auth:Headless) and save the session to state/. --proxy socks5://127.0.0.1:1080");
-                Console.WriteLine("                                                  (e.g. `ssh -D 1080 server`) binds the cf_clearance to the server's IP so");
-                Console.WriteLine("                                                  state/ can be copied to a headless server. No database needed.");
+                Console.WriteLine("                                                  Solve Cloudflare + log in to MobyGames in a headful browser (ignores");
+                Console.WriteLine("                                                  Auth:Headless; uses Xvfb when there is no DISPLAY, ticks the Turnstile");
+                Console.WriteLine("                                                  checkbox automatically) and save the session to state/. --proxy");
+                Console.WriteLine("                                                  socks5://127.0.0.1:1080 (e.g. `ssh -D 1080 server`) binds cf_clearance");
+                Console.WriteLine("                                                  to the server's IP so state/ can be copied there. No database needed.");
                 Console.WriteLine("    update-year (--year N | --slug <slug>) [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--force] [--since YYYY-MM-DD] [--from-cache]");
                 Console.WriteLine("                                                  Re-download every ALREADY-IMPORTED game MobyGames files under year N");
                 Console.WriteLine("                                                  (MobyGamesDiscoveredGames.ReleaseYear) and add only what is new: description");
@@ -1192,7 +1193,13 @@ class Program
             return 1;
         }
 
-        Console.WriteLine($"  Mode:  {(headless ? "headless (reusing an existing clearance)" : "VISIBLE browser — click the Turnstile checkbox when it appears")}");
+        bool hasSeat = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISPLAY"));
+
+        Console.WriteLine($"  Mode:  {(headless
+                                            ? "headless (reusing an existing clearance)"
+                                            : hasSeat
+                                                ? "headful browser on your DISPLAY — Turnstile is tried automatically; click it yourself if that fails"
+                                                : "headful browser on a private Xvfb screen — Turnstile must pass automatically (nobody can click)")}");
         Console.WriteLine($"  Proxy: {proxy ?? "(none — cookie will be bound to THIS machine's public IP)"}");
         Console.WriteLine($"  State: {(outDir is null ? "state/ (this machine's own session will be replaced)" : System.IO.Path.GetFullPath(outDir))}");
 

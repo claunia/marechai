@@ -566,6 +566,12 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
                 "  Alternatively mint the session elsewhere with `cf-login --proxy` and copy state/ over.");
         }
 
+        // Headful: first give the managed challenge a few seconds to pass by itself, then try to
+        // tick the Turnstile checkbox with real input events (mouse click on the widget, then
+        // Tab + Space), and only then ask a human — who, on a server with Xvfb, does not exist.
+        if(await TryAutoSolveTurnstileAsync())
+            return;
+
         // On a virtual display (Xvfb) there is nobody at the seat: waiting for a click would only
         // burn five minutes. Fail now so the caller's backoff / retry logic takes over.
         if(_virtualDisplay)
@@ -902,6 +908,95 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         return display;
     }
 
+    /// <summary>
+    ///     Attempts to clear a Cloudflare interstitial without a human: waits a few seconds for the
+    ///     non-interactive managed challenge to pass, then, if a Turnstile widget is present, sends
+    ///     REAL input events the way FlareSolverr does — a mouse click on the checkbox area of the
+    ///     widget's iframe, then Tab + Space — and checks after each attempt. Returns <c>true</c>
+    ///     when the challenge is gone.
+    /// </summary>
+    async Task<bool> TryAutoSolveTurnstileAsync()
+    {
+        Console.WriteLine("  Cloudflare interstitial detected — trying to pass it automatically...");
+
+        // 1. Non-interactive pass.
+        for(int i = 0; i < 5; i++)
+        {
+            await Task.Delay(2000);
+
+            if(!await IsCloudflareChallengePresentAsync())
+            {
+                Console.WriteLine("  Cloudflare challenge cleared without interaction.");
+                await Task.Delay(1500);
+
+                return true;
+            }
+        }
+
+        IPage page = await GetLivePageAsync();
+
+        // 2. Click the checkbox: the Turnstile widget is an iframe from challenges.cloudflare.com;
+        //    the checkbox sits at the left edge of it, vertically centred.
+        for(int attempt = 0; attempt < 3; attempt++)
+        {
+            try
+            {
+                IElementHandle frame = await page.QuerySelectorAsync("iframe[src*='challenges.cloudflare.com']")
+                                       ?? await page.QuerySelectorAsync("#turnstile-wrapper iframe")
+                                       ?? await page.QuerySelectorAsync("#challenge-stage iframe")
+                                       ?? await page.QuerySelectorAsync("iframe[title*='Widget' i]");
+
+                BoundingBox box = frame is null ? null : await frame.BoundingBoxAsync();
+
+                if(box is not null && box.Width > 0)
+                {
+                    decimal x = box.X + Math.Min(30, box.Width / 2);
+                    decimal y = box.Y + box.Height / 2;
+
+                    Console.WriteLine($"  Turnstile widget found at ({box.X:0},{box.Y:0}) {box.Width:0}x{box.Height:0} — clicking the checkbox (attempt {attempt + 1}/3)...");
+                    await page.Mouse.MoveAsync(x - 40, y + 15);
+                    await Task.Delay(300);
+                    await page.Mouse.MoveAsync(x, y, new PuppeteerSharp.Input.MoveOptions { Steps = 12 });
+                    await Task.Delay(200);
+                    await page.Mouse.ClickAsync(x, y);
+                }
+                else
+                {
+                    // 3. Keyboard fallback: focus the document and tab into the widget, then Space.
+                    Console.WriteLine($"  Turnstile iframe not found — trying Tab + Space (attempt {attempt + 1}/3)...");
+                    await page.Keyboard.PressAsync("Tab");
+                    await Task.Delay(300);
+                    await page.Keyboard.PressAsync("Space");
+                }
+            }
+            catch(Exception ex) when(IsTargetClosed(ex))
+            {
+                // The click worked and the page navigated away under us.
+                page = await GetLivePageAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"\e[33m  Auto-solve attempt failed: {ex.Message}\e[0m");
+            }
+
+            for(int i = 0; i < 5; i++)
+            {
+                await Task.Delay(2000);
+
+                if(!await IsCloudflareChallengePresentAsync())
+                {
+                    Console.WriteLine("  Cloudflare challenge cleared by the automatic click.");
+                    await Task.Delay(1500);
+
+                    return true;
+                }
+            }
+        }
+
+        Console.WriteLine("\e[33m  Automatic Turnstile solve did not work.\e[0m");
+
+        return false;
+    }
 
     /// <summary>
     ///     Runs <c>ldd</c> and <c>&lt;chrome&gt; --version --no-sandbox</c> against the downloaded
