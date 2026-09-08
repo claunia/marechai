@@ -26,4 +26,12 @@ public class MobyGamesImportState : BaseModel<long>
     public virtual SoftwareCompilation  SoftwareCompilation   { get; set; }
 
     public int? MobyNumericId { get; set; }
+
+    /// <summary>
+    ///     UTC timestamp of the last successful <c>update-year</c> refresh pass over this game
+    ///     (live re-download of all MobyGames sub-pages plus diff-import of releases, description
+    ///     and media). NULL means never refreshed since the original import. The refresh command
+    ///     skips stamped rows unless <c>--force</c> or <c>--since</c> is passed.
+    /// </summary>
+    public DateTime? LastRefreshedAt { get; set; }
 }
