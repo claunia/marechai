@@ -179,6 +179,12 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         Directory.CreateDirectory(xdgData);
         Directory.CreateDirectory(xdgCache);
 
+        // Headful without a display (headless server with Headless=false): run Chromium inside a
+        // private Xvfb screen, the way FlareSolverr does. Headless Chrome is fingerprinted by
+        // Cloudflare and gets the interactive checkbox; a headful one usually gets the invisible
+        // pass, and when it doesn't, the Turnstile widget can be clicked with real input events.
+        string display = _headless ? null : await EnsureDisplayAsync();
+
         try
         {
             LaunchOptions opts = new()
@@ -205,6 +211,9 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             opts.Env["XDG_CONFIG_HOME"] = xdgConfig;
             opts.Env["XDG_DATA_HOME"]   = xdgData;
             opts.Env["XDG_CACHE_HOME"]  = xdgCache;
+
+            if(display is not null)
+                opts.Env["DISPLAY"] = display;
 
             if(_proxy is not null)
             {
@@ -541,16 +550,32 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             throw new InvalidOperationException(
                 "Cloudflare's \"Verify you are human\" challenge cannot be solved in headless mode.\n" +
                 "\n" +
-                "  One-time bootstrap:\n" +
-                "    1. Set \"MobyGames:Auth:Headless\": false in Marechai.MobyGames/appsettings.json\n" +
-                "    2. Re-run the same command — a Chromium window will open.\n" +
-                "    3. Click the \"Verify you are human\" checkbox; if the login form appears,\n" +
-                "       it will auto-fill and submit from the credentials in appsettings.json.\n" +
+                "  Fix: set \"MobyGames:Auth:Headless\": false in Marechai.MobyGames/appsettings.json and\n" +
+                "  re-run. Chromium then runs headful — in a window when a DISPLAY exists, otherwise inside\n" +
+                "  an automatically started Xvfb (install the xvfb package on servers) — and the Turnstile\n" +
+                "  checkbox is ticked automatically with real input events; only if that fails does it wait\n" +
+                "  for a human click. Detailed manual flow:\n" +
+                "    1. Set Headless to false.\n" +
+                "    2. Re-run the same command — a Chromium window (or Xvfb screen) opens.\n" +
+                "    3. If the automatic solve fails, click the \"Verify you are human\" checkbox; the login\n" +
+                "       form (if shown) is filled from the credentials in appsettings.json.\n" +
                 "    4. Once the homepage loads logged-in, the program continues automatically.\n" +
                 "    5. After it finishes you may revert Headless back to true. Headless runs reuse\n" +
                 "       the cf_clearance stored in state/puppeteer-profile until Cloudflare re-challenges\n" +
                 "       (bound to this IP + user agent; lifetime is set by MobyGames, not by us).\n" +
-                "  On a headless server use `cf-login --proxy` from a desktop instead (see usage).");
+                "  Alternatively mint the session elsewhere with `cf-login --proxy` and copy state/ over.");
+        }
+
+        // On a virtual display (Xvfb) there is nobody at the seat: waiting for a click would only
+        // burn five minutes. Fail now so the caller's backoff / retry logic takes over.
+        if(_virtualDisplay)
+        {
+            await DumpLoginDiagnosticsAsync("cloudflare-interstitial");
+
+            throw new InvalidOperationException(
+                "Cloudflare's \"Verify you are human\" challenge could not be passed automatically on the " +
+                "virtual display (no human can click it there). See state/mobygames-cloudflare-interstitial.* " +
+                "diagnostics; the request will be retried after the challenge backoff.");
         }
 
         Console.WriteLine(
@@ -783,7 +808,100 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
             await _browser.CloseAsync();
 
         _browser?.Dispose();
+
+        if(_xvfb is { HasExited: false })
+        {
+            try { _xvfb.Kill(); _xvfb.WaitForExit(3000); } catch { /* best effort */ }
+        }
+
+        _xvfb?.Dispose();
+
+        // A killed Xvfb leaves its socket and lock behind, which would make the next run pick a
+        // new display number every time.
+        if(_xvfbDisplayNumber is int n)
+        {
+            foreach(string leftover in new[] { $"/tmp/.X11-unix/X{n}", $"/tmp/.X{n}-lock" })
+            {
+                try { if(File.Exists(leftover)) File.Delete(leftover); } catch { /* best effort */ }
+            }
+        }
     }
+
+    int? _xvfbDisplayNumber;
+
+    Process _xvfb;
+
+    /// <summary>True when Chromium runs on an Xvfb screen we started, i.e. no human can see or click it.</summary>
+    bool _virtualDisplay;
+
+    /// <summary>
+    ///     Returns the X display Chromium should use in headful mode. When <c>DISPLAY</c> is set,
+    ///     that one; otherwise starts a private <c>Xvfb</c> (must be installed: package
+    ///     <c>xorg-server-xvfb</c> / <c>xvfb</c>) and returns its display. Returns <c>null</c>
+    ///     when no display can be provided, in which case Chromium falls back to headless.
+    /// </summary>
+    async Task<string> EnsureDisplayAsync()
+    {
+        string existing = Environment.GetEnvironmentVariable("DISPLAY");
+
+        if(!string.IsNullOrWhiteSpace(existing))
+            return existing;
+
+        string xvfbExe = new[] { "/usr/bin/Xvfb", "/usr/local/bin/Xvfb", "/usr/X11R6/bin/Xvfb" }.FirstOrDefault(File.Exists);
+
+        if(xvfbExe is null)
+        {
+            Console.WriteLine("\e[33m  No DISPLAY and Xvfb is not installed — running Chromium headless instead " +
+                              "(install xvfb to let it pass Cloudflare like a real browser).\e[0m");
+
+            return null;
+        }
+
+        // Pick a display number that is not already in use.
+        int number = 90;
+
+        while(File.Exists($"/tmp/.X11-unix/X{number}") && number < 200) number++;
+
+        string display = $":{number}";
+
+        try
+        {
+            _xvfb = Process.Start(new ProcessStartInfo(xvfbExe,
+                                                       $"{display} -screen 0 1366x768x24 -nolisten tcp -ac")
+            {
+                UseShellExecute        = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError  = true
+            });
+
+            _xvfb.BeginOutputReadLine();
+            _xvfb.BeginErrorReadLine();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Xvfb failed to start ({ex.Message}) — running Chromium headless instead.\e[0m");
+
+            return null;
+        }
+
+        // Wait for the socket to appear.
+        for(int i = 0; i < 50 && !File.Exists($"/tmp/.X11-unix/X{number}"); i++)
+            await Task.Delay(100);
+
+        if(_xvfb.HasExited || !File.Exists($"/tmp/.X11-unix/X{number}"))
+        {
+            Console.WriteLine("\e[33m  Xvfb did not come up — running Chromium headless instead.\e[0m");
+
+            return null;
+        }
+
+        Console.WriteLine($"  Started Xvfb on {display} for headful Chromium (virtual display: no human can click).");
+        _virtualDisplay     = true;
+        _xvfbDisplayNumber  = number;
+
+        return display;
+    }
+
 
     /// <summary>
     ///     Runs <c>ldd</c> and <c>&lt;chrome&gt; --version --no-sandbox</c> against the downloaded
