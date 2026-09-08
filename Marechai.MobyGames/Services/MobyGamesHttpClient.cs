@@ -25,7 +25,8 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     // MobyGamesBrowser.DefaultUserAgent). A different UA here yields 403 on every page.
     const    string          UserAgent = MobyGamesBrowser.DefaultUserAgent;
     readonly HttpClient       _client;
-    readonly HttpClientHandler _handler;
+    readonly SocketsHttpHandler _handler;
+    string                      _lastRemote;
     readonly int              _delayMs;
 
     /// <param name="proxy">
@@ -38,7 +39,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     {
         _delayMs = delayMs;
 
-        _handler = new HttpClientHandler
+        _handler = new SocketsHttpHandler
         {
             AllowAutoRedirect        = true,
             MaxAutomaticRedirections = 5,
@@ -58,7 +59,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
         if(!string.IsNullOrWhiteSpace(proxy))
         {
-            // HttpClientHandler accepts http://, https:// and socks4/4a/5:// proxy URLs on .NET 6+.
+            // SocketsHttpHandler accepts http://, https:// and socks4/4a/5:// proxy URLs on .NET 6+.
             var webProxy = new WebProxy(proxy.Trim());
 
             if(!string.IsNullOrEmpty(proxyUser))
@@ -66,6 +67,42 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
             _handler.Proxy    = webProxy;
             _handler.UseProxy = true;
+        }
+        else if(Environment.GetEnvironmentVariable("MOBYGAMES_ALLOW_IPV6") is not "1")
+        {
+            // Cloudflare binds cf_clearance to the client IP. Every clearance we mint reaches
+            // MobyGames over IPv4 (the headless browser's SOCKS exit, or a desktop with v4), but a
+            // dual-stack server lets .NET prefer the AAAA record of www.mobygames.com and arrive
+            // from its IPv6 address instead — a different client to Cloudflare, hence HTTP 403 on
+            // every page while the very same cookie works elsewhere. Pin direct connections to
+            // IPv4 (set MOBYGAMES_ALLOW_IPV6=1 to opt out) and remember the endpoint for diagnostics.
+            _handler.ConnectCallback = async (ctx, ct) =>
+            {
+                IPAddress[] addresses = await Dns.GetHostAddressesAsync(ctx.DnsEndPoint.Host,
+                                                                        System.Net.Sockets.AddressFamily.InterNetwork,
+                                                                        ct);
+
+                if(addresses.Length == 0)
+                    throw new System.Net.Sockets.SocketException((int)System.Net.Sockets.SocketError.HostNotFound);
+
+                var socket = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork,
+                                                           System.Net.Sockets.SocketType.Stream,
+                                                           System.Net.Sockets.ProtocolType.Tcp) { NoDelay = true };
+
+                try
+                {
+                    await socket.ConnectAsync(addresses, ctx.DnsEndPoint.Port, ct);
+                    _lastRemote = socket.RemoteEndPoint?.ToString();
+
+                    return new System.Net.Sockets.NetworkStream(socket, ownsSocket: true);
+                }
+                catch
+                {
+                    socket.Dispose();
+
+                    throw;
+                }
+            };
         }
 
         _client = new HttpClient(_handler)
@@ -139,7 +176,13 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
             if(!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} fetching {url}\e[0m");
+                // Cloudflare marks its challenge/block responses; surface that plus the remote
+                // endpoint so a clearance bound to another IP is recognisable at a glance.
+                string mitigated = response.Headers.TryGetValues("cf-mitigated", out var mv) ? string.Join(",", mv) : null;
+
+                Console.WriteLine($"\e[33m  Warning: HTTP {(int)response.StatusCode} fetching {url}" +
+                                  (mitigated is not null ? $" (cf-mitigated: {mitigated})" : "") +
+                                  (_lastRemote is not null ? $" [remote {_lastRemote}]" : "") + "\e[0m");
 
                 return null;
             }
