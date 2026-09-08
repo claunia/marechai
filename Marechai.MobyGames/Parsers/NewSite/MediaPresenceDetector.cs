@@ -30,7 +30,8 @@ public static partial class MediaPresenceDetector
     [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/covers/""", RegexOptions.IgnoreCase)]
     private static partial Regex CoversRegex();
 
-    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/videos?/""", RegexOptions.IgnoreCase)]
+    // The current site links the tab as /media/; older captures used /video/ or /videos/.
+    [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/(?:media|videos?)/""", RegexOptions.IgnoreCase)]
     private static partial Regex MediaRegex();
 
     [GeneratedRegex(@"href=""/game/(\d+)/([^/""]+)/reviews/""", RegexOptions.IgnoreCase)]
