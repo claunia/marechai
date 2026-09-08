@@ -338,13 +338,24 @@ public class YearRefreshService
                 // 2. Replace the cache (both slug variants) — only after a successful main fetch.
                 if(!dryRun && !fromCache)
                 {
-                    int deleted = await _sourceDb.DeleteAllChunksAsync(cand.Slug) +
-                                  await _sourceDb.DeleteAllChunksAsync($"-{cand.Slug}");
+                    var oldChunks = new SortedSet<int>(await _sourceDb.GetChunkNumbersAsync(cand.Slug));
+                    oldChunks.UnionWith(await _sourceDb.GetChunkNumbersAsync($"-{cand.Slug}"));
+
+                    await _sourceDb.DeleteAllChunksAsync(cand.Slug);
+                    await _sourceDb.DeleteAllChunksAsync($"-{cand.Slug}");
 
                     foreach(MobyGamesRawRow row in rows)
                         await _sourceDb.InsertRowAsync(row.Id, row.Chunk, row.Body);
 
-                    Console.WriteLine($"    cache: replaced {deleted} old chunk(s) with {rows.Count}");
+                    var newChunks = new SortedSet<int>(rows.Select(r => r.Chunk));
+                    var dropped   = oldChunks.Except(newChunks).ToList();
+                    var added     = newChunks.Except(oldChunks).ToList();
+
+                    // Legacy dynamic slots (6-9, 13+) are expected to go away; a missing fixed slot
+                    // (e.g. 12 = media) means the live page no longer advertises that sub-page.
+                    Console.WriteLine($"    cache: chunks now [{string.Join(",", newChunks)}]" +
+                                      (added.Count   > 0 ? $", added [{string.Join(",", added)}]"     : "") +
+                                      (dropped.Count > 0 ? $", dropped [{string.Join(",", dropped)}]" : ""));
                 }
 
                 // 3. Description + releases (deduplicated; never touches ImportGameAsync).

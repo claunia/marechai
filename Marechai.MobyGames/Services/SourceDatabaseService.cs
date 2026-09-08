@@ -212,6 +212,27 @@ public class SourceDatabaseService
     ///     since the 2019 capture mean the cached HTML often disagrees with the live page
     ///     (e.g. mis-tagged genres) and would re-poison every downstream import otherwise.
     /// </summary>
+    /// <summary>Chunk numbers cached for the slug (no bodies), in ascending order.</summary>
+    public async Task<List<int>> GetChunkNumbersAsync(string gameId)
+    {
+        var chunks = new List<int>();
+
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "SELECT chunk FROM mobygames_raw WHERE id = @id ORDER BY chunk", connection);
+
+        cmd.Parameters.AddWithValue("@id", gameId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        while(await reader.ReadAsync())
+            chunks.Add(reader.GetInt32(0));
+
+        return chunks;
+    }
+
     public async Task<int> DeleteAllChunksAsync(string gameId)
     {
         await using var connection = new MySqlConnection(_connectionString);
