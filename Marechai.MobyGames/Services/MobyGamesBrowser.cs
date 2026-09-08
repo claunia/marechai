@@ -547,9 +547,10 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
                 "    3. Click the \"Verify you are human\" checkbox; if the login form appears,\n" +
                 "       it will auto-fill and submit from the credentials in appsettings.json.\n" +
                 "    4. Once the homepage loads logged-in, the program continues automatically.\n" +
-                "    5. After it finishes you may revert Headless back to true. The cf_clearance\n" +
-                "       cookie stored in state/puppeteer-profile typically lasts ~30 days; until\n" +
-                "       it expires, headless runs reuse it without hitting the challenge again.");
+                "    5. After it finishes you may revert Headless back to true. Headless runs reuse\n" +
+                "       the cf_clearance stored in state/puppeteer-profile until Cloudflare re-challenges\n" +
+                "       (bound to this IP + user agent; lifetime is set by MobyGames, not by us).\n" +
+                "  On a headless server use `cf-login --proxy` from a desktop instead (see usage).");
         }
 
         Console.WriteLine(

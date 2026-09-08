@@ -1267,7 +1267,8 @@ class Program
         Console.WriteLine($"    {System.IO.Path.GetFullPath(browser.UserDataDir)}/   -> <server>/Marechai.MobyGames/state/puppeteer-profile/");
         Console.WriteLine($"    {System.IO.Path.GetFullPath(browser.CookieCachePath)} -> <server>/Marechai.MobyGames/state/mobygames-cookies.json");
         Console.WriteLine($"  e.g.  rsync -a --delete --exclude 'Singleton*' {stateDir}/puppeteer-profile {stateDir}/mobygames-cookies.json user@server:/path/to/Marechai.MobyGames/state/");
-        Console.WriteLine("  The clearance is bound to the exit IP and to the tool's user agent; it typically lasts ~30 days.");
+        Console.WriteLine("  The clearance is bound to the exit IP (IPv4) and to the tool's user agent. How long Cloudflare honours it");
+        Console.WriteLine("  is decided by MobyGames' challenge settings; when pages start returning 403 (cf-mitigated: challenge), re-run cf-login.");
 
         return 0;
     }
