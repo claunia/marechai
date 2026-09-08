@@ -34,7 +34,13 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
     // running Chrome was an instant Cloudflare bot flag (mismatched UA + Chrome TLS/JS
     // fingerprints). Use a plausible recent Chrome/Linux UA — the major version doesn't have to
     // be exactly the Chromium build PuppeteerSharp pinned, but it should look like Chrome.
-    const string DefaultUserAgent =
+    /// <summary>
+    ///     User agent the headless browser presents to Cloudflare. Cloudflare binds the
+    ///     <c>cf_clearance</c> cookie to the user agent that solved the challenge, so
+    ///     <see cref="MobyGamesHttpClient" /> MUST send exactly this string too — otherwise every
+    ///     request made with the exported cookies gets HTTP 403 even though the login succeeded.
+    /// </summary>
+    internal const string DefaultUserAgent =
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36";
 
     static readonly JsonSerializerOptions s_jsonOptions = new()

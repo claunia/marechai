@@ -21,7 +21,9 @@ namespace Marechai.MobyGames.Services;
 public sealed partial class MobyGamesHttpClient : IDisposable
 {
     const    string          BaseUrl   = "https://www.mobygames.com";
-    const    string          UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0";
+    // Must match the headless browser's UA: Cloudflare ties cf_clearance to it (see
+    // MobyGamesBrowser.DefaultUserAgent). A different UA here yields 403 on every page.
+    const    string          UserAgent = MobyGamesBrowser.DefaultUserAgent;
     readonly HttpClient       _client;
     readonly HttpClientHandler _handler;
     readonly int              _delayMs;
