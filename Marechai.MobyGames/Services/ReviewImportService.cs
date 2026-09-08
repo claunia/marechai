@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
+using Marechai.MobyGames.Models;
 using Marechai.MobyGames.Parsers;
 using Microsoft.EntityFrameworkCore;
 using NewSite = Marechai.MobyGames.Parsers.NewSite;
@@ -82,75 +83,9 @@ public class ReviewImportService
                 // Get all HTML chunks for this game from the source database
                 var rows = await _sourceDb.GetRowsForGameAsync(game.MobyGameId);
 
-                if(rows.Count == 0)
-                {
-                    Console.WriteLine(" — no source data");
+                int imported = await ImportForGameAsync(game.MobyGameId, game.SoftwareId, rows, dryRun: false);
 
-                    await _reviewStateService.CreateOrUpdateStateAsync(
-                        game.MobyGameId, game.SoftwareId,
-                        MobyGamesReviewImportStatus.Skipped,
-                        errorMessage: "No source HTML chunks found");
-
-                    continue;
-                }
-
-                // Find the Reviews tab chunk
-                string  reviewsHtml = null;
-                bool    isNewLayout = false;
-
-                foreach(var row in rows)
-                {
-                    var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
-
-                    if(tab == MobyTab.Reviews)
-                    {
-                        reviewsHtml = row.Body;
-                        isNewLayout = layout == MobyLayout.New;
-
-                        break;
-                    }
-                }
-
-                if(reviewsHtml is null)
-                {
-                    Console.WriteLine(" — no reviews tab");
-
-                    await _reviewStateService.CreateOrUpdateStateAsync(
-                        game.MobyGameId, game.SoftwareId,
-                        MobyGamesReviewImportStatus.NoReviews);
-
-                    continue;
-                }
-
-                // Parse critic reviews — new layout embeds them as JSON in a Vue
-                // <critic-reviews :reviews='[...]'> attribute; old layout uses HTML divs.
-                var reviews = isNewLayout
-                                  ? NewSite.ReviewsPageParser.Parse(reviewsHtml)
-                                  : ReviewsPageParser.Parse(reviewsHtml);
-
-                if(reviews.Count == 0)
-                {
-                    Console.WriteLine(" — no critic reviews");
-
-                    await _reviewStateService.CreateOrUpdateStateAsync(
-                        game.MobyGameId, game.SoftwareId,
-                        MobyGamesReviewImportStatus.NoReviews);
-
-                    continue;
-                }
-
-                Console.WriteLine($" — {reviews.Count} critic reviews");
-
-                // Import reviews
-                int imported = await ImportReviewsAsync(game.SoftwareId, reviews);
-                totalReviews += imported;
-
-                await _reviewStateService.CreateOrUpdateStateAsync(
-                    game.MobyGameId, game.SoftwareId,
-                    MobyGamesReviewImportStatus.Imported,
-                    reviewsImported: imported);
-
-                Console.WriteLine($"    Imported {imported} reviews");
+                if(imported > 0) totalReviews += imported;
             }
             catch(Exception ex)
             {
@@ -166,7 +101,96 @@ public class ReviewImportService
         Console.WriteLine($"\n  Done. Processed {processed} games, imported {totalReviews} reviews total.");
     }
 
-    async Task<int> ImportReviewsAsync(ulong softwareId, List<Models.ParsedCriticReview> reviews)
+    /// <summary>
+    ///     Per-game review import shared by the batch loop and by <c>update-year</c>. Finds the
+    ///     Reviews tab in <paramref name="rows" /> (source DB or a live re-download held in memory),
+    ///     parses it and imports every critic review not already present for the software
+    ///     (<see cref="ImportReviewsAsync" /> dedupes on the unique (Magazine, Platform) pair), then
+    ///     records the outcome in <see cref="MobyGamesReviewImportState" />. Returns the number of
+    ///     reviews imported (or, in dry-run, the number that would be), <c>0</c> when there was
+    ///     nothing to do, and <c>-1</c> when the game had no source rows / no reviews tab.
+    ///     In dry-run nothing is written — not even the state row.
+    /// </summary>
+    public async Task<int> ImportForGameAsync(string mobyGameId, ulong softwareId, List<MobyGamesRawRow> rows,
+                                              bool dryRun)
+    {
+        if(rows.Count == 0)
+        {
+            Console.WriteLine(" — no source data");
+
+            if(!dryRun)
+                await _reviewStateService.CreateOrUpdateStateAsync(
+                    mobyGameId, softwareId,
+                    MobyGamesReviewImportStatus.Skipped,
+                    errorMessage: "No source HTML chunks found");
+
+            return -1;
+        }
+
+        // Find the Reviews tab chunk
+        string reviewsHtml = null;
+        bool   isNewLayout = false;
+
+        foreach(var row in rows)
+        {
+            var (tab, layout) = TabDetector.DetectWithLayout(row.Body);
+
+            if(tab == MobyTab.Reviews)
+            {
+                reviewsHtml = row.Body;
+                isNewLayout = layout == MobyLayout.New;
+
+                break;
+            }
+        }
+
+        if(reviewsHtml is null)
+        {
+            Console.WriteLine(" — no reviews tab");
+
+            if(!dryRun)
+                await _reviewStateService.CreateOrUpdateStateAsync(
+                    mobyGameId, softwareId,
+                    MobyGamesReviewImportStatus.NoReviews);
+
+            return -1;
+        }
+
+        // Parse critic reviews — new layout embeds them as JSON in a Vue
+        // <critic-reviews :reviews='[...]'> attribute; old layout uses HTML divs.
+        var reviews = isNewLayout
+                          ? NewSite.ReviewsPageParser.Parse(reviewsHtml)
+                          : ReviewsPageParser.Parse(reviewsHtml);
+
+        if(reviews.Count == 0)
+        {
+            Console.WriteLine(" — no critic reviews");
+
+            if(!dryRun)
+                await _reviewStateService.CreateOrUpdateStateAsync(
+                    mobyGameId, softwareId,
+                    MobyGamesReviewImportStatus.NoReviews);
+
+            return 0;
+        }
+
+        Console.WriteLine($" — {reviews.Count} critic reviews");
+
+        int imported = await ImportReviewsAsync(softwareId, reviews, dryRun);
+
+        if(!dryRun)
+            await _reviewStateService.CreateOrUpdateStateAsync(
+                mobyGameId, softwareId,
+                MobyGamesReviewImportStatus.Imported,
+                reviewsImported: imported);
+
+        Console.WriteLine($"    {(dryRun ? "Would import" : "Imported")} {imported} reviews");
+
+        return imported;
+    }
+
+
+    async Task<int> ImportReviewsAsync(ulong softwareId, List<Models.ParsedCriticReview> reviews, bool dryRun = false)
     {
         await using var ctx = await _contextFactory.CreateDbContextAsync();
 
@@ -183,20 +207,40 @@ public class ReviewImportService
         foreach(var review in reviews)
         {
             // Match magazine
-            var (magazineId, matchType) = await _magazineMatcher.MatchOrCreateAsync(review.PublicationName, review.PublicationSourceId);
+            long magazineId;
 
-            if(magazineId == 0)
+            if(dryRun)
             {
-                Console.WriteLine($"    \e[33mSkipping review — could not match magazine \"{review.PublicationName}\"\e[0m");
+                // Lookup-only: an unknown magazine would be created on a real run, so the review
+                // counts as "would import" but we cannot dedupe it against existing keys.
+                magazineId = _magazineMatcher.TryMatch(review.PublicationName, review.PublicationSourceId);
 
-                continue;
+                if(magazineId == 0)
+                {
+                    imported++;
+
+                    continue;
+                }
+            }
+            else
+            {
+                (magazineId, _) = await _magazineMatcher.MatchOrCreateAsync(review.PublicationName, review.PublicationSourceId);
+
+                if(magazineId == 0)
+                {
+                    Console.WriteLine($"    \e[33mSkipping review — could not match magazine \"{review.PublicationName}\"\e[0m");
+
+                    continue;
+                }
             }
 
             // Match platform
             SoftwarePlatform platform = null;
 
             if(!string.IsNullOrWhiteSpace(review.PlatformName))
-                platform = await _platformMatcher.MatchOrCreateAsync(review.PlatformName);
+                platform = dryRun
+                               ? _platformMatcher.TryMatch(review.PlatformName)
+                               : await _platformMatcher.MatchOrCreateAsync(review.PlatformName);
 
             ulong? platformId = platform?.Id;
 
@@ -225,12 +269,13 @@ public class ReviewImportService
                 ReviewUrl           = review.ReviewUrl
             };
 
-            ctx.SoftwareCriticReviews.Add(dbReview);
+            if(!dryRun) ctx.SoftwareCriticReviews.Add(dbReview);
+
             existingKeys.Add((magazineId, platformId));
             imported++;
         }
 
-        if(imported > 0)
+        if(imported > 0 && !dryRun)
             await ctx.SaveChangesAsync();
 
         return imported;
