@@ -692,6 +692,81 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         }
     }
 
+    /// <summary>True when <c>MobyGames:Auth:Headless</c> is explicitly <c>false</c> (an operator can click).</summary>
+    public static bool IsAttendedMode(IConfiguration cfg) =>
+        bool.TryParse(cfg.GetSection("MobyGames:Auth")["Headless"], out bool headless) && !headless;
+
+    /// <summary>
+    ///     Attended-mode challenge resolver used by <see cref="MobyGamesHttpClient" /> mid-run: opens
+    ///     a VISIBLE Chromium on the shared profile, navigates to the challenged page, waits for the
+    ///     operator to click "Verify you are human" (up to 5 minutes), then waits until the profile
+    ///     holds a <c>cf_clearance</c> different from the one the HTTP client already has, imports
+    ///     the fresh cookies into <paramref name="http" />, persists them and closes the window.
+    ///     Returns <c>true</c> when a new clearance was obtained.
+    /// </summary>
+    public static async Task<bool> SolveChallengeInteractivelyAsync(IConfiguration      cfg,
+                                                                    MobyGamesHttpClient http,
+                                                                    string              challengedUrl,
+                                                                    int                 rateLimitMs,
+                                                                    CancellationToken   ct = default)
+    {
+        string oldClearance = http.CurrentClearance;
+
+        await using var browser = new MobyGamesBrowser(cfg, rateLimitMs, headlessOverride: false);
+
+        // InitializeAsync opens the homepage, waits (headful) for the challenge to be clicked away
+        // and re-establishes the login; the profile's cf_clearance is replaced in the process.
+        await browser.InitializeAsync(ct);
+
+        // The challenged URL may sit behind its own challenge (Cloudflare scores per path too):
+        // visit it so any second checkbox is presented while the window is still open.
+        if(!string.IsNullOrWhiteSpace(challengedUrl) && challengedUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        {
+            IPage page = await browser.GetLivePageAsync();
+
+            await page.GoToAsync(challengedUrl, new NavigationOptions
+            {
+                Timeout   = 60_000,
+                WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+            });
+
+            await browser.WaitForCloudflareAsync();
+        }
+
+        // Wait for a NEW clearance to land in the profile (the cookie is rewritten shortly after
+        // the redirect that follows the click).
+        IReadOnlyList<CookieParam> cookies = null;
+        DateTime deadline = DateTime.UtcNow.AddSeconds(60);
+
+        while(DateTime.UtcNow < deadline)
+        {
+            cookies = await browser.ExportCookiesAsync();
+            string fresh = cookies.FirstOrDefault(c => c.Name == "cf_clearance")?.Value;
+
+            if(!string.IsNullOrEmpty(fresh) && fresh != oldClearance) break;
+
+            await Task.Delay(2000, ct);
+        }
+
+        string newClearance = cookies?.FirstOrDefault(c => c.Name == "cf_clearance")?.Value;
+
+        if(string.IsNullOrEmpty(newClearance))
+        {
+            Console.WriteLine("\e[31m  No cf_clearance cookie in the browser profile after the challenge.\e[0m");
+
+            return false;
+        }
+
+        http.ImportCookies(cookies);
+        await browser.SaveCookiesAsync();
+
+        Console.WriteLine(newClearance == oldClearance
+                              ? "\e[33m  Challenge cleared but cf_clearance did not change — retrying with the existing cookie.\e[0m"
+                              : "  New cf_clearance obtained and imported; resuming.");
+
+        return true;
+    }
+
     public async ValueTask DisposeAsync()
     {
         try

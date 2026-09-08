@@ -80,6 +80,8 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                                                          HttpCompletionOption option,
                                                          string url)
     {
+        int resolverTries = 0;
+
         for(int attempt = 0;; attempt++)
         {
             using HttpRequestMessage req = makeRequest();
@@ -90,6 +92,28 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                 LastRequestChallenged = false;
 
                 return response;
+            }
+
+            // Attended mode first: let the operator solve the challenge in a visible browser and
+            // retry at once. Two tries per request, then the timed backoff below takes over.
+            if(ChallengeResolver is not null && resolverTries < 2)
+            {
+                resolverTries++;
+                response.Dispose();
+
+                Console.WriteLine($"\e[33m  Cloudflare challenge on {url} — opening the browser to solve it ({resolverTries}/2)...\e[0m");
+
+                bool solved = false;
+
+                try { solved = await ChallengeResolver(url); }
+                catch(Exception ex) { Console.WriteLine($"\e[33m  Interactive challenge failed: {ex.Message}\e[0m"); }
+
+                if(solved)
+                {
+                    attempt--; // does not consume a backoff slot
+
+                    continue;
+                }
             }
 
             if(attempt >= ChallengeBackoff.Length)
@@ -243,7 +267,38 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         var client = new MobyGamesHttpClient(delayMs);
         await MobyGamesBrowser.TryAttachCookiesAsync(cfg, client, delayMs, ct);
 
+        // Attended mode: with MobyGames:Auth:Headless=false an operator is at a screen, so a
+        // Cloudflare challenge mid-run is solved by opening the visible browser, letting them
+        // click, and importing the new cf_clearance — instead of sleeping through the backoff.
+        if(MobyGamesBrowser.IsAttendedMode(cfg))
+        {
+            client.ChallengeResolver = url => MobyGamesBrowser.SolveChallengeInteractivelyAsync(cfg, client, url, delayMs, ct);
+            Console.WriteLine("  Attended mode (Auth:Headless=false): Cloudflare challenges will open the browser for you to solve.");
+        }
+
         return client;
+    }
+
+    /// <summary>
+    ///     Optional hook invoked when a request meets a Cloudflare challenge. It should obtain a
+    ///     fresh clearance (e.g. by opening a visible browser for the operator) and import the new
+    ///     cookies into this client via <see cref="ImportCookies" />; return <c>true</c> when the
+    ///     request should be retried right away. Falls back to <see cref="ChallengeBackoff" /> when
+    ///     unset or unsuccessful.
+    /// </summary>
+    public Func<string, Task<bool>> ChallengeResolver { get; set; }
+
+    /// <summary>Current <c>cf_clearance</c> value held by this client, or <c>null</c>.</summary>
+    public string CurrentClearance
+    {
+        get
+        {
+            foreach(Cookie c in _handler.CookieContainer.GetCookies(new Uri("https://www.mobygames.com/")))
+                if(c.Name == "cf_clearance")
+                    return c.Value;
+
+            return null;
+        }
     }
 
     /// <summary>
