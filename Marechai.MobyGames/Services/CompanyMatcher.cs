@@ -67,6 +67,9 @@ public partial class CompanyMatcher
     /// </summary>
     public bool YesToAll { get; set; }
 
+    /// <summary>True once <see cref="LoadAsync" /> has populated the in-memory index.</summary>
+    public bool IsLoaded => _companies is not null;
+
     public async Task LoadAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -148,6 +151,74 @@ public partial class CompanyMatcher
             Count(strippedLegalCandidates);
 
         return count > 1;
+    }
+
+    /// <summary>
+    ///     Lookup-only counterpart of <see cref="MatchOrCreateAsync" />: resolves the name through
+    ///     the cache, exact / legal / stripped exact matches and a single-candidate Soundex hit,
+    ///     but never prompts and never creates a company. Returns <c>null</c> when the name would
+    ///     need a prompt or a new company. Used by dry-run passes that must leave the DB untouched.
+    /// </summary>
+    public Company TryMatch(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+            return null;
+
+        string normalizedName = name.Replace("\u00a0", " ").Trim();
+
+        if(_cache.TryGetValue(normalizedName, out var cached))
+            return cached;
+
+        var exact = _companies.FirstOrDefault(c =>
+            string.Equals(c.Name, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        if(exact != null) return exact;
+
+        var legalExact = _companies.FirstOrDefault(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(c.LegalName, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        if(legalExact != null) return legalExact;
+
+        string strippedInput = StripSuffix(normalizedName);
+
+        var strippedExact = _companies.FirstOrDefault(c =>
+            string.Equals(StripSuffix(c.Name), strippedInput, StringComparison.OrdinalIgnoreCase));
+
+        if(strippedExact != null) return strippedExact;
+
+        var strippedLegalExact = _companies.FirstOrDefault(c =>
+            !string.IsNullOrWhiteSpace(c.LegalName) &&
+            string.Equals(StripSuffix(c.LegalName), strippedInput, StringComparison.OrdinalIgnoreCase));
+
+        if(strippedLegalExact != null) return strippedLegalExact;
+
+        string soundex         = SoundexHelper.Generate(normalizedName);
+        string strippedSoundex = SoundexHelper.Generate(strippedInput);
+
+        var candidates = new List<Company>();
+        var seenIds    = new HashSet<int>();
+
+        void AddCandidates(IEnumerable<Company> cs)
+        {
+            foreach(Company c in cs)
+                if(seenIds.Add(c.Id))
+                    candidates.Add(c);
+        }
+
+        if(_soundexIndex.TryGetValue(soundex, out var fullCandidates))
+            AddCandidates(fullCandidates);
+
+        if(_legalNameSoundexIndex.TryGetValue(soundex, out var legalCandidates))
+            AddCandidates(legalCandidates);
+
+        if(_strippedSoundexIndex.TryGetValue(strippedSoundex, out var strippedCandidates))
+            AddCandidates(strippedCandidates);
+
+        if(_strippedLegalNameSoundexIndex.TryGetValue(strippedSoundex, out var strippedLegalCandidates))
+            AddCandidates(strippedLegalCandidates);
+
+        return candidates.Count == 1 ? candidates[0] : null;
     }
 
     public async Task<(Company company, string matchType)> MatchOrCreateAsync(string name)
@@ -322,6 +393,25 @@ public partial class CompanyMatcher
 
         return null; // User chose 0 or invalid — fall through to create
     }
+
+    /// <summary>
+    ///     Pins a name to an already-known company so every later <see cref="MatchOrCreateAsync" />
+    ///     / <see cref="TryMatch" /> for that name resolves from the cache without prompting or
+    ///     creating. Used by the refresh path after resolving a publisher against the publishers
+    ///     already attached to the same software.
+    /// </summary>
+    public void Remember(string name, Company company)
+    {
+        if(string.IsNullOrWhiteSpace(name) || company is null) return;
+
+        _cache[name.Replace("\u00a0", " ").Trim()] = company;
+    }
+
+    /// <summary>
+    ///     Strips one well-known corporate / trade suffix (", Inc.", " Ltd", " Games", ...) from the
+    ///     end of a company name. Exposed for name comparisons outside the matcher.
+    /// </summary>
+    public static string StripCompanySuffix(string name) => StripSuffix(name);
 
     static string StripSuffix(string name)
     {

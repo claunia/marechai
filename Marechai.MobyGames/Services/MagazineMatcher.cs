@@ -38,6 +38,26 @@ public class MagazineMatcher
                                       .ToList());
     }
 
+    /// <summary>
+    ///     Lookup-only counterpart of <see cref="MatchOrCreateAsync" />: cache + exact title match,
+    ///     never creates and never hits the network. Returns <c>0</c> when unknown.
+    /// </summary>
+    public long TryMatch(string name, int? sourceId = null)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+            return 0;
+
+        string normalizedName = name.Replace("\u00a0", " ").Trim();
+
+        if(_cache.TryGetValue(normalizedName, out long cachedId))
+            return cachedId;
+
+        var exact = _magazines.FirstOrDefault(m =>
+            string.Equals(m.Title, normalizedName, StringComparison.OrdinalIgnoreCase));
+
+        return exact == default ? 0 : exact.Id;
+    }
+
     public async Task<(long magazineId, string matchType)> MatchOrCreateAsync(string name, int? sourceId = null)
     {
         if(string.IsNullOrWhiteSpace(name))

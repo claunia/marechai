@@ -40,6 +40,9 @@ public class CountryMatcher
 
     public CountryMatcher(IDbContextFactory<MarechaiContext> contextFactory) => _contextFactory = contextFactory;
 
+    /// <summary>True once <see cref="LoadAsync" /> has populated the in-memory index.</summary>
+    public bool IsLoaded => _countries is not null;
+
     public async Task LoadAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
