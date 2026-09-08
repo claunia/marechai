@@ -915,7 +915,11 @@ public class ImportService
             await ResolveDlcBaseGameAsync(context, software, game);
         }
 
-        // 3. Genres
+        // 3. Genres. MobyGames pages can list the same genre several times (one block per
+        // platform); the DB-side AnyAsync below cannot see rows added but not yet saved in this
+        // context, so also track what this pass has added (same guard as the credits loop).
+        var addedGenres = new HashSet<int>();
+
         foreach(var genre in game.Genres)
         {
             var genreType = genre.Type switch
@@ -943,6 +947,8 @@ public class ImportService
                 context.SoftwareGenres.Add(dbGenre);
                 await context.SaveChangesAsync();
             }
+
+            if(!addedGenres.Add(dbGenre.Id)) continue;
 
             bool genreExists = await context.GenresBySoftware
                                              .AnyAsync(g => g.SoftwareId == software.Id &&
