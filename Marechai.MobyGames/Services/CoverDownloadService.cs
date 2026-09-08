@@ -113,6 +113,8 @@ public class CoverDownloadService
         // colliding with the existing converted-asset tree.
         string photosRoot = downloadOnly ? "photos-new" : "photos";
 
+        HashSet<string> processedCoverIds = CoverStateService.ExtractCoverIds(processedUrls);
+
 
         // Find the cover art tab chunk
         string  coverHtml   = null;
@@ -210,11 +212,18 @@ public class CoverDownloadService
                 string coverTypeStr = cover.Type;
                 var    coverType     = MapCoverType(coverTypeStr);
 
+                // Already downloaded? Match on the detail URL AND on the numeric cover id: legacy
+                // state rows hold old-site URLs (".../cover-art/gameCoverId,279493/") while a live
+                // re-scrape yields new-site URLs (".../cover/group-N/cover-279493/") for the SAME
+                // cover, so URL equality alone would re-download every cover of a legacy game.
+                bool alreadyDownloaded = processedUrls.Contains(cover.DetailPageUrl) ||
+                                         (cover.CoverId is not null && processedCoverIds.Contains(cover.CoverId));
+
                 if(dryRun)
                 {
                     // With a populated processedUrls set (update-year passes the real one) only
                     // genuinely new covers are reported as "would download".
-                    if(processedUrls.Contains(cover.DetailPageUrl))
+                    if(alreadyDownloaded)
                     {
                         c.Skipped++;
 
@@ -227,16 +236,18 @@ public class CoverDownloadService
                     continue;
                 }
 
-                // Check if already downloaded
-                if(processedUrls.Contains(cover.DetailPageUrl))
+                if(alreadyDownloaded)
                 {
                     c.Skipped++;
 
                     continue;
                 }
 
-                // Check state table
-                var existingState = await _coverStateService.GetStateByCoverUrlAsync(cover.DetailPageUrl);
+                // Check state table (by URL, then by cover id across both URL layouts)
+                var existingState = await _coverStateService.GetStateByCoverUrlAsync(cover.DetailPageUrl)
+                                    ?? (cover.CoverId is null
+                                            ? null
+                                            : await _coverStateService.GetStateByCoverIdAsync(cover.CoverId));
 
                 if(existingState is not null && existingState.Status == MobyGamesCoverDownloadStatus.Downloaded)
                 {

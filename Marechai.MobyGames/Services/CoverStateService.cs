@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.MobyGames.Services;
 
-public class CoverStateService
+public partial class CoverStateService
 {
     readonly IDbContextFactory<MarechaiContext> _contextFactory;
 
@@ -33,6 +34,53 @@ public class CoverStateService
         return await context.MobyGamesCoverDownloadStates
                             .Where(s => s.MobyGameId == mobyGameId)
                             .ToListAsync();
+    }
+
+    /// <summary>
+    ///     Numeric MobyGames cover id from either URL layout: old site
+    ///     <c>.../cover-art/gameCoverId,279493/</c> or new site <c>.../cover/group-N/cover-279493/</c>.
+    /// </summary>
+    public static string ExtractCoverId(string url)
+    {
+        if(string.IsNullOrEmpty(url)) return null;
+
+        Match m = CoverIdRegex().Match(url);
+
+        return m.Success ? m.Groups[1].Value : null;
+    }
+
+    public static HashSet<string> ExtractCoverIds(IEnumerable<string> urls)
+    {
+        var ids = new HashSet<string>();
+
+        foreach(string url in urls)
+            if(ExtractCoverId(url) is string id)
+                ids.Add(id);
+
+        return ids;
+    }
+
+    [GeneratedRegex(@"(?:gameCoverId,|/cover-)(\d+)/?", RegexOptions.IgnoreCase)]
+    private static partial Regex CoverIdRegex();
+
+    /// <summary>
+    ///     Finds a state row for a cover by its numeric id regardless of which URL layout the
+    ///     row was created with. Prefers a <c>Downloaded</c> row when several exist.
+    /// </summary>
+    public async Task<MobyGamesCoverDownloadState> GetStateByCoverIdAsync(string coverId)
+    {
+        if(string.IsNullOrWhiteSpace(coverId)) return null;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        string oldPattern = $"%gameCoverId,{coverId}/%";
+        string newPattern = $"%/cover-{coverId}/%";
+
+        return await context.MobyGamesCoverDownloadStates
+                            .Where(s => EF.Functions.Like(s.CoverPageUrl, oldPattern) ||
+                                        EF.Functions.Like(s.CoverPageUrl, newPattern))
+                            .OrderByDescending(s => s.Status == MobyGamesCoverDownloadStatus.Downloaded)
+                            .FirstOrDefaultAsync();
     }
 
     public async Task<MobyGamesCoverDownloadState> GetStateByCoverUrlAsync(string coverPageUrl)
