@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Database.Models;
+using Marechai.MobyGames.Models;
 using Marechai.MobyGames.Parsers;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,12 +51,9 @@ public class VideoImportService
 
         Console.WriteLine($"  Already imported: {processedUrls.Count} videos\n");
 
-        int totalVideos    = 0;
-        int importedCount  = 0;
-        int skippedCount   = 0;
-        int failedCount    = 0;
-        int noMediaPage    = 0;
+        var c              = new MediaCounters();
         int gamesProcessed = 0;
+        int total          = Math.Min(batchSize, importedGames.Count);
 
         foreach(var game in importedGames.Take(batchSize))
         {
@@ -64,125 +62,11 @@ public class VideoImportService
             // Fetch the media page directly from the fixed chunk slot
             string mediaHtml = await _sourceDb.GetChunkBodyAsync(game.MobyGameId, NewGameRawFetcher.ChunkMedia);
 
-            if(mediaHtml is null)
-            {
-                noMediaPage++;
+            var rows = mediaHtml is null
+                           ? new List<MobyGamesRawRow>()
+                           : [new MobyGamesRawRow { Id = game.MobyGameId, Chunk = NewGameRawFetcher.ChunkMedia, Body = mediaHtml }];
 
-                if(dryRun || noMediaPage <= 10)
-                    Console.WriteLine($"  [{gamesProcessed}/{Math.Min(batchSize, importedGames.Count)}] {game.MobyGameId}: No scraped media page (run scrape-media-pages first)");
-
-                if(noMediaPage == 10 && !dryRun)
-                    Console.WriteLine("  ... suppressing further 'no media page' messages ...");
-
-                continue;
-            }
-
-            var videos = MediaPageParser.Parse(mediaHtml);
-
-            if(videos.Count == 0) continue;
-
-            Console.WriteLine($"\n  [{gamesProcessed}] \e[36;1m{game.MobyGameId}\e[0m — {videos.Count} video(s)");
-
-            totalVideos += videos.Count;
-
-            foreach(var video in videos)
-            {
-                string dedupeKey = video.EmbedUrl;
-
-                if(dryRun)
-                {
-                    Console.WriteLine($"    {video.Provider}: {video.VideoId} — {video.Title ?? "(no title)"}");
-
-                    continue;
-                }
-
-                if(processedUrls.Contains(dedupeKey))
-                {
-                    skippedCount++;
-
-                    continue;
-                }
-
-                var existingState = await _stateService.GetStateByVideoUrlAsync(dedupeKey);
-
-                if(existingState is not null &&
-                   existingState.Status == MobyGamesCoverDownloadStatus.Downloaded)
-                {
-                    skippedCount++;
-
-                    continue;
-                }
-
-                if(existingState is null)
-                {
-                    existingState = new MobyGamesVideoImportState
-                    {
-                        MobyGameId       = game.MobyGameId,
-                        SoftwareId       = game.SoftwareId!.Value,
-                        VideoUrl         = dedupeKey,
-                        Title            = video.Title,
-                        Provider         = video.Provider,
-                        ExtractedVideoId = video.VideoId,
-                        Status           = MobyGamesCoverDownloadStatus.Pending
-                    };
-
-                    await _stateService.CreateStateAsync(existingState);
-                }
-
-                try
-                {
-                    // Check if this exact video already exists for this software
-                    await using var dbContext = await _contextFactory.CreateDbContextAsync();
-
-                    bool alreadyExists = await dbContext.SoftwareVideos
-                                                       .AnyAsync(v => v.SoftwareId == game.SoftwareId!.Value &&
-                                                                      v.Provider   == video.Provider &&
-                                                                      v.VideoId    == video.VideoId);
-
-                    if(alreadyExists)
-                    {
-                        existingState.Status      = MobyGamesCoverDownloadStatus.Skipped;
-                        existingState.ProcessedOn = DateTime.UtcNow;
-                        await _stateService.UpdateStateAsync(existingState);
-                        skippedCount++;
-
-                        Console.WriteLine($"    {video.Provider}: {video.VideoId} — already exists, skipped");
-
-                        continue;
-                    }
-
-                    var softwareVideo = new SoftwareVideo
-                    {
-                        SoftwareId = game.SoftwareId!.Value,
-                        Provider   = video.Provider,
-                        VideoId    = video.VideoId,
-                        Title      = video.Title
-                    };
-
-                    dbContext.SoftwareVideos.Add(softwareVideo);
-                    await dbContext.SaveChangesAsync();
-
-                    existingState.Status          = MobyGamesCoverDownloadStatus.Downloaded;
-                    existingState.SoftwareVideoId = softwareVideo.Id;
-                    existingState.ProcessedOn     = DateTime.UtcNow;
-                    await _stateService.UpdateStateAsync(existingState);
-
-                    importedCount++;
-                    processedUrls.Add(dedupeKey);
-
-                    Console.WriteLine($"    {video.Provider}: {video.VideoId} — \e[32mOK\e[0m ({video.Title ?? "no title"})");
-                }
-                catch(Exception ex)
-                {
-                    existingState.Status       = MobyGamesCoverDownloadStatus.Failed;
-                    existingState.ErrorMessage = ex.Message.Length > 1024 ? ex.Message[..1024] : ex.Message;
-                    existingState.ProcessedOn  = DateTime.UtcNow;
-                    await _stateService.UpdateStateAsync(existingState);
-                    failedCount++;
-
-                    Console.WriteLine($"    {video.Provider}: {video.VideoId} — \e[31mFAILED\e[0m ({ex.Message})");
-                }
-            }
+            await ProcessGameAsync(game, rows, processedUrls, dryRun, c, $"[{gamesProcessed}/{total}]");
         }
 
         Console.WriteLine("\n  ────────────────────────────────────");
@@ -191,19 +75,165 @@ public class VideoImportService
         {
             Console.WriteLine("  \e[33;1m[DRY RUN]\e[0m No changes made");
             Console.WriteLine($"    Games scanned:       {gamesProcessed}");
-            Console.WriteLine($"    No media page:       {noMediaPage}");
-            Console.WriteLine($"    Total videos found:  {totalVideos}");
+            Console.WriteLine($"    No media page:       {c.NoPage}");
+            Console.WriteLine($"    Total videos found:  {c.Total}");
         }
         else
         {
             Console.WriteLine($"    Games processed:     {gamesProcessed}");
-            Console.WriteLine($"    No media page:       {noMediaPage}");
-            Console.WriteLine($"    Total videos found:  {totalVideos}");
-            Console.WriteLine($"    Imported:            {importedCount}");
-            Console.WriteLine($"    Skipped (existing):  {skippedCount}");
-            Console.WriteLine($"    Failed:              {failedCount}");
+            Console.WriteLine($"    No media page:       {c.NoPage}");
+            Console.WriteLine($"    Total videos found:  {c.Total}");
+            Console.WriteLine($"    Imported:            {c.Added}");
+            Console.WriteLine($"    Skipped (existing):  {c.Skipped}");
+            Console.WriteLine($"    Failed:              {c.Failed}");
         }
 
         Console.WriteLine("  ────────────────────────────────────\n");
     }
+
+    /// <summary>
+    ///     Imports every video of ONE imported game not yet recorded as <c>Downloaded</c> in
+    ///     <see cref="MobyGamesVideoImportState" />. The media page is taken from
+    ///     <paramref name="rows" /> (chunk <see cref="NewGameRawFetcher.ChunkMedia" />), which may
+    ///     come from the source DB or from a live re-download held in memory. Dedupes by embed URL
+    ///     and by the unique (SoftwareId, Provider, VideoId) key.
+    /// </summary>
+    public async Task<bool> ProcessGameAsync(MobyGamesImportState game, List<MobyGamesRawRow> rows,
+                                             HashSet<string> processedUrls, bool dryRun, MediaCounters c,
+                                             string progress = "")
+    {
+
+        string mediaHtml = rows.FirstOrDefault(r => r.Chunk == NewGameRawFetcher.ChunkMedia)?.Body;
+
+        if(mediaHtml is null)
+        {
+            c.NoPage++;
+
+            if(dryRun || c.NoPage <= 10)
+                Console.WriteLine($"  {progress} {game.MobyGameId}: No scraped media page (run scrape-media-pages first)");
+
+            if(c.NoPage == 10 && !dryRun)
+                Console.WriteLine("  ... suppressing further 'no media page' messages ...");
+
+            return true;
+        }
+
+        var videos = MediaPageParser.Parse(mediaHtml);
+
+        if(videos.Count == 0) return true;
+
+        Console.WriteLine($"\n  {progress} \e[36;1m{game.MobyGameId}\e[0m — {videos.Count} video(s)");
+
+        c.Total += videos.Count;
+
+        foreach(var video in videos)
+        {
+            string dedupeKey = video.EmbedUrl;
+
+            if(dryRun)
+            {
+                if(processedUrls.Contains(dedupeKey))
+                {
+                    c.Skipped++;
+
+                    continue;
+                }
+
+                Console.WriteLine($"    {video.Provider}: {video.VideoId} — {video.Title ?? "(no title)"}");
+                c.WouldAdd++;
+
+                continue;
+            }
+
+            if(processedUrls.Contains(dedupeKey))
+            {
+                c.Skipped++;
+
+                continue;
+            }
+
+            var existingState = await _stateService.GetStateByVideoUrlAsync(dedupeKey);
+
+            if(existingState is not null &&
+               existingState.Status == MobyGamesCoverDownloadStatus.Downloaded)
+            {
+                c.Skipped++;
+
+                continue;
+            }
+
+            if(existingState is null)
+            {
+                existingState = new MobyGamesVideoImportState
+                {
+                    MobyGameId       = game.MobyGameId,
+                    SoftwareId       = game.SoftwareId!.Value,
+                    VideoUrl         = dedupeKey,
+                    Title            = video.Title,
+                    Provider         = video.Provider,
+                    ExtractedVideoId = video.VideoId,
+                    Status           = MobyGamesCoverDownloadStatus.Pending
+                };
+
+                await _stateService.CreateStateAsync(existingState);
+            }
+
+            try
+            {
+                // Check if this exact video already exists for this software
+                await using var dbContext = await _contextFactory.CreateDbContextAsync();
+
+                bool alreadyExists = await dbContext.SoftwareVideos
+                                                   .AnyAsync(v => v.SoftwareId == game.SoftwareId!.Value &&
+                                                                  v.Provider   == video.Provider &&
+                                                                  v.VideoId    == video.VideoId);
+
+                if(alreadyExists)
+                {
+                    existingState.Status      = MobyGamesCoverDownloadStatus.Skipped;
+                    existingState.ProcessedOn = DateTime.UtcNow;
+                    await _stateService.UpdateStateAsync(existingState);
+                    c.Skipped++;
+
+                    Console.WriteLine($"    {video.Provider}: {video.VideoId} — already exists, skipped");
+
+                    continue;
+                }
+
+                var softwareVideo = new SoftwareVideo
+                {
+                    SoftwareId = game.SoftwareId!.Value,
+                    Provider   = video.Provider,
+                    VideoId    = video.VideoId,
+                    Title      = video.Title
+                };
+
+                dbContext.SoftwareVideos.Add(softwareVideo);
+                await dbContext.SaveChangesAsync();
+
+                existingState.Status          = MobyGamesCoverDownloadStatus.Downloaded;
+                existingState.SoftwareVideoId = softwareVideo.Id;
+                existingState.ProcessedOn     = DateTime.UtcNow;
+                await _stateService.UpdateStateAsync(existingState);
+
+                c.Added++;
+                processedUrls.Add(dedupeKey);
+
+                Console.WriteLine($"    {video.Provider}: {video.VideoId} — \e[32mOK\e[0m ({video.Title ?? "no title"})");
+            }
+            catch(Exception ex)
+            {
+                existingState.Status       = MobyGamesCoverDownloadStatus.Failed;
+                existingState.ErrorMessage = ex.Message.Length > 1024 ? ex.Message[..1024] : ex.Message;
+                existingState.ProcessedOn  = DateTime.UtcNow;
+                await _stateService.UpdateStateAsync(existingState);
+                c.Failed++;
+
+                Console.WriteLine($"    {video.Provider}: {video.VideoId} — \e[31mFAILED\e[0m ({ex.Message})");
+            }
+        }
+
+        return true;
+    }
+
 }
