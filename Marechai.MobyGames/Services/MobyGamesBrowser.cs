@@ -755,11 +755,20 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         {
             IPage page = await browser.GetLivePageAsync();
 
-            await page.GoToAsync(challengedUrl, new NavigationOptions
+            IResponse nav = await page.GoToAsync(challengedUrl, new NavigationOptions
             {
                 Timeout   = 60_000,
                 WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
             });
+
+            // The browser is trusted where the HTTP client is not: if it simply gets an error page
+            // here, the URL is dead and no amount of clearance will change the HTTP client's answer.
+            if(nav is not null && (int)nav.Status >= 400 && !await browser.IsCloudflareChallengePresentAsync())
+            {
+                http.NoteUrlUnavailable((int)nav.Status);
+
+                return false;
+            }
 
             await browser.WaitForCloudflareAsync();
         }

@@ -66,6 +66,40 @@ public sealed partial class MobyGamesHttpClient : IDisposable
     /// </summary>
     public bool LastRequestChallenged { get; private set; }
 
+    /// <summary>
+    ///     True when the most recent request was challenged although the session still passes on
+    ///     the homepage: Cloudflare walled off that one URL for this client (usually an error page
+    ///     such as a 404). Callers should treat the page as unavailable, not the session as blocked.
+    /// </summary>
+    public bool LastChallengeWasUrlSpecific { get; private set; }
+
+    /// <summary>
+    ///     Called by a challenge resolver that visited the challenged URL in the browser and found
+    ///     an ordinary error page instead of a challenge (e.g. HTTP 404).
+    /// </summary>
+    public void NoteUrlUnavailable(int status)
+    {
+        Console.WriteLine($"\e[33m  The browser sees HTTP {status} for that URL — the page is unavailable, not the session.\e[0m");
+        LastChallengeWasUrlSpecific = true;
+    }
+
+    /// <summary>One un-backed-off GET of the homepage with the current cookies; true when it is not challenged.</summary>
+    async Task<bool> SessionStillPassesAsync()
+    {
+        try
+        {
+            using var probeReq = new HttpRequestMessage(HttpMethod.Get, BaseUrl + "/");
+            using HttpResponseMessage probe = await _client.SendAsync(probeReq, HttpCompletionOption.ResponseHeadersRead);
+
+            return !IsChallenge(probe);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+
     static bool IsChallenge(HttpResponseMessage response) =>
         response.StatusCode == HttpStatusCode.Forbidden &&
         response.Headers.TryGetValues("cf-mitigated", out var v) &&
@@ -89,10 +123,28 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
             if(!IsChallenge(response))
             {
-                LastRequestChallenged = false;
+                LastRequestChallenged        = false;
+                LastChallengeWasUrlSpecific  = false;
 
                 return response;
             }
+
+            // Cloudflare scores per request and per rule, so a URL can be challenged for THIS client
+            // while the session is perfectly fine (typically: error pages such as a 404 are wrapped
+            // in a challenge to stop id scanners). Probe the homepage with the same session: if it
+            // passes, the challenge is about the URL, not about us — report the page as unavailable
+            // and neither open a browser nor sleep for it.
+            if(!url.TrimEnd('/').Equals(BaseUrl, StringComparison.OrdinalIgnoreCase) && await SessionStillPassesAsync())
+            {
+                Console.WriteLine($"\e[33m  Cloudflare challenges only {url} (the session passes elsewhere) — " +
+                                  "treating the page as unavailable.\e[0m");
+                LastChallengeWasUrlSpecific = true;
+                LastRequestChallenged       = false;
+
+                return response;
+            }
+
+            LastChallengeWasUrlSpecific = false;
 
             // Attended mode first: let the operator solve the challenge in a visible browser and
             // retry at once. Two tries per request, then the timed backoff below takes over.
@@ -113,6 +165,15 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                     attempt--; // does not consume a backoff slot
 
                     continue;
+                }
+
+                // The browser looked at the URL and found a plain error page (e.g. 404): not a
+                // session problem, nothing to back off for.
+                if(LastChallengeWasUrlSpecific)
+                {
+                    using HttpRequestMessage again = makeRequest();
+
+                    return await _client.SendAsync(again, option);
                 }
             }
 

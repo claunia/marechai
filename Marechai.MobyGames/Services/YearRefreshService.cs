@@ -294,25 +294,29 @@ public class YearRefreshService
                     if(chunks is null)
                     {
                         fetchFailed++;
-                        consecutiveMainFailures++;
-                        Console.WriteLine("    \e[31m✗\e[0m main page fetch failed (removed / renamed / rate-limited?) — cache untouched");
 
-                        // The HTTP client already slept through its whole challenge backoff schedule
-                        // and Cloudflare is STILL challenging this IP: nothing in this batch can
-                        // succeed right now. Stop here; unstamped games are retried next run.
-                        if(_http.LastRequestChallenged)
+                        // A page that is gone (404, or Cloudflare walling off that one URL while the
+                        // session still passes) is that game's problem, not the batch's: skip it and
+                        // keep going without touching the consecutive-failure counter.
+                        if(_http.LastChallengeWasUrlSpecific)
                         {
-                            Console.WriteLine("\n  \e[31;1mABORTING: Cloudflare keeps challenging this IP after the full backoff — " +
-                                              "let the traffic score decay and re-run later (or re-run cf-login).\e[0m");
-                            aborted = true;
+                            Console.WriteLine("    \e[33m–\e[0m page unavailable on MobyGames (removed / renamed?) — skipped, cache untouched");
 
                             continue;
                         }
 
+                        consecutiveMainFailures++;
+                        Console.WriteLine("    \e[31m✗\e[0m main page fetch failed" +
+                                          (_http.LastRequestChallenged ? " (Cloudflare still challenging after the full backoff)" : "") +
+                                          " — cache untouched");
+
+                        // Only a run of blocked games in a row means the whole batch is hopeless right
+                        // now; unstamped games are retried next run.
                         if(consecutiveMainFailures >= MaxConsecutiveMainFailures)
                         {
                             Console.WriteLine($"\n  \e[31;1mABORTING: {MaxConsecutiveMainFailures} consecutive main-page failures — " +
-                                              "MobyGames is probably rate-limiting us. Re-run later.\e[0m");
+                                              "Cloudflare / MobyGames is blocking this client right now. Let the traffic " +
+                                              "score decay and re-run later.\e[0m");
                             aborted = true;
                         }
 
