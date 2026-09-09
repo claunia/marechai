@@ -723,6 +723,162 @@ public sealed class MobyGamesBrowser : IAsyncDisposable
         }
     }
 
+    /// <summary>Result of an in-page <c>fetch()</c> performed by <see cref="FetchAsync" />.</summary>
+    public sealed class BrowserFetchResult
+    {
+        public int                        Status   { get; init; }
+        public string                     FinalUrl { get; init; }
+        public Dictionary<string, string> Headers  { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+        public byte[]                     Body     { get; init; } = [];
+    }
+
+    sealed class JsFetchResult
+    {
+        public int                        status  { get; set; }
+        public string                     url     { get; set; }
+        public Dictionary<string, string> headers { get; set; }
+        public string                     body    { get; set; }
+    }
+
+    const string FetchScript = @"async (u, hdrs) => {
+        const r = await fetch(u, { credentials: 'include', redirect: 'follow', headers: hdrs || {} });
+        const bytes = new Uint8Array(await r.arrayBuffer());
+        let bin = '';
+        const CH = 0x8000;
+        for (let i = 0; i < bytes.length; i += CH)
+            bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+        const h = {};
+        r.headers.forEach((v, k) => { h[k] = v; });
+        return { status: r.status, url: r.url, headers: h, body: btoa(bin) };
+    }";
+
+    /// <summary>
+    ///     Performs an HTTP GET <i>inside the logged-in browser</i> (a same-origin <c>fetch()</c> run
+    ///     in the MobyGames page context) and returns status, final URL, headers and body bytes.
+    ///     The request therefore carries Chrome's TLS/HTTP2 fingerprint, headers and cookies — the
+    ///     only client Cloudflare consistently trusts — instead of .NET's. If the response is a
+    ///     Cloudflare challenge, the page navigates to the URL, the challenge is passed the usual
+    ///     way (automatic click, human, or fail-fast on a virtual display) and the fetch is retried
+    ///     once.
+    /// </summary>
+    public async Task<BrowserFetchResult> FetchAsync(string url, IDictionary<string, string> headers = null,
+                                                     CancellationToken ct = default)
+    {
+        await EnsureInitializedAsync(ct);
+
+        for(int attempt = 0; attempt < 2; attempt++)
+        {
+            IPage page = await GetLivePageAsync();
+
+            // fetch() must run on the MobyGames origin so cookies and same-origin rules apply.
+            if(!page.Url.StartsWith("https://www.mobygames.com", StringComparison.OrdinalIgnoreCase))
+            {
+                await page.GoToAsync("https://www.mobygames.com/", new NavigationOptions
+                {
+                    Timeout   = 60_000,
+                    WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+                });
+
+                await WaitForCloudflareAsync();
+                page = await GetLivePageAsync();
+            }
+
+            JsFetchResult js;
+
+            try
+            {
+                js = await page.EvaluateFunctionAsync<JsFetchResult>(FetchScript, url,
+                                                                    headers ?? new Dictionary<string, string>());
+            }
+            catch(Exception ex) when(IsTargetClosed(ex) && attempt == 0)
+            {
+                continue; // tab swapped under us — re-acquire and retry once
+            }
+
+            var result = new BrowserFetchResult
+            {
+                Status   = js.status,
+                FinalUrl = js.url ?? url,
+                Headers  = new Dictionary<string, string>(js.headers ?? new(), StringComparer.OrdinalIgnoreCase),
+                Body     = string.IsNullOrEmpty(js.body) ? [] : Convert.FromBase64String(js.body)
+            };
+
+            bool challenged = result.Status == 403 &&
+                              result.Headers.TryGetValue("cf-mitigated", out string mit) &&
+                              mit.Contains("challenge", StringComparison.OrdinalIgnoreCase);
+
+            if(!challenged || attempt == 1)
+                return result;
+
+            // Even the browser got challenged on this URL: face it as a navigation so the usual
+            // solving machinery runs, then retry the fetch once.
+            Console.WriteLine($"  Cloudflare challenge in the browser for {url} — passing it...");
+
+            await page.GoToAsync(url, new NavigationOptions
+            {
+                Timeout   = 60_000,
+                WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+            });
+
+            await WaitForCloudflareAsync();
+        }
+
+        throw new InvalidOperationException("unreachable");
+    }
+
+    IPage _downloadTab;
+
+    /// <summary>
+    ///     Downloads a (typically cross-origin, e.g. <c>cdn.mobygames.com</c>) URL by navigating a
+    ///     dedicated second tab to it and reading the navigation response body through CDP. Used
+    ///     when an in-page <c>fetch()</c> is not possible (CORS) and the plain HTTP client was
+    ///     challenged. The main tab is left untouched.
+    /// </summary>
+    public async Task<BrowserFetchResult> DownloadViaTabAsync(string url, CancellationToken ct = default)
+    {
+        await EnsureInitializedAsync(ct);
+
+        if(_downloadTab is null || _downloadTab.IsClosed)
+        {
+            _downloadTab = await _browser.NewPageAsync();
+            await _downloadTab.SetUserAgentAsync(DefaultUserAgent, null);
+
+            if(_proxy is not null && !string.IsNullOrEmpty(_proxyUser))
+                await _downloadTab.AuthenticateAsync(new Credentials { Username = _proxyUser, Password = _proxyPassword ?? "" });
+        }
+
+        IResponse nav = await _downloadTab.GoToAsync(url, new NavigationOptions
+        {
+            Timeout   = 120_000,
+            WaitUntil = new[] { WaitUntilNavigation.Load }
+        });
+
+        if(nav is null)
+            return new BrowserFetchResult { Status = 0, FinalUrl = url };
+
+        var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach((string k, string v) in nav.Headers)
+            headers[k] = v;
+
+        byte[] body;
+
+        try { body = await nav.BufferAsync(); }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"\e[33m  Could not read the tab response body for {url}: {ex.Message}\e[0m");
+            body = [];
+        }
+
+        return new BrowserFetchResult
+        {
+            Status   = (int)nav.Status,
+            FinalUrl = nav.Url ?? url,
+            Headers  = headers,
+            Body     = body
+        };
+    }
+
     /// <summary>True when <c>MobyGames:Auth:Headless</c> is explicitly <c>false</c> (an operator can click).</summary>
     public static bool IsAttendedMode(IConfiguration cfg) =>
         bool.TryParse(cfg.GetSection("MobyGames:Auth")["Headless"], out bool headless) && !headless;

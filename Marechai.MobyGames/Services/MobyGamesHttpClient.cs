@@ -99,7 +99,6 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         }
     }
 
-
     static bool IsChallenge(HttpResponseMessage response) =>
         response.StatusCode == HttpStatusCode.Forbidden &&
         response.Headers.TryGetValues("cf-mitigated", out var v) &&
@@ -119,7 +118,22 @@ public sealed partial class MobyGamesHttpClient : IDisposable
         for(int attempt = 0;; attempt++)
         {
             using HttpRequestMessage req = makeRequest();
-            HttpResponseMessage response = await _client.SendAsync(req, option);
+
+            // Browser transport only for the site itself: an in-page fetch() to another host (the
+            // cdn.mobygames.com image store) is blocked by CORS. Other hosts use the .NET client and,
+            // should one of them be challenged, a dedicated browser tab downloads it instead.
+            bool viaBrowser = Browser is not null && IsSiteHost(req.RequestUri);
+
+            HttpResponseMessage response = viaBrowser
+                                               ? await SendViaBrowserAsync(req)
+                                               : await _client.SendAsync(req, option);
+
+            if(!viaBrowser && Browser is not null && IsChallenge(response))
+            {
+                response.Dispose();
+                Console.WriteLine($"  Cloudflare challenge on {url} for the HTTP client — downloading it in a browser tab instead.");
+                response = await SendViaBrowserTabAsync(req);
+            }
 
             if(!IsChallenge(response))
             {
@@ -173,7 +187,7 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                 {
                     using HttpRequestMessage again = makeRequest();
 
-                    return await _client.SendAsync(again, option);
+                    return viaBrowser ? await SendViaBrowserAsync(again) : await _client.SendAsync(again, option);
                 }
             }
 
@@ -326,19 +340,87 @@ public sealed partial class MobyGamesHttpClient : IDisposable
                                                               CancellationToken ct      = default)
     {
         var client = new MobyGamesHttpClient(delayMs);
-        await MobyGamesBrowser.TryAttachCookiesAsync(cfg, client, delayMs, ct);
 
-        // Attended mode: with MobyGames:Auth:Headless=false an operator is at a screen, so a
-        // Cloudflare challenge mid-run is solved by opening the visible browser, letting them
-        // click, and importing the new cf_clearance — instead of sleeping through the backoff.
+        // Headful mode (Auth:Headless=false): keep the logged-in Chromium open for the whole run
+        // and perform every request THROUGH it (see SendViaBrowserAsync). Cloudflare scores the
+        // TLS/HTTP2 fingerprint of the client, and the only one it consistently trusts is Chrome;
+        // a fresh cf_clearance does not make .NET's handshake look like Chrome's. Challenges met on
+        // the way are passed in the browser (automatic click, human, or fail-fast under Xvfb).
         if(MobyGamesBrowser.IsAttendedMode(cfg))
         {
-            client.ChallengeResolver = url => MobyGamesBrowser.SolveChallengeInteractivelyAsync(cfg, client, url, delayMs, ct);
-            Console.WriteLine("  Headful mode (Auth:Headless=false): Cloudflare challenges are solved in the browser " +
-                              "(automatic Turnstile click, Xvfb when there is no DISPLAY; click it yourself if that fails).");
+            var browser = new MobyGamesBrowser(cfg, delayMs);
+
+            try
+            {
+                await browser.InitializeAsync(ct);
+                client.ImportCookies(await browser.ExportCookiesAsync());
+                client.Browser = browser;
+
+                Console.WriteLine($"  Browser transport: requests go through the logged-in Chromium " +
+                                  $"(MobyPlus={(browser.HasMobyPlus ? "yes" : "no")}); the .NET client is not used for MobyGames.");
+
+                return client;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"\e[31m  Browser transport unavailable: {ex.GetType().Name}: {ex.Message}\e[0m");
+                Console.WriteLine("\e[33m  Falling back to the plain HTTP client.\e[0m");
+                await browser.DisposeAsync();
+            }
         }
 
+        await MobyGamesBrowser.TryAttachCookiesAsync(cfg, client, delayMs, ct);
+
         return client;
+    }
+
+    /// <summary>
+    ///     When set, every request is executed inside this browser (in-page <c>fetch()</c>) instead
+    ///     of over the .NET socket stack. Owned and disposed by this client.
+    /// </summary>
+    public MobyGamesBrowser Browser { get; private set; }
+
+    static bool IsSiteHost(Uri uri) =>
+        uri is not null &&
+        (uri.Host.Equals("www.mobygames.com", StringComparison.OrdinalIgnoreCase) ||
+         uri.Host.Equals("mobygames.com",     StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    ///     Runs the request through <see cref="Browser" /> (in-page <c>fetch()</c>, same origin only)
+    ///     and re-packages the result as an <see cref="HttpResponseMessage" /> so every existing
+    ///     caller (pages, JSON, redirect-based id resolution) works unchanged.
+    /// </summary>
+    async Task<HttpResponseMessage> SendViaBrowserAsync(HttpRequestMessage req)
+    {
+        var headers = new Dictionary<string, string>();
+
+        foreach(var h in req.Headers)
+            headers[h.Key] = string.Join(",", h.Value);
+
+        return ToResponse(await Browser.FetchAsync(req.RequestUri!.ToString(), headers));
+    }
+
+    /// <summary>Cross-origin fallback: the browser navigates a spare tab to the URL and hands back the body.</summary>
+    async Task<HttpResponseMessage> SendViaBrowserTabAsync(HttpRequestMessage req) =>
+        ToResponse(await Browser.DownloadViaTabAsync(req.RequestUri!.ToString()));
+
+    static HttpResponseMessage ToResponse(MobyGamesBrowser.BrowserFetchResult r)
+    {
+        var response = new HttpResponseMessage((HttpStatusCode)r.Status)
+        {
+            RequestMessage = new HttpRequestMessage(HttpMethod.Get, r.FinalUrl),
+            Content        = new ByteArrayContent(r.Body)
+        };
+
+        foreach((string key, string value) in r.Headers)
+        {
+            if(key.StartsWith("content-", StringComparison.OrdinalIgnoreCase))
+                response.Content.Headers.TryAddWithoutValidation(key, value);
+            else
+                response.Headers.TryAddWithoutValidation(key, value);
+        }
+
+        return response;
     }
 
     /// <summary>
@@ -878,6 +960,14 @@ public sealed partial class MobyGamesHttpClient : IDisposable
 
     public void Dispose()
     {
+        if(Browser is not null)
+        {
+            try { Browser.DisposeAsync().AsTask().GetAwaiter().GetResult(); }
+            catch(Exception ex) { Console.WriteLine($"\e[33m  Warning: browser shutdown: {ex.Message}\e[0m"); }
+
+            Browser = null;
+        }
+
         _client?.Dispose();
         _handler?.Dispose();
     }
