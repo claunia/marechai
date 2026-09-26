@@ -259,7 +259,7 @@ public class SpecsReparseService
     {
         var aggregated = new List<ParsedSpec>();
 
-        foreach(string trySlug in SlugVariants(slug))
+        foreach(string trySlug in MobyGamesSlug.Variants(slug))
         {
             var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
 
@@ -288,7 +288,7 @@ public class SpecsReparseService
         var aggregated = new List<ParsedSpec>();
         string title   = null;
 
-        foreach(string trySlug in SlugVariants(slug))
+        foreach(string trySlug in MobyGamesSlug.Variants(slug))
         {
             var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
 
@@ -322,18 +322,6 @@ public class SpecsReparseService
         }
 
         return (aggregated, title);
-    }
-
-    static IEnumerable<string> SlugVariants(string slug)
-    {
-        if(string.IsNullOrWhiteSpace(slug)) yield break;
-
-        string trimmed = slug.TrimStart('-');
-        var seen       = new HashSet<string>();
-
-        foreach(string candidate in new[] { slug, $"-{slug}", trimmed, $"-{trimmed}" })
-            if(seen.Add(candidate))
-                yield return candidate;
     }
 
     /// <summary>

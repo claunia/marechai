@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Marechai.MobyGames.Models;
@@ -30,6 +31,7 @@ public static partial class MainTabParser
         ParseDescription(doc, game);
         ParseCompilationContents(doc, game);
         ParseGroups(doc, game);
+        ParseAlternateTitles(doc, game);
     }
 
     static void ParseGameName(HtmlDocument doc, ParsedGame game)
@@ -298,6 +300,66 @@ public static partial class MainTabParser
     }
 
     /// <summary>
+    ///     Parses the sidebar "Alternate Titles" section. Each entry is a single
+    ///     <c>&lt;li&gt;</c> of the form <c>"Title" -- &lt;em&gt;note&lt;/em&gt;</c>; the
+    ///     section is absent entirely (no placeholder) when the game has no alternate
+    ///     titles. Uses the same h2-then-walk-to-ul approach as
+    ///     <see cref="ParseGroups" /> because the section has no id or class of its own.
+    /// </summary>
+    static void ParseAlternateTitles(HtmlDocument doc, ParsedGame game)
+    {
+        var titlesH2 = doc.DocumentNode.SelectSingleNode("//h2[text()='Alternate Titles']");
+
+        if(titlesH2 is null) return;
+
+        var ul = titlesH2.NextSibling;
+
+        while(ul != null && ul.Name != "ul")
+            ul = ul.NextSibling;
+
+        if(ul is null) return;
+
+        var items = ul.SelectNodes("./li");
+
+        if(items is null) return;
+
+        foreach(var li in items)
+        {
+            var em = li.SelectSingleNode(".//em");
+
+            string comment = em is null ? null : WebUtility.HtmlDecode(em.InnerText).Trim();
+
+            // Everything before the <em> holds the quoted title plus the " -- " separator.
+            // Rebuilding it from the child nodes (rather than splitting the whole InnerText on
+            // " -- ") keeps titles that themselves contain " -- " or quotes intact.
+            var titlePart = new StringBuilder();
+
+            foreach(var child in li.ChildNodes)
+            {
+                if(child == em) break;
+
+                titlePart.Append(child.InnerText);
+            }
+
+            string title = WebUtility.HtmlDecode(titlePart.ToString()).Trim();
+
+            // Drop the trailing separator, then the surrounding ASCII double quotes.
+            title = AltTitleSeparatorRegex().Replace(title, string.Empty).Trim();
+
+            if(title.Length >= 2 && title[0] == '"' && title[^1] == '"')
+                title = title[1..^1].Trim();
+
+            if(string.IsNullOrWhiteSpace(title)) continue;
+
+            game.AlternateTitles.Add(new ParsedAlternateTitle
+            {
+                Title   = title,
+                Comment = string.IsNullOrWhiteSpace(comment) ? null : comment
+            });
+        }
+    }
+
+    /// <summary>
     ///     If any genre is "Compilation", extracts the slugs of contained games
     ///     from the description section's list items (li/a).
     /// </summary>
@@ -540,6 +602,10 @@ public static partial class MainTabParser
 
     [GeneratedRegex(@"</?moby\b[^>]*>", RegexOptions.IgnoreCase)]
     private static partial Regex MobyTagRegex();
+
+    /// <summary>Trailing <c>--</c> separator between an alternate title and its note.</summary>
+    [GeneratedRegex(@"\s*--\s*$")]
+    private static partial Regex AltTitleSeparatorRegex();
 
     /// <summary>
     ///     Extracts a MobyGames game slug from a single href URL.

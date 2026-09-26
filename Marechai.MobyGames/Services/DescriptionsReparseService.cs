@@ -188,7 +188,7 @@ public class DescriptionsReparseService
     /// <summary>Reassembles the game from cached raw HTML; returns null when no rows exist.</summary>
     async Task<ParsedGame> ReparseGameAsync(string slug)
     {
-        foreach(string trySlug in SlugVariants(slug))
+        foreach(string trySlug in MobyGamesSlug.Variants(slug))
         {
             var rows = await _sourceDb.GetRowsForGameAsync(trySlug);
 
@@ -198,18 +198,6 @@ public class DescriptionsReparseService
         }
 
         return null;
-    }
-
-    static IEnumerable<string> SlugVariants(string slug)
-    {
-        if(string.IsNullOrWhiteSpace(slug)) yield break;
-
-        string trimmed = slug.TrimStart('-');
-        var seen       = new HashSet<string>();
-
-        foreach(string candidate in new[] { slug, $"-{slug}", trimmed, $"-{trimmed}" })
-            if(seen.Add(candidate))
-                yield return candidate;
     }
 
     sealed class Counters

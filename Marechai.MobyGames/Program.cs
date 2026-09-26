@@ -744,6 +744,31 @@ class Program
                 break;
             }
 
+            case "backfill-alternate-titles":
+            {
+                int    altBatchSize = 50;
+                string altSlug      = null;
+
+                for(int i = 1; i < args.Length - 1; i++)
+                {
+                    if(args[i] == "--batch-size" && int.TryParse(args[i + 1], out int bs))
+                        altBatchSize = bs;
+                    else if(args[i] == "--slug")
+                        altSlug = args[i + 1];
+                }
+
+                bool altDryRun = args.Contains("--dry-run");
+
+                var altTitlesService = new AlternateTitlesBackfillService(factory, sourceDb);
+
+                if(altSlug is not null)
+                    await altTitlesService.RunForSlugAsync(altSlug, altDryRun);
+                else
+                    await altTitlesService.RunAsync(altBatchSize, altDryRun);
+
+                break;
+            }
+
             case "cleanup-orphan-duplicates":
             {
                 bool cleanupDryRun = args.Contains("--dry-run");
@@ -1104,6 +1129,11 @@ class Program
                 Console.WriteLine("                                                  (sidebar links, review tables, <moby> tags) by reparsing from cached raw HTML.");
                 Console.WriteLine("                                                  Only fingerprint-matching rows are rewritten; their non-English machine");
                 Console.WriteLine("                                                  translations are deleted for later retranslation. No network access.");
+                Console.WriteLine("    backfill-alternate-titles [--batch-size N] [--slug SLUG] [--dry-run]");
+                Console.WriteLine("                                                  Add missing SoftwareAlternativeTitle rows for already-imported games by");
+                Console.WriteLine("                                                  reparsing the Alternate Titles section from cached raw HTML. Additive only:");
+                Console.WriteLine("                                                  inserts missing titles and fills blank comments, never overwrites or deletes.");
+                Console.WriteLine("                                                  Reports how many titles each page has. No network access.");
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");

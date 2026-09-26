@@ -20,6 +20,12 @@ public class ParsedGame
     public List<string>          Groups          { get; set; } = [];
 
     /// <summary>
+    ///     Alternate titles listed on the Main page ("Alternate Titles" on the legacy
+    ///     layout, the "aka:" line plus the JSON-LD <c>alternateName</c> array on the new one).
+    /// </summary>
+    public List<ParsedAlternateTitle> AlternateTitles { get; set; } = [];
+
+    /// <summary>
     ///     Slugs of games contained in this compilation, extracted from description links.
     ///     Only populated when genre is "Compilation".
     /// </summary>
@@ -84,6 +90,18 @@ public class ParsedGame
     ///     with <see cref="NumericId" /> to build new-site sub-page URLs.
     /// </summary>
     public string Slug { get; set; }
+}
+
+/// <summary>
+///     An alternate title for a game (regional title, working title, script variant).
+///     <see cref="Comment" /> is MobyGames' free-text note about the variant
+///     (e.g. "Japanese spelling", "Working title") and may be null: the new layout's
+///     JSON-LD <c>alternateName</c> list carries titles without notes.
+/// </summary>
+public class ParsedAlternateTitle
+{
+    public string Title   { get; set; }
+    public string Comment { get; set; }
 }
 
 public class ParsedGenre

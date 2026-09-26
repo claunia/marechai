@@ -143,7 +143,7 @@ public class CoversReparseService
 
     async Task<List<ParsedCoverGroup>> ParseCoverGroupsForSlugAsync(string slug)
     {
-        foreach(string trySlug in SlugVariants(slug))
+        foreach(string trySlug in MobyGamesSlug.Variants(slug))
         {
             List<MobyGamesRawRow> rows = await _sourceDb.GetRowsForGameAsync(trySlug);
 
@@ -162,17 +162,5 @@ public class CoversReparseService
         }
 
         return [];
-    }
-
-    static IEnumerable<string> SlugVariants(string slug)
-    {
-        if(string.IsNullOrWhiteSpace(slug)) yield break;
-
-        string trimmed = slug.TrimStart('-');
-        var seen       = new HashSet<string>();
-
-        foreach(string candidate in new[] { slug, $"-{slug}", trimmed, $"-{trimmed}" })
-            if(seen.Add(candidate))
-                yield return candidate;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Marechai.MobyGames.Models;
@@ -34,6 +35,7 @@ public static partial class MainTabParser
         ParseGroups(doc, game);
         ParseMediaFlags(doc, game);
         ParseCompilationContents(doc, game);
+        ParseAlternateTitles(doc, game);
     }
 
     // ----------------------------------------------------------------------
@@ -358,6 +360,83 @@ public static partial class MainTabParser
 
             if(!string.IsNullOrWhiteSpace(name) && !game.Groups.Contains(name))
                 game.Groups.Add(name);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // 5b) Alternate titles. The new layout carries them twice, and neither
+    //     source is complete on its own:
+    //
+    //     a) The "aka:" line right under the <h1>, one span per title with the
+    //        note in data-tooltip and the title in a <u>. Has the notes, but
+    //        omits non-Latin titles.
+    //     b) The JSON-LD blob's "alternateName" array. Complete, but note-less.
+    //
+    //     So (a) wins on titles it lists and (b) fills in the rest with a null
+    //     comment. For X-COM: UFO Defense that is 6 from the aka line plus the
+    //     Japanese title only JSON-LD knows about.
+    // ----------------------------------------------------------------------
+    static void ParseAlternateTitles(HtmlDocument doc, ParsedGame game)
+    {
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        void Add(string title, string comment)
+        {
+            if(string.IsNullOrWhiteSpace(title) || !seen.Add(title)) return;
+
+            game.AlternateTitles.Add(new ParsedAlternateTitle
+            {
+                Title   = title,
+                Comment = string.IsNullOrWhiteSpace(comment) ? null : comment
+            });
+        }
+
+        // a) the "aka:" line: the first div sibling after the <h1>.
+        var h1 = doc.DocumentNode.SelectSingleNode("//h1[contains(concat(' ',@class,' '),' mb-0 ')]");
+
+        var akaDiv = h1?.NextSibling;
+
+        while(akaDiv != null && akaDiv.Name != "div")
+            akaDiv = akaDiv.NextSibling;
+
+        if(akaDiv?.SelectNodes(".//span[@data-tooltip]") is { } spans)
+        {
+            foreach(var span in spans)
+            {
+                var u = span.SelectSingleNode(".//u");
+
+                if(u is null) continue;
+
+                Add(WebUtility.HtmlDecode(u.InnerText).Trim(),
+                    WebUtility.HtmlDecode(span.GetAttributeValue("data-tooltip", null) ?? string.Empty).Trim());
+            }
+        }
+
+        // b) the JSON-LD "alternateName" array, for the titles the aka line drops.
+        foreach(var script in doc.DocumentNode.SelectNodes("//script[@type='application/ld+json']") ??
+                              Enumerable.Empty<HtmlNode>())
+        {
+            string json = WebUtility.HtmlDecode(script.InnerText);
+
+            if(string.IsNullOrWhiteSpace(json)) continue;
+
+            try
+            {
+                using var document = JsonDocument.Parse(json);
+
+                if(document.RootElement.ValueKind != JsonValueKind.Object ||
+                   !document.RootElement.TryGetProperty("alternateName", out JsonElement names) ||
+                   names.ValueKind != JsonValueKind.Array)
+                    continue;
+
+                foreach(JsonElement name in names.EnumerateArray())
+                    if(name.ValueKind == JsonValueKind.String)
+                        Add(name.GetString()?.Trim(), null);
+            }
+            catch(JsonException)
+            {
+                // A malformed blob must not sink the rest of the page.
+            }
         }
     }
 
