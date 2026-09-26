@@ -36,7 +36,7 @@ public class ReviewImportService
         _reviewStateService = reviewStateService;
     }
 
-    public async Task RunAsync(int batchSize)
+    public async Task RunAsync(int batchSize, GameScope scope = default)
     {
         Console.WriteLine("  Loading reference data...");
         await _platformMatcher.LoadAsync();
@@ -48,23 +48,26 @@ public class ReviewImportService
         // Get all imported games with SoftwareId
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status    == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
-                                         .Select(s => new
-                                         {
-                                             s.MobyGameId,
-                                             SoftwareId = s.SoftwareId.Value
-                                         })
-                                         .ToListAsync();
+        // Review import has its own per-game resume marker in MobyGamesReviewImportState, so the
+        // selector only applies the scope here and the skip is done below.
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Total imported games: {importedGames.Count}");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState, MobyGamesMediaPass.Reviews,
+                                                                   scope, batchSize, usePassState: false);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Total imported games in scope: {importedGames.Count}");
 
         // Get already-processed review imports for resume
         var processedIds = await _reviewStateService.GetProcessedGameIdsAsync();
 
         var toProcess = importedGames
                        .Where(g => !processedIds.Contains(g.MobyGameId))
+                       .Select(g => new
+                        {
+                            g.MobyGameId,
+                            SoftwareId = g.SoftwareId.Value
+                        })
                        .Take(batchSize)
                        .ToList();
 

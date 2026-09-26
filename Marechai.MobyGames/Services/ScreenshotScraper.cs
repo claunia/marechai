@@ -30,7 +30,7 @@ public class ScreenshotScraper
         _httpClient     = httpClient;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun)
+    public async Task RunAsync(int batchSize, bool dryRun, GameScope scope = default)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Detecting games with screenshots...\n"
@@ -38,22 +38,24 @@ public class ScreenshotScraper
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        // Get imported games
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
-                                         .OrderBy(s => s.MobyGameId)
-                                         .ToListAsync();
+        // Get the imported games this pass still has to visit
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Found {importedGames.Count} imported games");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState,
+                                                                   MobyGamesMediaPass.ScreenshotPages, scope,
+                                                                   batchSize);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Games to process in this batch: {importedGames.Count}");
 
         int scraped      = 0;
         int skipped      = 0;
         int noScreenshots = 0;
         int failed       = 0;
         int gamesChecked = 0;
+        var visited      = new List<string>();
 
-        foreach(var game in importedGames.Take(batchSize))
+        foreach(var game in importedGames)
         {
             gamesChecked++;
 
@@ -109,6 +111,7 @@ public class ScreenshotScraper
             if(!hasScreenshots)
             {
                 noScreenshots++;
+                visited.Add(game.MobyGameId);
 
                 if(gamesChecked <= 5 || dryRun)
                     Console.WriteLine($"  [{gamesChecked}/{Math.Min(batchSize, importedGames.Count)}] {game.MobyGameId}: No screenshots tab");
@@ -127,6 +130,7 @@ public class ScreenshotScraper
             {
                 Console.WriteLine("    → Already scraped, skipping");
                 skipped++;
+                visited.Add(game.MobyGameId);
 
                 continue;
             }
@@ -199,9 +203,16 @@ public class ScreenshotScraper
             // Store in mobygames_raw as a new chunk
             await _sourceDb.InsertRowAsync(game.MobyGameId, NewGameRawFetcher.ChunkScreenshots, html);
 
+            // The page is new, so download-screenshots has work to do on this game again.
+            await passState.ClearVisitedAsync(MobyGamesMediaPass.Screenshots, game.MobyGameId);
+
             Console.WriteLine(" \e[32mOK\e[0m");
             scraped++;
+            visited.Add(game.MobyGameId);
         }
+
+        // Failed fetches are deliberately not marked, so they are retried on the next run.
+        if(!dryRun) await passState.MarkVisitedAsync(MobyGamesMediaPass.ScreenshotPages, visited);
 
         Console.WriteLine("\n  ────────────────────────────────────");
         Console.WriteLine($"    Games checked:    {gamesChecked}");

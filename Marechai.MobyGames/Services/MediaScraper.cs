@@ -28,7 +28,7 @@ public class MediaScraper
         _httpClient     = httpClient;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun)
+    public async Task RunAsync(int batchSize, bool dryRun, GameScope scope = default)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Detecting games with media tab...\n"
@@ -36,14 +36,14 @@ public class MediaScraper
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        // Get imported games
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
-                                         .OrderBy(s => s.MobyGameId)
-                                         .ToListAsync();
+        // Get the imported games this pass still has to visit
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Found {importedGames.Count} imported games");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState, MobyGamesMediaPass.MediaPages,
+                                                                   scope, batchSize);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Games to process in this batch: {importedGames.Count}");
 
         int scraped  = 0;
         int skipped  = 0;
@@ -51,7 +51,9 @@ public class MediaScraper
         int failed   = 0;
         int gamesChecked = 0;
 
-        foreach(var game in importedGames.Take(batchSize))
+        var visited = new List<string>();
+
+        foreach(var game in importedGames)
         {
             gamesChecked++;
 
@@ -67,6 +69,7 @@ public class MediaScraper
                     Console.WriteLine($"  [{gamesChecked}/{Math.Min(batchSize, importedGames.Count)}] {game.MobyGameId}: Already scraped, skipping");
 
                 skipped++;
+                visited.Add(game.MobyGameId);
 
                 continue;
             }
@@ -139,6 +142,9 @@ public class MediaScraper
             // Store in mobygames_raw as a new chunk (even without videos, to avoid re-fetching)
             await _sourceDb.InsertRowAsync(game.MobyGameId, NewGameRawFetcher.ChunkMedia, html);
 
+            // The page is new, so import-videos has work to do on this game again.
+            await passState.ClearVisitedAsync(MobyGamesMediaPass.Videos, game.MobyGameId);
+
             if(hasVideos)
             {
                 Console.WriteLine(" \e[32mOK\e[0m (has videos)");
@@ -149,7 +155,12 @@ public class MediaScraper
                 Console.WriteLine(" \e[33mOK\e[0m (no videos)");
                 noMedia++;
             }
+
+            visited.Add(game.MobyGameId);
         }
+
+        // Failed fetches are deliberately not marked, so they are retried on the next run.
+        if(!dryRun) await passState.MarkVisitedAsync(MobyGamesMediaPass.MediaPages, visited);
 
         Console.WriteLine("\n  ────────────────────────────────────");
         Console.WriteLine($"    Games checked:      {gamesChecked}");

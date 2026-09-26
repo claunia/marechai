@@ -229,6 +229,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoundSynthVideo>                    SoundSynthVideos                    { get; set; }
     public virtual DbSet<SoftwareCriticReview>               SoftwareCriticReviews               { get; set; }
     public virtual DbSet<MobyGamesReviewImportState>         MobyGamesReviewImportStates         { get; set; }
+    public virtual DbSet<MobyGamesMediaPassState>            MobyGamesMediaPassStates            { get; set; }
     public virtual DbSet<SoftwareUserRating>                  SoftwareUserRatings                 { get; set; }
     public virtual DbSet<SoftwareUserReview>                  SoftwareUserReviews                 { get; set; }
     public virtual DbSet<SoftwareUserReviewVote>              SoftwareUserReviewVotes             { get; set; }
@@ -3482,6 +3483,13 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasIndex(e => e.MobyGameId).IsUnique();
             entity.HasIndex(e => e.Status);
+        });
+
+        modelBuilder.Entity<MobyGamesMediaPassState>(entity =>
+        {
+            // One row per (game, pass); the unique index also serves the per-pass lookup of
+            // already-visited games that every media pass does at startup.
+            entity.HasIndex(e => new { e.Pass, e.MobyGameId }).IsUnique();
         });
 
         modelBuilder.Entity<SoftwareUserRating>(entity =>

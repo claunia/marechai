@@ -1034,6 +1034,24 @@ public enum MobyGamesReviewImportStatus : byte
     NoReviews = 4
 }
 
+/// <summary>
+///     One of the per-game media passes the MobyGames tool runs over already-imported games
+///     (scraping a sub-page into the raw cache, or importing/downloading from it). Recorded in
+///     <c>MobyGamesMediaPassState</c> so each pass can skip the games it has already visited
+///     instead of restarting from the head of the catalogue on every run.
+/// </summary>
+public enum MobyGamesMediaPass : byte
+{
+    Covers           = 0,
+    PromoPages       = 1,
+    PromoArt         = 2,
+    ScreenshotPages  = 3,
+    Screenshots      = 4,
+    MediaPages       = 5,
+    Videos           = 6,
+    Reviews          = 7
+}
+
 public enum SuggestionEntityType : byte
 {
     Company          = 1,

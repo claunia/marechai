@@ -34,7 +34,7 @@ public class CoverDownloadService
         _assetRootPath     = assetRootPath;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
+    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false, GameScope scope = default)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing covers without downloading...\n"
@@ -42,16 +42,16 @@ public class CoverDownloadService
                                   ? "\n  Starting cover download \e[33;1m(--download-only: conversion skipped, writing to photos-new/)\e[0m...\n"
                                   : "\n  Starting cover download...\n");
 
-        // Get all imported games with SoftwareId
+        // Get the imported games this pass still has to visit
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
-                                         .OrderBy(s => s.MobyGameId)
-                                         .ToListAsync();
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Found {importedGames.Count} imported games with SoftwareId");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState, MobyGamesMediaPass.Covers,
+                                                                   scope, batchSize);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Games to process in this batch: {importedGames.Count}");
 
         // Get already-processed cover URLs for quick skip
         var processedUrls = dryRun ? [] : await _coverStateService.GetProcessedCoverUrlsAsync();
@@ -60,9 +60,10 @@ public class CoverDownloadService
 
         var c              = new MediaCounters();
         int gamesProcessed = 0;
-        int total          = Math.Min(batchSize, importedGames.Count);
+        int total          = importedGames.Count;
+        var visited        = new List<string>();
 
-        foreach(var game in importedGames.Take(batchSize))
+        foreach(var game in importedGames)
         {
             gamesProcessed++;
 
@@ -72,8 +73,15 @@ public class CoverDownloadService
             bool ok = await ProcessGameAsync(game, rows, processedUrls, dryRun, downloadOnly, c,
                                              $"[{gamesProcessed}/{total}]");
 
+            // An aborted run (rate limit, network failure) must not mark the game as visited.
             if(!ok) break;
+
+            // Cover art comes from the import's own chunks, so there is no scraper upstream to
+            // invalidate this marker; re-run with --force after re-fetching a game's pages.
+            visited.Add(game.MobyGameId);
         }
+
+        if(!dryRun) await passState.MarkVisitedAsync(MobyGamesMediaPass.Covers, visited);
 
         // Print summary
         Console.WriteLine("\n  ────────────────────────────────────");

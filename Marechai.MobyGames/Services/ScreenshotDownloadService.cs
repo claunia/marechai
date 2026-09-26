@@ -38,7 +38,7 @@ public class ScreenshotDownloadService
         _assetRootPath   = assetRootPath;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
+    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false, GameScope scope = default)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing screenshots without downloading...\n"
@@ -48,13 +48,13 @@ public class ScreenshotDownloadService
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null)
-                                         .OrderBy(s => s.MobyGameId)
-                                         .ToListAsync();
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Found {importedGames.Count} imported games");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState, MobyGamesMediaPass.Screenshots,
+                                                                   scope, batchSize);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Games to process in this batch: {importedGames.Count}");
 
         var processedUrls = dryRun ? new HashSet<string>() : await _stateService.GetProcessedScreenshotUrlsAsync();
 
@@ -65,9 +65,10 @@ public class ScreenshotDownloadService
 
         var c              = new MediaCounters();
         int gamesProcessed = 0;
-        int total          = Math.Min(batchSize, importedGames.Count);
+        int total          = importedGames.Count;
+        var visited        = new List<string>();
 
-        foreach(var game in importedGames.Take(batchSize))
+        foreach(var game in importedGames)
         {
             gamesProcessed++;
 
@@ -81,8 +82,16 @@ public class ScreenshotDownloadService
             bool ok = await ProcessGameAsync(game, rows, processedUrls, dryRun, downloadOnly, c,
                                              $"[{gamesProcessed}/{total}]");
 
+            // An aborted run (rate limit, network failure) must not mark the game as visited.
             if(!ok) break;
+
+            // Marked even when the screenshot page was not cached: otherwise the pass would re-check
+            // the same pageless games forever and never advance. scrape-screenshot-pages clears this
+            // marker when it actually fetches the page, so the game comes back here with work to do.
+            visited.Add(game.MobyGameId);
         }
+
+        if(!dryRun) await passState.MarkVisitedAsync(MobyGamesMediaPass.Screenshots, visited);
 
         Console.WriteLine("\n  ────────────────────────────────────");
 

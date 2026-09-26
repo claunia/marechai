@@ -36,7 +36,7 @@ public class PromoArtDownloadService
         _assetRootPath  = assetRootPath;
     }
 
-    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false)
+    public async Task RunAsync(int batchSize, bool dryRun, bool downloadOnly = false, GameScope scope = default)
     {
         Console.WriteLine(dryRun
                               ? "\n  \e[33;1m[DRY RUN]\e[0m Parsing promo art without downloading...\n"
@@ -46,16 +46,14 @@ public class PromoArtDownloadService
 
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        // Only consider import states whose SoftwareId still exists in Softwares — stale states
-        // (Software deleted after import) would otherwise cause an FK violation on insert.
-        var importedGames = await context.MobyGamesImportStates
-                                         .Where(s => s.Status     == MobyGamesImportStatus.Imported &&
-                                                     s.SoftwareId != null &&
-                                                     context.Softwares.Any(sw => sw.Id == s.SoftwareId.Value))
-                                         .OrderBy(s => s.MobyGameId)
-                                         .ToListAsync();
+        var passState = new MediaPassStateService(_contextFactory);
 
-        Console.WriteLine($"  Found {importedGames.Count} imported games");
+        var importedGames = await ImportedGameSelector.SelectAsync(context, passState, MobyGamesMediaPass.PromoArt,
+                                                                   scope, batchSize,
+                                                                   requireExistingSoftware: true);
+
+        Console.WriteLine($"  Scope: {scope.Describe()}");
+        Console.WriteLine($"  Games to process in this batch: {importedGames.Count}");
 
         var processedUrls = dryRun ? new HashSet<string>() : await _stateService.GetProcessedPromoUrlsAsync();
 
@@ -63,9 +61,10 @@ public class PromoArtDownloadService
 
         var c              = new MediaCounters();
         int gamesProcessed = 0;
-        int total          = Math.Min(batchSize, importedGames.Count);
+        int total          = importedGames.Count;
+        var visited        = new List<string>();
 
-        foreach(var game in importedGames.Take(batchSize))
+        foreach(var game in importedGames)
         {
             gamesProcessed++;
 
@@ -79,8 +78,16 @@ public class PromoArtDownloadService
             bool ok = await ProcessGameAsync(game, rows, processedUrls, dryRun, downloadOnly, c,
                                              $"[{gamesProcessed}/{total}]");
 
+            // An aborted run (rate limit, network failure) must not mark the game as visited.
             if(!ok) break;
+
+            // Marked even when the promo page was not cached: otherwise the pass would re-check the
+            // same pageless games forever and never advance. scrape-promo-pages clears this marker
+            // when it actually fetches the page, so the game comes back here with work to do.
+            visited.Add(game.MobyGameId);
         }
+
+        if(!dryRun) await passState.MarkVisitedAsync(MobyGamesMediaPass.PromoArt, visited);
 
         Console.WriteLine("\n  ────────────────────────────────────");
 

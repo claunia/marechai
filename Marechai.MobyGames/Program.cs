@@ -110,6 +110,8 @@ class Program
 
             case "download-covers":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int coverBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
@@ -157,7 +159,7 @@ class Program
 
                 try
                 {
-                    await coverDownloadService.RunAsync(coverBatchSize, dryRun, downloadOnly);
+                    await coverDownloadService.RunAsync(coverBatchSize, dryRun, downloadOnly, scope);
                 }
                 finally
                 {
@@ -201,6 +203,8 @@ class Program
 
             case "import-reviews":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int reviewBatchSize = config.GetValue("Import:BatchSize", 500);
                 int reviewDelayMs   = config.GetValue("MobyGames:DelayMs", 2000);
 
@@ -222,7 +226,7 @@ class Program
                     factory, sourceDb, platformMatcher, magazineMatcher,
                     reviewStateService, countryMatcher);
 
-                await reviewImportService.RunAsync(reviewBatchSize);
+                await reviewImportService.RunAsync(reviewBatchSize, scope);
 
                 break;
             }
@@ -312,6 +316,8 @@ class Program
 
             case "scrape-promo-pages":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int promoBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
                 bool dryRun        = false;
@@ -338,7 +344,7 @@ class Program
 
                 try
                 {
-                    await promoScraper.RunAsync(promoBatchSize, dryRun);
+                    await promoScraper.RunAsync(promoBatchSize, dryRun, scope);
                 }
                 finally
                 {
@@ -350,6 +356,8 @@ class Program
 
             case "download-promo-art":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int promoBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs        = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot   = config.GetValue<string>("MobyGames:AssetRootPath");
@@ -391,7 +399,7 @@ class Program
 
                 try
                 {
-                    await promoDownloadService.RunAsync(promoBatchSize, dryRun, downloadOnly);
+                    await promoDownloadService.RunAsync(promoBatchSize, dryRun, downloadOnly, scope);
                 }
                 finally
                 {
@@ -411,6 +419,8 @@ class Program
 
             case "scrape-screenshot-pages":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int screenshotBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs             = config.GetValue("MobyGames:DelayMs", 2000);
                 bool dryRun             = false;
@@ -438,7 +448,7 @@ class Program
 
                 try
                 {
-                    await screenshotScraper.RunAsync(screenshotBatchSize, dryRun);
+                    await screenshotScraper.RunAsync(screenshotBatchSize, dryRun, scope);
                 }
                 finally
                 {
@@ -450,6 +460,8 @@ class Program
 
             case "download-screenshots":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int screenshotBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs             = config.GetValue("MobyGames:DelayMs", 2000);
                 string assetRoot        = config.GetValue<string>("MobyGames:AssetRootPath");
@@ -493,7 +505,7 @@ class Program
 
                 try
                 {
-                    await screenshotDownloadService.RunAsync(screenshotBatchSize, dryRun, downloadOnly);
+                    await screenshotDownloadService.RunAsync(screenshotBatchSize, dryRun, downloadOnly, scope);
                 }
                 finally
                 {
@@ -513,6 +525,8 @@ class Program
 
             case "scrape-media-pages":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int mediaBatchSize = config.GetValue("Import:BatchSize", 500);
                 int delayMs        = 2000;
                 bool dryRun        = false;
@@ -533,7 +547,7 @@ class Program
 
                 try
                 {
-                    await mediaScraper.RunAsync(mediaBatchSize, dryRun);
+                    await mediaScraper.RunAsync(mediaBatchSize, dryRun, scope);
                 }
                 finally
                 {
@@ -545,6 +559,8 @@ class Program
 
             case "import-videos":
             {
+                if(!GameScope.TryParse(args, out GameScope scope)) return 1;
+
                 int videoBatchSize = config.GetValue("Import:BatchSize", 500);
                 bool dryRun        = false;
 
@@ -561,7 +577,7 @@ class Program
                 var videoImportService = new VideoImportService(
                     factory, sourceDb, videoStateService);
 
-                await videoImportService.RunAsync(videoBatchSize, dryRun);
+                await videoImportService.RunAsync(videoBatchSize, dryRun, scope);
 
                 break;
             }
@@ -1076,7 +1092,15 @@ class Program
                 Console.WriteLine("                                                  Import next batch of games (--unattended skips games needing prompts;");
                 Console.WriteLine("                                                  --yes-to-all implies --unattended and auto-picks 'create new entry',");
                 Console.WriteLine("                                                  'create new company', and ProductCodeIssuer.Other instead of skipping)");
-                Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
+                Console.WriteLine("");
+                Console.WriteLine("  The download/scrape commands below all share these scoping options:");
+                Console.WriteLine("    --recent N    only the N most recently imported games");
+                Console.WriteLine("    --since DATE  only games imported on or after DATE (YYYY-MM-DD)");
+                Console.WriteLine("    --force       re-visit games the pass already processed");
+                Console.WriteLine("  Without --force each pass skips the games it has already visited, so repeated");
+                Console.WriteLine("  runs advance through the catalogue instead of restarting at the same games.");
+                Console.WriteLine("");
+                Console.WriteLine("    download-covers [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Download covers for imported games (--download-only skips the");
                 Console.WriteLine("                                                  ImageMagick conversion step; run `convert-images` later)");
                 Console.WriteLine("    repair-covers [--batch-size N] [--dry-run]");
@@ -1086,7 +1110,7 @@ class Program
                 Console.WriteLine("                                                  Reparse the Covers tab from cached raw HTML and correct GroupId/Platform on");
                 Console.WriteLine("                                                  MobyGamesCoverDownloadState rows. No network access. Run `repair-covers`");
                 Console.WriteLine("                                                  afterwards to propagate the fix onto SoftwareCover/SoftwareCoverGroup.");
-                Console.WriteLine("    import-reviews [--batch-size N]");
+                Console.WriteLine("    import-reviews [--batch-size N] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Import critic reviews for imported games");
                 Console.WriteLine("    status                                        Show import status counts");
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
@@ -1098,14 +1122,14 @@ class Program
                 Console.WriteLine("    scrape-new-games [--batch-size N] [--delay-ms N] [--dry-run]");
                 Console.WriteLine("                                                  Fetch main/credits/releases/specs HTML for discovered games into mobygames_raw");
                 Console.WriteLine("    discovery-status                              Show MobyGamesDiscoveredGames status counts");
-                Console.WriteLine("    scrape-promo-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    scrape-promo-pages [--batch-size N] [--delay-ms N] [--dry-run] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Scrape promo art pages from new MobyGames");
-                Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
+                Console.WriteLine("    download-promo-art [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Download promo art images for scraped games");
                 Console.WriteLine("    promo-art-status                              Show promo art download status counts");
-                Console.WriteLine("    scrape-screenshot-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    scrape-screenshot-pages [--batch-size N] [--delay-ms N] [--dry-run] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Scrape screenshot pages from new MobyGames");
-                Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run] [--download-only]");
+                Console.WriteLine("    download-screenshots [--batch-size N] [--delay-ms N] [--dry-run] [--download-only] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Download screenshots for scraped games");
                 Console.WriteLine("    convert-images --type covers|promo-art|screenshots|all [--batch-size N] [--parallel N] [--asset-root <path>] [--dry-run]");
                 Console.WriteLine("                                                  Run the ImageMagick conversion pass on already-downloaded originals.");
@@ -1113,9 +1137,9 @@ class Program
                 Console.WriteLine("                                                  --parallel N caps concurrent ImageMagick invocations (default: one per CPU core).");
                 Console.WriteLine("                                                  Designed to be offloaded to a more powerful machine.");
                 Console.WriteLine("    screenshot-status                             Show screenshot download status counts");
-                Console.WriteLine("    scrape-media-pages [--batch-size N] [--delay-ms N] [--dry-run]");
+                Console.WriteLine("    scrape-media-pages [--batch-size N] [--delay-ms N] [--dry-run] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Scrape media (video) pages from new MobyGames");
-                Console.WriteLine("    import-videos [--batch-size N] [--dry-run]");
+                Console.WriteLine("    import-videos [--batch-size N] [--dry-run] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Import video links from scraped media pages");
                 Console.WriteLine("    video-status                                  Show video import status counts");
                 Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run] [--unattended]");
