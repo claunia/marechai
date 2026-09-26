@@ -35,6 +35,16 @@ public class IgdbGame : BaseModel<long>
     [StringLength(4096)]
     public string PlatformIdsJson { get; set; }
 
+    /// <summary>
+    ///     IGDB's <c>first_release_date</c>, stored raw as Unix epoch seconds exactly as the API returns it, and
+    ///     converted at the use site. Used as a matching/disambiguation signal: Jaro-Winkler scores sequels in a
+    ///     series above the auto-accept threshold against each other (e.g. <c>Doom 3</c> vs <c>DOOM II</c>), and the
+    ///     release year is the signal that separates them. Null means "not fetched yet"; <c>0</c> is the sentinel for
+    ///     "fetched, IGDB has no date", mirroring how <see cref="Slug" /> uses an empty string, so the backfill does
+    ///     not retry such rows forever. Both must be treated as unknown rather than as a mismatch.
+    /// </summary>
+    public long? FirstReleaseDate { get; set; }
+
     [Required]
     public IgdbMatchStatus MatchStatus { get; set; }
 

@@ -61,7 +61,7 @@ public class GameMirrorService
                                                                    bool dryRun)
     {
         string query = new ApicalypseQueryBuilder()
-                      .Fields("id,name,slug,game_type,parent_game,version_parent,platforms")
+                      .Fields("id,name,slug,game_type,parent_game,version_parent,platforms,first_release_date")
                       .Where($"id > {afterId}")
                       .Sort("id asc")
                       .Limit(pageSize)
@@ -111,17 +111,23 @@ public class GameMirrorService
                                              ? plats.EnumerateArray().Select(p => p.GetInt32()).ToList()
                                              : [];
 
+                long? firstReleaseDate = element.TryGetProperty("first_release_date", out var frd) &&
+                                          frd.ValueKind == JsonValueKind.Number
+                                              ? frd.GetInt64()
+                                              : null;
+
                 context.IgdbGames.Add(new IgdbGame
                 {
-                    IgdbId          = igdbId,
-                    Name            = name,
-                    Slug            = slug,
-                    GameTypeId      = gameTypeId,
-                    ParentGameId    = parentGameId,
-                    VersionParentId = versionParentId,
-                    PlatformIdsJson = JsonSerializer.Serialize(platformIds),
-                    MatchStatus     = IgdbMatchStatus.Pending,
-                    BatchNumber     = batchNumber
+                    IgdbId           = igdbId,
+                    Name             = name,
+                    Slug             = slug,
+                    GameTypeId       = gameTypeId,
+                    ParentGameId     = parentGameId,
+                    VersionParentId  = versionParentId,
+                    PlatformIdsJson  = JsonSerializer.Serialize(platformIds),
+                    FirstReleaseDate = firstReleaseDate,
+                    MatchStatus      = IgdbMatchStatus.Pending,
+                    BatchNumber      = batchNumber
                 });
 
                 lastId = igdbId;
@@ -187,6 +193,58 @@ public class GameMirrorService
         }
 
         Console.WriteLine($"  Backfilled slugs for {ids.Count} games.");
+
+        return ids.Count;
+    }
+
+    /// <summary>Fills in <see cref="IgdbGame.FirstReleaseDate" /> for rows mirrored before the field was tracked.
+    /// Run repeatedly (e.g. via a CLI loop) until it reports 0 remaining. Games IGDB has no date for are stamped
+    /// with the <c>0</c> sentinel so they are not retried on every pass.</summary>
+    public async Task<int> BackfillFirstReleaseDatesAsync(int batchSize, bool dryRun)
+    {
+        int pageSize = Math.Min(batchSize <= 0 ? IgdbMaxPageSize : batchSize, IgdbMaxPageSize);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        List<long> ids = await context.IgdbGames.Where(g => g.FirstReleaseDate == null)
+                                       .OrderBy(g => g.IgdbId)
+                                       .Select(g => g.IgdbId)
+                                       .Take(pageSize)
+                                       .ToListAsync();
+
+        if(ids.Count == 0)
+        {
+            Console.WriteLine("  No games left needing a release-date backfill.");
+
+            return 0;
+        }
+
+        string query = new ApicalypseQueryBuilder()
+                      .Fields("id,first_release_date")
+                      .Where($"id = ({string.Join(",", ids)})")
+                      .Limit(pageSize)
+                      .Build();
+
+        using JsonDocument doc = await _client.QueryAsync("games", query);
+
+        var datesById = doc.RootElement.EnumerateArray()
+                           .ToDictionary(e => e.GetProperty("id").GetInt64(),
+                                         e => e.TryGetProperty("first_release_date", out var frd) &&
+                                              frd.ValueKind == JsonValueKind.Number
+                                                  ? frd.GetInt64()
+                                                  : (long?)null);
+
+        if(!dryRun)
+        {
+            List<IgdbGame> games = await context.IgdbGames.Where(g => ids.Contains(g.IgdbId)).ToListAsync();
+
+            foreach(IgdbGame game in games)
+                game.FirstReleaseDate = datesById.GetValueOrDefault(game.IgdbId) ?? 0;
+
+            await context.SaveChangesAsync();
+        }
+
+        Console.WriteLine($"  Backfilled release dates for {ids.Count} games.");
 
         return ids.Count;
     }
