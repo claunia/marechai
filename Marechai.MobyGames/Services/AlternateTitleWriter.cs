@@ -22,10 +22,18 @@ namespace Marechai.MobyGames.Services;
 /// </summary>
 public static class AlternateTitleWriter
 {
-    /// <summary>Number of rows inserted and comments filled by a single apply.</summary>
-    public readonly record struct Result(int Inserted, int CommentsFilled)
+    /// <summary>
+    ///     Number of rows inserted, and how many comments were actually written, by a single apply.
+    ///     <para>
+    ///         <see cref="CommentsWritten" /> counts every comment persisted — those carried in on a
+    ///         newly inserted row just as much as those filled into an existing row that had none.
+    ///         Counting only the latter would report "3 new, 0 comments" for three rows that each
+    ///         got a comment.
+    ///     </para>
+    /// </summary>
+    public readonly record struct Result(int Inserted, int CommentsWritten)
     {
-        public bool Changed => Inserted > 0 || CommentsFilled > 0;
+        public bool Changed => Inserted > 0 || CommentsWritten > 0;
     }
 
     /// <summary>
@@ -48,8 +56,8 @@ public static class AlternateTitleWriter
         foreach(SoftwareAlternativeTitle row in existing)
             byTitle.TryAdd(row.Title, row);
 
-        int inserted       = 0;
-        int commentsFilled = 0;
+        int inserted        = 0;
+        int commentsWritten = 0;
 
         foreach(ParsedAlternateTitle candidate in parsed)
         {
@@ -73,7 +81,7 @@ public static class AlternateTitleWriter
                 if(!string.IsNullOrWhiteSpace(comment) && string.IsNullOrWhiteSpace(row.Comment))
                 {
                     row.Comment = comment;
-                    commentsFilled++;
+                    commentsWritten++;
                 }
 
                 continue;
@@ -89,8 +97,10 @@ public static class AlternateTitleWriter
             context.SoftwareAlternativeTitles.Add(added);
             byTitle[title] = added;
             inserted++;
+
+            if(added.Comment is not null) commentsWritten++;
         }
 
-        return new Result(inserted, commentsFilled);
+        return new Result(inserted, commentsWritten);
     }
 }

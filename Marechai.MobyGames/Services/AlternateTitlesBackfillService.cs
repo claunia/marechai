@@ -163,11 +163,11 @@ public class AlternateTitlesBackfillService
 
             Console.WriteLine($"{label} \e[90m{parsed.Count} found\e[0m, " +
                               $"\e[32;1m{result.Inserted}\e[0m new, " +
-                              $"{(result.CommentsFilled > 0 ? "\e[32;1m" : "\e[90m")}{result.CommentsFilled}\e[0m " +
-                              $"comment(s) filled{(dryRun ? " \e[33m(dry-run)\e[0m" : "")}");
+                              $"{(result.CommentsWritten > 0 ? "\e[32;1m" : "\e[90m")}{result.CommentsWritten}\e[0m " +
+                              $"with a comment{(dryRun ? " \e[33m(dry-run)\e[0m" : "")}");
 
-            totals.Inserted       += result.Inserted;
-            totals.CommentsFilled += result.CommentsFilled;
+            totals.Inserted        += result.Inserted;
+            totals.CommentsWritten += result.CommentsWritten;
         }
         catch(Exception ex)
         {
@@ -206,8 +206,7 @@ public class AlternateTitlesBackfillService
         Console.WriteLine($"\n  \e[36mDone\e[0m \e[90m— processed\e[0m {Num(totals.Processed, "\e[36;1m")}" +
                           $"\e[90m, titles found\e[0m {Num(totals.TitlesFound, "\e[36;1m")}" +
                           $"\e[90m, {(dryRun ? "would insert" : "inserted")}\e[0m {Num(totals.Inserted, "\e[32;1m")}" +
-                          $"\e[90m, comments {(dryRun ? "would fill" : "filled")}\e[0m " +
-                          $"{Num(totals.CommentsFilled, "\e[32;1m")}" +
+                          $"\e[90m, with a comment\e[0m {Num(totals.CommentsWritten, "\e[32;1m")}" +
                           $"\e[90m, no titles on page\e[0m {Num(totals.SkippedNone, "\e[90m")}" +
                           $"\e[90m, already complete\e[0m {Num(totals.SkippedUnchanged, "\e[90m")}" +
                           $"\e[90m, failed\e[0m {Num(totals.Failed, "\e[31;1m")}");
@@ -215,7 +214,7 @@ public class AlternateTitlesBackfillService
 
     sealed class Counters
     {
-        public int CommentsFilled;
+        public int CommentsWritten;
         public int Failed;
         public int Inserted;
         public int Processed;
