@@ -109,7 +109,11 @@ public class AlternateTitlesBackfillService
     async Task ProcessAsync(MarechaiContext context, MobyGamesImportState state, bool dryRun, Counters totals)
     {
         totals.Processed++;
-        Console.Write($"  [Software {state.SoftwareId}] {state.MobyGameId}...");
+
+        // Most games have no Alternate Titles section at all (roughly five in six), so nothing is
+        // printed until there is something to say. The per-game line is written in one go below
+        // rather than opened before the parse, and the run summary still counts every game.
+        string label = $"  [Software {state.SoftwareId}] {state.MobyGameId}";
 
         try
         {
@@ -117,7 +121,6 @@ public class AlternateTitlesBackfillService
 
             if(parsed.Count == 0)
             {
-                Console.WriteLine(" 0 found, skip.");
                 totals.SkippedNone++;
 
                 return;
@@ -129,7 +132,7 @@ public class AlternateTitlesBackfillService
 
             if(software is null)
             {
-                Console.WriteLine($" {parsed.Count} found, but Software {state.SoftwareId} is missing, skip.");
+                Console.WriteLine($"{label} {parsed.Count} found, but Software {state.SoftwareId} is missing, skip.");
                 totals.Failed++;
 
                 return;
@@ -139,7 +142,6 @@ public class AlternateTitlesBackfillService
 
             if(!result.Changed)
             {
-                Console.WriteLine($" {parsed.Count} found, all already present.");
                 totals.SkippedUnchanged++;
 
                 return;
@@ -150,7 +152,7 @@ public class AlternateTitlesBackfillService
             else
                 await context.SaveChangesAsync();
 
-            Console.WriteLine($" {parsed.Count} found, {result.Inserted} new, " +
+            Console.WriteLine($"{label} {parsed.Count} found, {result.Inserted} new, " +
                               $"{result.CommentsFilled} comments filled{(dryRun ? " (dry-run)" : "")}.");
 
             totals.Inserted       += result.Inserted;
@@ -158,7 +160,7 @@ public class AlternateTitlesBackfillService
         }
         catch(Exception ex)
         {
-            Console.WriteLine($" Error: {ex.Message}");
+            Console.WriteLine($"{label} Error: {ex.Message}");
             totals.Failed++;
             context.ChangeTracker.Clear();
         }
