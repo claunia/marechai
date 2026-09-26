@@ -39,14 +39,20 @@ public class AlternateTitlesBackfillService
     /// </summary>
     public async Task RunForSlugAsync(string slug, bool dryRun)
     {
-        Console.WriteLine($"Backfilling alternate titles for '{slug}' (dryRun={dryRun})\n");
+        Console.WriteLine($"\e[36mBackfilling alternate titles for \e[36;1m{slug}\e[0m" +
+                          $"{(dryRun ? " \e[33;1m[DRY RUN]\e[0m" : "")}\n");
 
         List<ParsedAlternateTitle> found = await ParseAlternateTitlesForSlugAsync(slug);
 
-        Console.WriteLine($"  {found.Count} alternate title(s) in cached HTML:");
+        Console.WriteLine(found.Count == 0
+                              ? "  \e[33mNo alternate titles in cached HTML\e[0m"
+                              : $"  \e[32;1m{found.Count}\e[0m alternate title(s) in cached HTML:");
 
         foreach(ParsedAlternateTitle title in found)
-            Console.WriteLine($"    \"{title.Title}\"{(title.Comment is null ? "" : $" -- {title.Comment}")}");
+        {
+            Console.WriteLine($"    \e[36m{title.Title}\e[0m" +
+                              (title.Comment is null ? "" : $" \e[90m— {title.Comment}\e[0m"));
+        }
 
         Console.WriteLine();
 
@@ -57,14 +63,15 @@ public class AlternateTitlesBackfillService
 
         if(state is null)
         {
-            Console.WriteLine($"No import state row for '{slug}': nothing to write to.");
+            Console.WriteLine($"\e[33mNo import state row for '{slug}': nothing to write to.\e[0m");
 
             return;
         }
 
         if(state.SoftwareId is null)
         {
-            Console.WriteLine($"'{slug}' is not linked to a Software row (status={state.Status}): nothing to write to.");
+            Console.WriteLine($"\e[33m'{slug}' is not linked to a Software row (status={state.Status}): " +
+                              $"nothing to write to.\e[0m");
 
             return;
         }
@@ -80,7 +87,8 @@ public class AlternateTitlesBackfillService
     /// </summary>
     public async Task RunAsync(int batchSize, bool dryRun)
     {
-        Console.WriteLine($"Backfilling alternate titles (batch={batchSize}, dryRun={dryRun})\n");
+        Console.WriteLine($"\e[36mBackfilling alternate titles \e[90m(batch={batchSize})\e[0m" +
+                          $"{(dryRun ? " \e[33;1m[DRY RUN]\e[0m" : "")}\n");
 
         var totals = new Counters();
 
@@ -95,7 +103,7 @@ public class AlternateTitlesBackfillService
 
         if(batch.Count == 0)
         {
-            Console.WriteLine("No imported games to process.");
+            Console.WriteLine("\e[33mNo imported games to process.\e[0m");
 
             return;
         }
@@ -113,7 +121,7 @@ public class AlternateTitlesBackfillService
         // Most games have no Alternate Titles section at all (roughly five in six), so nothing is
         // printed until there is something to say. The per-game line is written in one go below
         // rather than opened before the parse, and the run summary still counts every game.
-        string label = $"  [Software {state.SoftwareId}] {state.MobyGameId}";
+        string label = $"  \e[90m[Software {state.SoftwareId}]\e[0m \e[36;1m{state.MobyGameId}\e[0m";
 
         try
         {
@@ -132,7 +140,8 @@ public class AlternateTitlesBackfillService
 
             if(software is null)
             {
-                Console.WriteLine($"{label} {parsed.Count} found, but Software {state.SoftwareId} is missing, skip.");
+                Console.WriteLine($"{label} \e[33m{parsed.Count} found, but Software {state.SoftwareId} " +
+                                  $"is missing, skip\e[0m");
                 totals.Failed++;
 
                 return;
@@ -152,15 +161,17 @@ public class AlternateTitlesBackfillService
             else
                 await context.SaveChangesAsync();
 
-            Console.WriteLine($"{label} {parsed.Count} found, {result.Inserted} new, " +
-                              $"{result.CommentsFilled} comments filled{(dryRun ? " (dry-run)" : "")}.");
+            Console.WriteLine($"{label} \e[90m{parsed.Count} found\e[0m, " +
+                              $"\e[32;1m{result.Inserted}\e[0m new, " +
+                              $"{(result.CommentsFilled > 0 ? "\e[32;1m" : "\e[90m")}{result.CommentsFilled}\e[0m " +
+                              $"comment(s) filled{(dryRun ? " \e[33m(dry-run)\e[0m" : "")}");
 
             totals.Inserted       += result.Inserted;
             totals.CommentsFilled += result.CommentsFilled;
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"{label} Error: {ex.Message}");
+            Console.WriteLine($"{label} \e[31mError: {ex.Message}\e[0m");
             totals.Failed++;
             context.ChangeTracker.Clear();
         }
@@ -188,12 +199,18 @@ public class AlternateTitlesBackfillService
 
     static void PrintSummary(Counters totals, bool dryRun)
     {
-        Console.WriteLine($"\nDone: processed={totals.Processed}, titles_found={totals.TitlesFound}, " +
-                          $"{(dryRun ? "would_insert" : "inserted")}={totals.Inserted}, " +
-                          $"comments_{(dryRun ? "would_be_filled" : "filled")}={totals.CommentsFilled}, " +
-                          $"skipped_none_on_page={totals.SkippedNone}, " +
-                          $"skipped_unchanged={totals.SkippedUnchanged}, " +
-                          $"failed={totals.Failed}");
+        // Counts that represent work carry colour; the quiet ones stay grey so the eye lands on
+        // what actually happened. A non-zero failure count is the only thing that turns red.
+        string Num(int value, string colourWhenSet) => value > 0 ? $"{colourWhenSet}{value}\e[0m" : $"\e[90m{value}\e[0m";
+
+        Console.WriteLine($"\n  \e[36mDone\e[0m \e[90m— processed\e[0m {Num(totals.Processed, "\e[36;1m")}" +
+                          $"\e[90m, titles found\e[0m {Num(totals.TitlesFound, "\e[36;1m")}" +
+                          $"\e[90m, {(dryRun ? "would insert" : "inserted")}\e[0m {Num(totals.Inserted, "\e[32;1m")}" +
+                          $"\e[90m, comments {(dryRun ? "would fill" : "filled")}\e[0m " +
+                          $"{Num(totals.CommentsFilled, "\e[32;1m")}" +
+                          $"\e[90m, no titles on page\e[0m {Num(totals.SkippedNone, "\e[90m")}" +
+                          $"\e[90m, already complete\e[0m {Num(totals.SkippedUnchanged, "\e[90m")}" +
+                          $"\e[90m, failed\e[0m {Num(totals.Failed, "\e[31;1m")}");
     }
 
     sealed class Counters
