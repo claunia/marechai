@@ -1988,6 +1988,46 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
             foreach(SoftwareExternalId externalId in sourceExternalIds)
                 externalId.SoftwareId = targetId;
 
+            // 8d. Merge SoftwareSimilarTo (composite PK, one row per unordered pair with SoftwareId <
+            //     SimilarSoftwareId — must remove+add). The source can sit on either side; the
+            //     SimilarSoftwareId FK is Restrict, so every row naming the source must go before it is
+            //     deleted. A source↔target link would become a self-link and is dropped.
+            List<SoftwareSimilarTo> sourceSimilar = await context.SoftwareSimilarTo
+                                                                 .Where(s => s.SoftwareId        == sourceId ||
+                                                                             s.SimilarSoftwareId == sourceId)
+                                                                 .ToListAsync();
+
+            HashSet<(ulong, ulong)> targetSimilarKeys = (await context.SoftwareSimilarTo
+                                                                      .Where(s => s.SoftwareId        == targetId ||
+                                                                                  s.SimilarSoftwareId == targetId)
+                                                                      .Select(s => new
+                                                                       {
+                                                                           s.SoftwareId,
+                                                                           s.SimilarSoftwareId
+                                                                       })
+                                                                      .ToListAsync())
+               .Select(s => (s.SoftwareId, s.SimilarSoftwareId))
+               .ToHashSet();
+
+            foreach(SoftwareSimilarTo similar in sourceSimilar)
+            {
+                context.SoftwareSimilarTo.Remove(similar);
+
+                ulong other = similar.SoftwareId == sourceId ? similar.SimilarSoftwareId : similar.SoftwareId;
+
+                if(other == targetId) continue;
+
+                (ulong, ulong) key = targetId < other ? (targetId, other) : (other, targetId);
+
+                if(!targetSimilarKeys.Add(key)) continue;
+
+                context.SoftwareSimilarTo.Add(new SoftwareSimilarTo
+                {
+                    SoftwareId        = key.Item1,
+                    SimilarSoftwareId = key.Item2
+                });
+            }
+
             // 9. Update MobyGames tracking tables
             List<MobyGamesImportState> importStates =
                 await context.MobyGamesImportStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
