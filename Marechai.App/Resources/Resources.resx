@@ -3988,4 +3988,6 @@
   <data name="FailedToSaveSoftwareCompilation" xml:space="preserve"><value>Failed to save software compilation.</value></data>
   <data name="FailedToDeleteSoftwareCompilation" xml:space="preserve"><value>Failed to delete software compilation.</value></data>
   <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Page {0} of {1}</value></data>
+  <data name="CompilationBaseSoftwareLabel" xml:space="preserve"><value>Base game</value></data>
+  <data name="CompilationAddonContentFor" xml:space="preserve"><value>Add-on content for</value></data>
 </root>

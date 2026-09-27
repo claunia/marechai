@@ -617,6 +617,7 @@ class Program
                 int dlcDelayMs      = 2000;
                 bool dlcDryRun      = false;
                 bool dlcUnattended  = false;
+                bool dlcRecheck     = args.Contains("--recheck");
 
                 for(int i = 1; i < args.Length - 1; i++)
                 {
@@ -647,7 +648,7 @@ class Program
 
                 try
                 {
-                    await dlcService.RunAsync(dlcBatchSize, dlcDryRun);
+                    await dlcService.RunAsync(dlcBatchSize, dlcDryRun, dlcRecheck);
                 }
                 catch(UserQuitException)
                 {
@@ -792,6 +793,14 @@ class Program
 
                 var cleanupService = new OrphanCleanupService(factory);
                 await cleanupService.RunAsync(cleanupDryRun, cleanupYes);
+
+                break;
+            }
+
+            case "dedupe-compilations":
+            {
+                var dedupeService = new CompilationDedupeService(factory);
+                await dedupeService.RunAsync(args.Contains("--dry-run"));
 
                 break;
             }
@@ -1142,8 +1151,9 @@ class Program
                 Console.WriteLine("    import-videos [--batch-size N] [--dry-run] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Import video links from scraped media pages");
                 Console.WriteLine("    video-status                                  Show video import status counts");
-                Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run] [--unattended]");
+                Console.WriteLine("    import-dlc-relations [--batch-size N] [--delay-ms N] [--dry-run] [--unattended] [--recheck]");
                 Console.WriteLine("                                                  Link DLC entries to their base games via MobyGames");
+                Console.WriteLine("                                                  (--recheck: retry DLCs already found to have no base game)");
                 Console.WriteLine("    resolve-compilation-relations [--batch-size N] [--dry-run] [--unattended]");
                 Console.WriteLine("                                                  Convert compilation Software to proper compilation releases");
                 Console.WriteLine("    reparse-specs [--batch-size N] [--dry-run]");
@@ -1161,6 +1171,9 @@ class Program
                 Console.WriteLine("    cleanup-orphan-duplicates [--dry-run] [--yes]");
                 Console.WriteLine("                                                  Merge duplicate orphan Software rows into their state-linked twin (backfill for");
                 Console.WriteLine("                                                  legacy data created before MarkSoftwareLinkedAsync). Prompts unless --yes is passed.");
+                Console.WriteLine("    dedupe-compilations [--dry-run]");
+                Console.WriteLine("                                                  Delete same-name SoftwareCompilation copies not referenced by any import state");
+                Console.WriteLine("                                                  (left by repeated compilation imports), moving collections/files/covers to the kept copy.");
                 Console.WriteLine("    cf-login [--proxy <url>] [--proxy-auth user:pass] [--out <dir>] [--headless]");
                 Console.WriteLine("                                                  Solve Cloudflare + log in to MobyGames in a headful browser (ignores");
                 Console.WriteLine("                                                  Auth:Headless; uses Xvfb when there is no DISPLAY, ticks the Turnstile");

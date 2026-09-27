@@ -3446,4 +3446,6 @@
   <data name="FailedToSaveSoftwareCompilation" xml:space="preserve"><value>Softwarekompilation konnte nicht gespeichert werden.</value></data>
   <data name="FailedToDeleteSoftwareCompilation" xml:space="preserve"><value>Softwarekompilation konnte nicht gelöscht werden.</value></data>
   <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Seite {0} von {1}</value></data>
+  <data name="CompilationBaseSoftwareLabel" xml:space="preserve"><value>Basisspiel</value></data>
+  <data name="CompilationAddonContentFor" xml:space="preserve"><value>Zusatzinhalt für</value></data>
 </root>

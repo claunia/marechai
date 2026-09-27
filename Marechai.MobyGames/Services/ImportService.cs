@@ -1096,6 +1096,42 @@ public class ImportService
 
         bool hasUnresolved = unresolvedSlugs.Count > 0 || game.UnresolvableCompilationGames.Count > 0;
 
+        // Idempotency: if this slug was already imported as a compilation that still exists, only
+        // top up its contained-software junctions. Re-running the creation phase would add a second
+        // SoftwareCompilation (with duplicate releases) and orphan the first one, since
+        // MarkImportedAsync overwrites the state's SoftwareCompilationId.
+        ulong? existingCompilationId = await FindImportedCompilationIdAsync(context, game.MobyGameId);
+
+        if(existingCompilationId is not null)
+        {
+            HashSet<ulong> alreadyLinked = (await context.SoftwareBySoftwareCompilation
+                                                         .Where(j => j.SoftwareCompilationId == existingCompilationId)
+                                                         .Select(j => j.SoftwareId)
+                                                         .ToListAsync()).ToHashSet();
+
+            int added = 0;
+
+            foreach(ulong containedId in containedSoftwareIds.Distinct())
+            {
+                if(alreadyLinked.Contains(containedId)) continue;
+
+                context.SoftwareBySoftwareCompilation.Add(new SoftwareBySoftwareCompilation
+                {
+                    SoftwareCompilationId = existingCompilationId.Value,
+                    SoftwareId            = containedId
+                });
+
+                added++;
+            }
+
+            if(added > 0) await context.SaveChangesAsync();
+
+            Console.WriteLine($"    Already imported as compilation #{existingCompilationId}; " +
+                              $"linked {added} new contained game(s)");
+
+            return;
+        }
+
         // If nothing at all could be linked we cannot create a meaningful compilation; mark Failed
         // and still report the missing entries to admins so they can act.
         if(containedSoftwareIds.Count == 0)
@@ -1263,6 +1299,34 @@ public class ImportService
                                                                  compilationCreated: compilationCreated);
             }
         }
+    }
+
+    /// <summary>
+    ///     Returns the <see cref="SoftwareCompilation" /> ID an already-imported slug (any dash variant)
+    ///     points at, or <c>null</c> when the slug has no Imported compilation state or the compilation
+    ///     row no longer exists.
+    /// </summary>
+    internal static async Task<ulong?> FindImportedCompilationIdAsync(MarechaiContext context, string slug)
+    {
+        if(string.IsNullOrWhiteSpace(slug)) return null;
+
+        string   trimmed = slug.TrimStart('-');
+        string[] slugs   = new[] { slug, trimmed, $"-{trimmed}" }.Distinct().ToArray();
+
+        List<ulong> ids = await context.MobyGamesImportStates
+                                       .Where(s => slugs.Contains(s.MobyGameId)         &&
+                                                   s.Status == MobyGamesImportStatus.Imported &&
+                                                   s.SoftwareCompilationId != null)
+                                       .Select(s => s.SoftwareCompilationId.Value)
+                                       .ToListAsync();
+
+        foreach(ulong id in ids)
+        {
+            if(await context.SoftwareCompilations.AnyAsync(c => c.Id == id))
+                return id;
+        }
+
+        return null;
     }
 
     /// <summary>

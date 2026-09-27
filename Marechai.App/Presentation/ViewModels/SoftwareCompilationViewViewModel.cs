@@ -60,6 +60,15 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
     private Visibility _showBundledWith = Visibility.Collapsed;
 
     [ObservableProperty]
+    private string? _baseSoftwareName;
+
+    [ObservableProperty]
+    private int? _baseSoftwareId;
+
+    [ObservableProperty]
+    private Visibility _showBaseSoftware = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showBundledSoftware = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -182,6 +191,22 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
     }
 
     [RelayCommand]
+    public Task NavigateToBaseSoftware()
+    {
+        if(BaseSoftwareId is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoftwareId, BaseSoftwareId.Value },
+            { NavParamKeys.NavigationSource, nameof(SoftwareCompilationViewViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoftwareViewPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
     public Task NavigateToBundledMachine()
     {
         if(BundledMachineId is null) return Task.CompletedTask;
@@ -277,6 +302,8 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
             BundledSoftwareId   = compilation.SoftwareId;
             BundledMachineName  = compilation.Machine;
             BundledMachineId    = compilation.MachineId;
+            BaseSoftwareName    = compilation.BaseSoftware;
+            BaseSoftwareId      = compilation.BaseSoftwareId;
 
             string baseUrl = _configuration.GetSection("ApiClient:Url").Value ?? string.Empty;
             CoverImageUrl = compilation.FrontCoverId.HasValue
@@ -349,6 +376,7 @@ public partial class SoftwareCompilationViewViewModel : ObservableObject, IRegio
     {
         ShowBundledSoftware = !string.IsNullOrWhiteSpace(BundledSoftwareName) ? Visibility.Visible : Visibility.Collapsed;
         ShowBundledMachine  = !string.IsNullOrWhiteSpace(BundledMachineName) ? Visibility.Visible : Visibility.Collapsed;
+        ShowBaseSoftware    = !string.IsNullOrWhiteSpace(BaseSoftwareName) ? Visibility.Visible : Visibility.Collapsed;
         ShowBundledWith     = ShowBundledSoftware == Visibility.Visible || ShowBundledMachine == Visibility.Visible
                                   ? Visibility.Visible
                                   : Visibility.Collapsed;

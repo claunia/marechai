@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5234/"
+      "url": "http://127.0.0.1:5099/"
     }
   ],
   "paths": {
@@ -42434,6 +42434,129 @@
         }
       }
     },
+    "/software-compilations/{id}/merge": {
+      "post": {
+        "tags": [
+          "SoftwareCompilations"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeSoftwareCompilationsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeSoftwareCompilationsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeSoftwareCompilationsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/software-compilations/{id}/releases": {
       "get": {
         "tags": [
@@ -69379,6 +69502,26 @@
           }
         }
       },
+      "MergeSoftwareCompilationsRequest": {
+        "required": [
+          "targetId",
+          "sourceIds"
+        ],
+        "type": "object",
+        "properties": {
+          "targetId": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "sourceIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint64"
+            }
+          }
+        }
+      },
       "MessageDto": {
         "required": [
           "sender",
@@ -72031,6 +72174,19 @@
             "format": "uint64"
           },
           "software": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "base_software_id": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint64"
+          },
+          "base_software": {
             "type": [
               "null",
               "string"

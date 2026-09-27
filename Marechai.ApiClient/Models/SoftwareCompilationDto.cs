@@ -14,6 +14,16 @@ namespace Marechai.ApiClient.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The base_software property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? BaseSoftware { get; set; }
+#nullable restore
+#else
+        public string BaseSoftware { get; set; }
+#endif
+        /// <summary>The base_software_id property</summary>
+        public int? BaseSoftwareId { get; set; }
         /// <summary>The front_cover_id property</summary>
         public Guid? FrontCoverId { get; set; }
         /// <summary>The id property</summary>
@@ -91,6 +101,8 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "base_software", n => { BaseSoftware = n.GetStringValue(); } },
+                { "base_software_id", n => { BaseSoftwareId = n.GetIntValue(); } },
                 { "front_cover_id", n => { FrontCoverId = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "machine", n => { Machine = n.GetStringValue(); } },
@@ -111,6 +123,8 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("base_software", BaseSoftware);
+            writer.WriteIntValue("base_software_id", BaseSoftwareId);
             writer.WriteGuidValue("front_cover_id", FrontCoverId);
             writer.WriteIntValue("id", Id);
             writer.WriteStringValue("machine", Machine);

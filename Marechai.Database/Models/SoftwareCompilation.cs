@@ -12,6 +12,13 @@ public class SoftwareCompilation : BaseModel<ulong>
     public         ulong?   SoftwareId { get; set; }
     public virtual Software Software   { get; set; }
 
+    /// <summary>
+    ///     The game this compilation is add-on content for (e.g. a Season Pass bundling DLCs for a single game).
+    ///     Distinct from <see cref="SoftwareId" />, which links a compilation bundled with a piece of software.
+    /// </summary>
+    public         ulong?   BaseSoftwareId { get; set; }
+    public virtual Software BaseSoftware   { get; set; }
+
     public         int?     MachineId { get; set; }
     public virtual Machine  Machine   { get; set; }
 

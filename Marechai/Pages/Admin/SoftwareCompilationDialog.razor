@@ -27,6 +27,17 @@
                                  Class="mb-4"
                                  HelperText="@L["Set if this compilation is permanently bundled with a piece of software (e.g. games shipped with an OS)."]"/>
 
+                <MudAutocomplete T="SoftwareDto"
+                                 Label="@L["Base game (optional)"]"
+                                 @bind-Value="_selectedBaseSoftware"
+                                 SearchFunc="SearchSoftware"
+                                 ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 MinCharacters="0"
+                                 Class="mb-4"
+                                 HelperText="@L["Set if this compilation is add-on content for a single game (e.g. a Season Pass bundling its DLCs)."]"/>
+
                 <MudAutocomplete T="MachineDto"
                                  Label="@L["Bundled with machine (optional)"]"
                                  @bind-Value="_selectedMachine"
@@ -216,6 +227,7 @@
 @code {
     string                  _validationError;
     SoftwareDto             _selectedSoftware;
+    SoftwareDto             _selectedBaseSoftware;
     MachineDto              _selectedMachine;
     SoftwareCompilationDto  _selectedPredecessor;
 
@@ -241,6 +253,8 @@
     [Parameter] public string Name { get; set; } = string.Empty;
     [Parameter] public int? SoftwareId { get; set; }
     [Parameter] public string SoftwareName { get; set; }
+    [Parameter] public int? BaseSoftwareId { get; set; }
+    [Parameter] public string BaseSoftwareName { get; set; }
     [Parameter] public int? MachineId { get; set; }
     [Parameter] public string MachineName { get; set; }
     [Parameter] public int? PredecessorId { get; set; }
@@ -255,6 +269,9 @@
     {
         if(SoftwareId is not null)
             _selectedSoftware = new SoftwareDto { Id = SoftwareId, Name = SoftwareName ?? string.Empty };
+
+        if(BaseSoftwareId is not null)
+            _selectedBaseSoftware = new SoftwareDto { Id = BaseSoftwareId, Name = BaseSoftwareName ?? string.Empty };
 
         if(MachineId is not null)
             _selectedMachine = new MachineDto { Id = MachineId, Name = MachineName ?? string.Empty };
@@ -409,6 +426,7 @@
         {
             Name             = Name,
             SoftwareId       = _selectedSoftware?.Id,
+            BaseSoftwareId   = _selectedBaseSoftware?.Id,
             MachineId        = _selectedMachine?.Id,
             PredecessorId    = _selectedPredecessor?.Id,
             RelationshipType = RelationshipType

@@ -14,6 +14,10 @@ public class SoftwareCompilationDto : BaseDto<ulong>
     public ulong? SoftwareId { get; set; }
     [JsonPropertyName("software")]
     public string? Software { get; set; }
+    [JsonPropertyName("base_software_id")]
+    public ulong? BaseSoftwareId { get; set; }
+    [JsonPropertyName("base_software")]
+    public string? BaseSoftware { get; set; }
     [JsonPropertyName("machine_id")]
     public int? MachineId { get; set; }
     [JsonPropertyName("machine")]

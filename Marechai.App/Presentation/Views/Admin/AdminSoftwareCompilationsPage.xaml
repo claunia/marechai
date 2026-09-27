@@ -157,6 +157,15 @@
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch"
                                                   PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareLabel}" />
 
+                                        <!-- Base game (Season Pass / add-on bundle) -->
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompilationBaseSoftwareLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                        Text="{Binding BaseSoftwareSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                        x:Name="BaseSoftwareFilterBox" TextChanged="BaseSoftwareFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding BaseSoftwareSuggestions}" SelectedItem="{Binding SelectedBaseSoftware, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name" HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompilationBaseSoftwareLabel}" />
+
                                         <!-- Bundled-with machine -->
                                         <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=MachineLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"

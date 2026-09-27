@@ -118,6 +118,20 @@
                         </StackPanel>
                     </Border>
 
+                    <StackPanel Visibility="{Binding ShowBaseSoftware}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompilationAddonContentFor}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <Border Style="{StaticResource MetadataCardStyle}">
+                            <HyperlinkButton Content="{Binding BaseSoftwareName}"
+                                             Command="{Binding NavigateToBaseSoftwareCommand}"
+                                             HorizontalAlignment="Left"
+                                             Padding="0" />
+                        </Border>
+                    </StackPanel>
+
                     <StackPanel Visibility="{Binding ShowBundledWith}"
                                 Spacing="8">
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=BundledWith}"

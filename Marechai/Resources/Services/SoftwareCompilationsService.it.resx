@@ -92,4 +92,13 @@
     <data name="Search compilation to add" xml:space="preserve">
         <value>Cerca compilazione da aggiungere</value>
     </data>
+    <data name="Base game (optional)" xml:space="preserve">
+        <value>Gioco base (facoltativo)</value>
+    </data>
+    <data name="Set if this compilation is add-on content for a single game (e.g. a Season Pass bundling its DLCs)." xml:space="preserve">
+        <value>Impostare se questa compilation è contenuto aggiuntivo per un singolo gioco (ad es. un season pass che raggruppa i suoi DLC).</value>
+    </data>
+    <data name="Add-on content for" xml:space="preserve">
+        <value>Contenuto aggiuntivo per</value>
+    </data>
 </root>

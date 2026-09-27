@@ -27,6 +27,13 @@ public sealed partial class AdminSoftwareCompilationsPage : Page
             vm.UpdateSoftwareSuggestions(sender.Text);
     }
 
+    private void BaseSoftwareFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
+           DataContext is AdminSoftwareCompilationsViewModel vm)
+            vm.UpdateBaseSoftwareSuggestions(sender.Text);
+    }
+
     private void MachineFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&

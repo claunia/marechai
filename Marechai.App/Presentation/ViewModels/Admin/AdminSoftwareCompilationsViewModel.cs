@@ -25,6 +25,7 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     private const int SearchDebounceMs = 300;
 
     private CancellationTokenSource? _softwarePickerDebounce;
+    private CancellationTokenSource? _baseSoftwarePickerDebounce;
     private CancellationTokenSource? _predecessorPickerDebounce;
     private CancellationTokenSource? _includedSoftwareDebounce;
     private CancellationTokenSource? _includedCompilationDebounce;
@@ -64,6 +65,10 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
     [ObservableProperty] private string                              _softwareSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareDto>    _softwareSuggestions = [];
     [ObservableProperty] private SoftwareDto?                        _selectedSoftware;
+
+    [ObservableProperty] private string                              _baseSoftwareSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoftwareDto>    _baseSoftwareSuggestions = [];
+    [ObservableProperty] private SoftwareDto?                        _selectedBaseSoftware;
 
     [ObservableProperty] private string                              _machineSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<MachineDto>     _machineSuggestions = [];
@@ -304,6 +309,11 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
             : null;
         SoftwareSearchText = SelectedSoftware?.Name ?? string.Empty;
 
+        SelectedBaseSoftware   = full.BaseSoftwareId.HasValue
+            ? new SoftwareDto { Id = full.BaseSoftwareId.Value, Name = full.BaseSoftware }
+            : null;
+        BaseSoftwareSearchText = SelectedBaseSoftware?.Name ?? string.Empty;
+
         await EnsureMachinesLoadedAsync();
         SelectedMachine   = full.MachineId.HasValue
             ? _allMachines?.FirstOrDefault(m => m.Id == full.MachineId.Value)
@@ -360,6 +370,7 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
             {
                 Name             = CompilationName,
                 SoftwareId       = SelectedSoftware?.Id,
+                BaseSoftwareId   = SelectedBaseSoftware?.Id,
                 MachineId        = SelectedMachine?.Id,
                 PredecessorId    = SelectedPredecessor?.Id,
                 RelationshipType = SelectedRelationshipTypeIndex
@@ -422,6 +433,10 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
         SoftwareSearchText = string.Empty;
         SoftwareSuggestions.Clear();
 
+        SelectedBaseSoftware   = null;
+        BaseSoftwareSearchText = string.Empty;
+        BaseSoftwareSuggestions.Clear();
+
         SelectedMachine   = null;
         MachineSearchText = string.Empty;
         MachineSuggestions.Clear();
@@ -458,6 +473,13 @@ public partial class AdminSoftwareCompilationsViewModel : ObservableObject, IReg
         List<SoftwareDto> results = await _service.SearchSoftwareAsync(query);
         SoftwareSuggestions.Clear();
         foreach(SoftwareDto s in results) SoftwareSuggestions.Add(s);
+    });
+
+    public void UpdateBaseSoftwareSuggestions(string query) => Debounce(ref _baseSoftwarePickerDebounce, async () =>
+    {
+        List<SoftwareDto> results = await _service.SearchSoftwareAsync(query);
+        BaseSoftwareSuggestions.Clear();
+        foreach(SoftwareDto s in results) BaseSoftwareSuggestions.Add(s);
     });
 
     public async Task EnsureMachinesLoadedAsync()

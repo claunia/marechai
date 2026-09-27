@@ -63,6 +63,7 @@ public partial class SoftwareCompilations
             {
                 Name             = data.Name,
                 SoftwareId       = data.SoftwareId,
+                BaseSoftwareId   = data.BaseSoftwareId,
                 MachineId        = data.MachineId,
                 PredecessorId    = data.PredecessorId,
                 RelationshipType = (int)data.RelationshipType
@@ -100,6 +101,8 @@ public partial class SoftwareCompilations
             { x => x.Name, full.Name },
             { x => x.SoftwareId, full.SoftwareId },
             { x => x.SoftwareName, full.Software },
+            { x => x.BaseSoftwareId, full.BaseSoftwareId },
+            { x => x.BaseSoftwareName, full.BaseSoftware },
             { x => x.MachineId, full.MachineId },
             { x => x.MachineName, full.Machine },
             { x => x.PredecessorId, full.PredecessorId },
@@ -123,6 +126,7 @@ public partial class SoftwareCompilations
                 Id               = full.Id,
                 Name             = data.Name,
                 SoftwareId       = data.SoftwareId,
+                BaseSoftwareId   = data.BaseSoftwareId,
                 MachineId        = data.MachineId,
                 PredecessorId    = data.PredecessorId,
                 RelationshipType = (int)data.RelationshipType

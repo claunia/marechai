@@ -3550,4 +3550,6 @@
   <data name="FailedToSaveSoftwareCompilation" xml:space="preserve"><value>Impossible d&apos;enregistrer la compilation de logiciels.</value></data>
   <data name="FailedToDeleteSoftwareCompilation" xml:space="preserve"><value>Impossible de supprimer la compilation de logiciels.</value></data>
   <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Page {0} sur {1}</value></data>
+  <data name="CompilationBaseSoftwareLabel" xml:space="preserve"><value>Jeu de base</value></data>
+  <data name="CompilationAddonContentFor" xml:space="preserve"><value>Contenu additionnel pour</value></data>
 </root>

@@ -1170,6 +1170,8 @@ public class LocalizedStrings
     public string SoftwareProductCodesLabel => _l["SoftwareProductCodesLabel"];
     public string Compilation => _l["Compilation"];
     public string BundledWith => _l["Bundled with"];
+    public string CompilationBaseSoftwareLabel => _l["CompilationBaseSoftwareLabel"];
+    public string CompilationAddonContentFor => _l["CompilationAddonContentFor"];
     public string Releases => _l["Releases"];
     public string IncludedSoftware => _l["IncludedSoftware"];
     public string UnknownPlatform => _l["Unknown platform"];

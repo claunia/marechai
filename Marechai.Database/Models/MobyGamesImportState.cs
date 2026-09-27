@@ -34,4 +34,12 @@ public class MobyGamesImportState : BaseModel<long>
     ///     skips stamped rows unless <c>--force</c> or <c>--since</c> is passed.
     /// </summary>
     public DateTime? LastRefreshedAt { get; set; }
+
+    /// <summary>
+    ///     UTC timestamp at which <c>import-dlc-relations</c> examined this DLC and definitively found no base game
+    ///     (no parent link on its page, or only an "Included in" compilation whose base game could not be derived).
+    ///     NULL means not yet examined or examined with a transient failure. Stamped rows are skipped unless
+    ///     <c>--recheck</c> is passed.
+    /// </summary>
+    public DateTime? DlcRelationCheckedAt { get; set; }
 }

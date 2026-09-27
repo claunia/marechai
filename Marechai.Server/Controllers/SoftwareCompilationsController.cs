@@ -49,6 +49,8 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
         Name             = c.Name,
         SoftwareId       = c.SoftwareId,
         Software         = c.Software != null ? c.Software.Name : null,
+        BaseSoftwareId   = c.BaseSoftwareId,
+        BaseSoftware     = c.BaseSoftware != null ? c.BaseSoftware.Name : null,
         MachineId        = c.MachineId,
         Machine          = c.Machine != null ? c.Machine.Name : null,
         PredecessorId    = c.PredecessorId,
@@ -111,10 +113,14 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
 
         if(userId is null) return Unauthorized();
 
+        if(dto.BaseSoftwareId is not null && !await context.Softwares.AnyAsync(s => s.Id == dto.BaseSoftwareId))
+            return BadRequest("Base software not found.");
+
         var model = new SoftwareCompilation
         {
             Name             = dto.Name,
             SoftwareId       = dto.SoftwareId,
+            BaseSoftwareId   = dto.BaseSoftwareId,
             MachineId        = dto.MachineId,
             PredecessorId    = dto.PredecessorId,
             RelationshipType = dto.RelationshipType
@@ -150,8 +156,12 @@ public class SoftwareCompilationsController(MarechaiContext context) : Controlle
 
         if(model is null) return NotFound();
 
+        if(dto.BaseSoftwareId is not null && !await context.Softwares.AnyAsync(s => s.Id == dto.BaseSoftwareId))
+            return BadRequest("Base software not found.");
+
         model.Name             = dto.Name;
         model.SoftwareId       = dto.SoftwareId;
+        model.BaseSoftwareId   = dto.BaseSoftwareId;
         model.MachineId        = dto.MachineId;
         model.PredecessorId    = dto.PredecessorId;
         model.RelationshipType = dto.RelationshipType;

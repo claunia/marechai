@@ -49,6 +49,16 @@ else if(_compilation is not null)
         </MudCard>
     }
 
+    @if(!string.IsNullOrEmpty(_compilation.BaseSoftware))
+    {
+        <MudCard Elevation="2" Class="mb-4 rounded-lg">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-2">@L["Add-on content for"]</MudText>
+                <MudLink Href="@($"/software/{_compilation.BaseSoftwareId}")">@_compilation.BaseSoftware</MudLink>
+            </MudCardContent>
+        </MudCard>
+    }
+
     @if(_releases is { Count: > 0 })
     {
         <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
