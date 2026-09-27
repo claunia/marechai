@@ -1946,6 +1946,39 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 }
             }
 
+            // 8b. Merge SoftwareAlternativeTitles (no unique index; dedup on trimmed title, case-insensitive
+            //     like MariaDB's collation). A source title equal to the target's own name is redundant.
+            //     On a duplicate, the target keeps its row but adopts the source's comment if it has none.
+            List<SoftwareAlternativeTitle> sourceAltTitles =
+                await context.SoftwareAlternativeTitles.Where(t => t.SoftwareId == sourceId).ToListAsync();
+
+            Dictionary<string, SoftwareAlternativeTitle> targetAltTitles = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach(SoftwareAlternativeTitle t in await context.SoftwareAlternativeTitles
+                                                               .Where(t => t.SoftwareId == targetId)
+                                                               .ToListAsync())
+                targetAltTitles.TryAdd(t.Title.Trim(), t);
+
+            foreach(SoftwareAlternativeTitle altTitle in sourceAltTitles)
+            {
+                string key = altTitle.Title.Trim();
+
+                if(string.Equals(key, target.Name?.Trim(), StringComparison.OrdinalIgnoreCase))
+                    context.SoftwareAlternativeTitles.Remove(altTitle);
+                else if(targetAltTitles.TryGetValue(key, out SoftwareAlternativeTitle existing))
+                {
+                    if(string.IsNullOrWhiteSpace(existing.Comment) && !string.IsNullOrWhiteSpace(altTitle.Comment))
+                        existing.Comment = altTitle.Comment;
+
+                    context.SoftwareAlternativeTitles.Remove(altTitle);
+                }
+                else
+                {
+                    altTitle.SoftwareId = targetId;
+                    targetAltTitles.Add(key, altTitle);
+                }
+            }
+
             // 9. Update MobyGames tracking tables
             List<MobyGamesImportState> importStates =
                 await context.MobyGamesImportStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
