@@ -1979,6 +1979,15 @@ public class SoftwareController(MarechaiContext context, IMemoryCache cache, Use
                 }
             }
 
+            // 8c. Re-parent SoftwareExternalIds. (ExternalSiteId, ExternalId) is unique across all software,
+            //     so a source row can never duplicate a target row; a target may legitimately end up with
+            //     two IDs on the same site (both old entries were catalogued there).
+            List<SoftwareExternalId> sourceExternalIds =
+                await context.SoftwareExternalIds.Where(e => e.SoftwareId == sourceId).ToListAsync();
+
+            foreach(SoftwareExternalId externalId in sourceExternalIds)
+                externalId.SoftwareId = targetId;
+
             // 9. Update MobyGames tracking tables
             List<MobyGamesImportState> importStates =
                 await context.MobyGamesImportStates.Where(s => s.SoftwareId == sourceId).ToListAsync();
