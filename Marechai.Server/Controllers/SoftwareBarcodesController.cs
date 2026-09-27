@@ -100,6 +100,10 @@ public class SoftwareBarcodesController(MarechaiContext context) : ControllerBas
 
         if(model is null) return NotFound();
 
+        if(await context.SoftwareBarcodes.AnyAsync(b => b.Id != id && b.ReleaseId == dto.ReleaseId &&
+                                                         b.Code == dto.Code))
+            return BadRequest();
+
         model.ReleaseId = dto.ReleaseId;
         model.Code      = dto.Code;
         model.Type      = dto.Type;
@@ -118,6 +122,9 @@ public class SoftwareBarcodesController(MarechaiContext context) : ControllerBas
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
+        if(await context.SoftwareBarcodes.AnyAsync(b => b.ReleaseId == dto.ReleaseId && b.Code == dto.Code))
+            return BadRequest();
 
         var model = new SoftwareBarcode
         {

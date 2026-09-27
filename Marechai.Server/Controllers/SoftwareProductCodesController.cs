@@ -100,6 +100,10 @@ public class SoftwareProductCodesController(MarechaiContext context) : Controlle
 
         if(model is null) return NotFound();
 
+        if(await context.SoftwareProductCodes.AnyAsync(p => p.Id != id && p.ReleaseId == dto.ReleaseId &&
+                                                             p.Issuer == dto.Issuer && p.Code == dto.Code))
+            return BadRequest();
+
         model.ReleaseId = dto.ReleaseId;
         model.Issuer    = dto.Issuer;
         model.Code      = dto.Code;
@@ -118,6 +122,10 @@ public class SoftwareProductCodesController(MarechaiContext context) : Controlle
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
+        if(await context.SoftwareProductCodes.AnyAsync(p => p.ReleaseId == dto.ReleaseId && p.Issuer == dto.Issuer &&
+                                                             p.Code == dto.Code))
+            return BadRequest();
 
         var model = new SoftwareProductCode
         {

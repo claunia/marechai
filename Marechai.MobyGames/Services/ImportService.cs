@@ -1396,8 +1396,6 @@ public class ImportService
         HashSet<(ulong, int, string)> addedCompanyRoles,
         ulong? softwareCompilationId, string compilationTitle)
     {
-        var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
-        var addedBarcodes     = new HashSet<string>();
         var createdReleases   = new List<SoftwareRelease>();
 
         // Group releases by platform
@@ -1411,7 +1409,6 @@ public class ImportService
             {
                 SoftwareRelease dbRelease = await CreateReleaseAsync(context, softwareId, game, release, platform,
                                                                      platformGroup.Key, addedCompanyRoles,
-                                                                     addedProductCodes, addedBarcodes,
                                                                      softwareCompilationId, compilationTitle,
                                                                      writeSpecsAndRatings: true);
 
@@ -1436,7 +1433,6 @@ public class ImportService
         MarechaiContext context, ulong? softwareId, ParsedGame game, ParsedRelease release,
         SoftwarePlatform platform, string platformKey,
         HashSet<(ulong, int, string)> addedCompanyRoles,
-        HashSet<(ProductCodeIssuer, string)> addedProductCodes, HashSet<string> addedBarcodes,
         ulong? softwareCompilationId, string compilationTitle, bool writeSpecsAndRatings)
     {
         var (publisher, _) = await _companyMatcher.MatchOrCreateAsync(
@@ -1460,6 +1456,11 @@ public class ImportService
         context.SoftwareReleases.Add(dbRelease);
         await context.SaveChangesAsync();
 
+        // Barcodes and product codes are unique per release, not globally: the
+        // same code legitimately appears on re-releases and regional variants.
+        var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
+        var addedBarcodes     = new HashSet<string>();
+
         // Barcodes
         foreach(var barcode in release.Barcodes)
         {
@@ -1472,7 +1473,7 @@ public class ImportService
 
             // Check for existing barcode
             bool exists = await context.SoftwareBarcodes
-                                       .AnyAsync(b => b.Code == barcode.Code);
+                                       .AnyAsync(b => b.ReleaseId == dbRelease.Id && b.Code == barcode.Code);
 
             if(exists) continue;
 
@@ -1501,7 +1502,7 @@ public class ImportService
             }
 
             bool codeExists = await context.SoftwareProductCodes
-                                           .AnyAsync(c => c.Issuer == issuer &&
+                                           .AnyAsync(c => c.ReleaseId == dbRelease.Id && c.Issuer == issuer &&
                                                            c.Code == productCode.Code);
 
             if(codeExists) continue;
@@ -1916,8 +1917,6 @@ public class ImportService
                                                            .ToListAsync();
 
         var addedCompanyRoles = new HashSet<(ulong, int, string)>();
-        var addedProductCodes = new HashSet<(ProductCodeIssuer, string)>();
-        var addedBarcodes     = new HashSet<string>();
 
         foreach(var platformGroup in game.Releases.GroupBy(r => r.Platform ?? "Unknown"))
         {
@@ -2071,7 +2070,7 @@ public class ImportService
                 if(dryRun) continue;
 
                 await CreateReleaseAsync(context, softwareId, game, release, platform, platformGroup.Key,
-                                         addedCompanyRoles, addedProductCodes, addedBarcodes,
+                                         addedCompanyRoles,
                                          softwareCompilationId: null, compilationTitle: null,
                                          writeSpecsAndRatings: true);
 

@@ -2840,7 +2840,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         modelBuilder.Entity<SoftwareBarcode>(entity =>
         {
-            entity.HasIndex(x => x.Code).IsUnique();
+            entity.HasIndex(x => x.Code);
+
+            entity.HasIndex(x => new
+                   {
+                       x.ReleaseId,
+                       x.Code
+                   })
+                  .IsUnique();
 
             entity.HasOne(x => x.Release).WithMany(x => x.Barcodes).HasForeignKey(x => x.ReleaseId);
         });
@@ -2848,7 +2855,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         modelBuilder.Entity<SoftwareProductCode>(entity =>
         {
             entity.HasIndex(x => new
+            {
+                x.Issuer,
+                x.Code
+            });
+
+            entity.HasIndex(x => new
                    {
+                       x.ReleaseId,
                        x.Issuer,
                        x.Code
                    })

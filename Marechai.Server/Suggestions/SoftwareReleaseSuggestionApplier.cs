@@ -464,8 +464,9 @@ internal static class SoftwareReleaseSuggestionApplier
                 if(!typeRaw.HasValue) return false;
                 if(!Enum.IsDefined(typeof(BarcodeType), (byte)typeRaw.Value)) return false;
                 code = code.Trim();
-                // Code is globally unique (HasIndex(Code).IsUnique()).
-                if(await context.SoftwareBarcodes.AsNoTracking().AnyAsync(b => b.Code == code)) return false;
+                // Unique per release — HasIndex(new{ReleaseId,Code}).IsUnique().
+                if(await context.SoftwareBarcodes.AsNoTracking()
+                                .AnyAsync(b => b.ReleaseId == releaseId && b.Code == code)) return false;
                 await context.SoftwareBarcodes.AddAsync(new SoftwareBarcode
                 {
                     ReleaseId = releaseId,
@@ -484,9 +485,10 @@ internal static class SoftwareReleaseSuggestionApplier
                 if(!Enum.IsDefined(typeof(ProductCodeIssuer), (byte)issuerRaw.Value)) return false;
                 code = code.Trim();
                 ProductCodeIssuer issuer = (ProductCodeIssuer)issuerRaw.Value;
-                // Unique pair (Issuer, Code) — HasIndex(new{Issuer,Code}).IsUnique().
+                // Unique per release — HasIndex(new{ReleaseId,Issuer,Code}).IsUnique().
                 if(await context.SoftwareProductCodes.AsNoTracking()
-                                .AnyAsync(p => p.Issuer == issuer && p.Code == code)) return false;
+                                .AnyAsync(p => p.ReleaseId == releaseId && p.Issuer == issuer && p.Code == code))
+                    return false;
                 await context.SoftwareProductCodes.AddAsync(new SoftwareProductCode
                 {
                     ReleaseId = releaseId,
