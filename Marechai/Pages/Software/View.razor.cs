@@ -41,6 +41,7 @@ namespace Marechai.Pages.Software;
 
 public partial class View
 {
+    List<SoftwareAlternativeTitleDto>            _alternativeTitles = [];
     List<SoftwareCompanyRoleDto>                 _companies = [];
     List<SoftwareReleaseDto>                     _compilations = [];
     List<PersonBySoftwareDto>                    _credits = [];
@@ -167,6 +168,7 @@ public partial class View
 
             // Phase 1 (header + Overview)
             Task<List<SoftwareGenreDto>>            genresTask        = Service.GetGenresAsync(Id);
+            Task<List<SoftwareAlternativeTitleDto>> altTitlesTask     = Service.GetAlternativeTitlesAsync(Id);
             Task<List<SoftwareDto>>                 addonsTask        = Service.GetAddonsAsync(Id);
             Task<List<SoftwareSimilarToDto>>        similarTask       = Service.GetSimilarSoftwareAsync(Id);
             Task<List<SoftwareCoverDto>>            coversTask        = Service.GetCoversBySoftwareAsync(Id);
@@ -194,10 +196,11 @@ public partial class View
             Task<List<SoftwareUserReviewDto>>       userReviewsTask   = AuthService.GetUserReviewsAsync(Id);
 
             // ── Phase 1 await ──
-            await Task.WhenAll(genresTask, addonsTask, similarTask, coversTask,
+            await Task.WhenAll(genresTask, altTitlesTask, addonsTask, similarTask, coversTask,
                                marechaiScoreTask, placementsTask, userSummaryTask, authStateTask, myRatingTask);
 
             _genres            = genresTask.Result;
+            _alternativeTitles = altTitlesTask.Result;
             _addons            = addonsTask.Result;
             _similarSoftware   = similarTask.Result;
             _covers            = coversTask.Result;

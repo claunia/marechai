@@ -936,6 +936,29 @@ public class SoftwareBrowsingService
         }
     }
 
+    public async Task<List<SoftwareAlternativeTitleDto>> GetAlternativeTitlesAsync(int softwareId, string lang = null)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching alternative titles for software {SoftwareId} (lang={Lang}) from API",
+                                   softwareId, lang ?? "default");
+
+            List<SoftwareAlternativeTitleDto> titles =
+                await _apiClient.Software[softwareId].AlternativeTitles.GetAsync(config =>
+                {
+                    if(!string.IsNullOrWhiteSpace(lang)) config.QueryParameters.Lang = lang;
+                });
+
+            return titles ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching alternative titles for software {SoftwareId} from API", softwareId);
+
+            return [];
+        }
+    }
+
     public async Task<List<SoftwareSimilarToDto>> GetSimilarSoftwareAsync(int softwareId)
     {
         try

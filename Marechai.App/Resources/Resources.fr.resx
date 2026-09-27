@@ -3552,4 +3552,5 @@
   <data name="SoftwareCompilationsPageInfo" xml:space="preserve"><value>Page {0} sur {1}</value></data>
   <data name="CompilationBaseSoftwareLabel" xml:space="preserve"><value>Jeu de base</value></data>
   <data name="CompilationAddonContentFor" xml:space="preserve"><value>Contenu additionnel pour</value></data>
+  <data name="AlsoKnownAsLabel" xml:space="preserve"><value>Également connu sous le nom de</value></data>
 </root>

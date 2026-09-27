@@ -664,6 +664,9 @@
     <data name="Genres" xml:space="preserve">
         <value>Genres</value>
     </data>
+    <data name="Also known as" xml:space="preserve">
+        <value>Également connu sous le nom de</value>
+    </data>
     <data name="Alternative Titles" xml:space="preserve">
         <value>Titres alternatifs</value>
     </data>

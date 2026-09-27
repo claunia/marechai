@@ -327,9 +327,13 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     public ObservableCollection<SpecPlatformGroupItem>    SpecGroups          { get; } = [];
     public ObservableCollection<RatingItem>               Ratings             { get; } = [];
     public ObservableCollection<SoftwareSimilarToDto>     SimilarSoftware     { get; } = [];
+    public ObservableCollection<SoftwareAlternativeTitleDto> AlternativeTitles { get; } = [];
 
     [ObservableProperty]
     private Visibility _showSimilarSoftware = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showAlternativeTitles = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showGenres = Visibility.Collapsed;
@@ -522,6 +526,21 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             foreach(SoftwareSimilarToDto s in similar) SimilarSoftware.Add(s);
 
             ShowSimilarSoftware = SimilarSoftware.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            // Load alternative titles (comments translated server-side).
+            AlternativeTitles.Clear();
+            List<SoftwareAlternativeTitleDto> altTitles =
+                await _browsingService.GetAlternativeTitlesAsync(softwareId, GetIso639CodeFromCulture());
+
+            foreach(SoftwareAlternativeTitleDto t in altTitles)
+            {
+                // NullToVisibilityConverter only collapses null, so normalise blank comments.
+                if(string.IsNullOrWhiteSpace(t.Comment)) t.Comment = null;
+
+                AlternativeTitles.Add(t);
+            }
+
+            ShowAlternativeTitles = AlternativeTitles.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             // Load companies
             List<SoftwareCompanyRoleDto> companies = await _browsingService.GetCompaniesAsync(softwareId);

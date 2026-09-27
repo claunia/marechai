@@ -995,6 +995,7 @@ public class LocalizedStrings
     public string ExternalSiteLabel => _l["ExternalSiteLabel"];
     public string ExternalIdValueLabel => _l["ExternalIdValueLabel"];
     public string SimilarSoftwareHeader => _l["SimilarSoftwareHeader"];
+    public string AlsoKnownAsLabel => _l["AlsoKnownAsLabel"];
     public string SimilarSoftwareSearchLabel => _l["SimilarSoftwareSearchLabel"];
     public string SoftwareAttributesPageSizeLabel => _l["SoftwareAttributesPageSizeLabel"];
     public string SoftwareAttributesSoftwareColumn => _l["SoftwareAttributesSoftwareColumn"];

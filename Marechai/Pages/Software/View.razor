@@ -410,6 +410,24 @@ else
                 <td style="width: 33%; text-align: right;"><strong>@L["Name"]</strong></td>
                 <td>@_software.Name</td>
             </tr>
+            @if(_alternativeTitles.Count > 0)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right; vertical-align: top;"><strong>@L["Also known as"]</strong></td>
+                    <td>
+                        @foreach(SoftwareAlternativeTitleDto altTitle in _alternativeTitles)
+                        {
+                            <div>
+                                @altTitle.Title
+                                @if(!string.IsNullOrWhiteSpace(altTitle.Comment))
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary" Inline="true"> — @altTitle.Comment</MudText>
+                                }
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
             @if(!string.IsNullOrEmpty(_software.Family))
             {
                 <tr>
