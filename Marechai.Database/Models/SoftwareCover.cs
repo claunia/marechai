@@ -31,9 +31,10 @@ namespace Marechai.Database.Models;
 
 public class SoftwareCover : BaseModel<Guid>
 {
-    // Nullable: a cover is anchored by exactly one of SoftwareId, SoftwareReleaseId, or
-    // SoftwareCompilationId, depending on whether it belongs to a piece of Software, a
-    // specific SoftwareRelease, or a SoftwareCompilation (which has no single owning release).
+    // Nullable: a cover is owned by exactly one of SoftwareId or SoftwareCompilationId,
+    // depending on whether it belongs to a piece of Software or a SoftwareCompilation. The
+    // owner is always set, even when the cover is also attributed to a specific
+    // SoftwareRelease via SoftwareReleaseId, because cover listings filter on the owner.
     public         ulong?   SoftwareId { get;              set; }
     public virtual Software Software { get; set; }
 

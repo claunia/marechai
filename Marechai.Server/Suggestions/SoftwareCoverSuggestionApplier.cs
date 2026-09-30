@@ -259,13 +259,18 @@ public static class SoftwareCoverSuggestionApplier
 
             if(movedPath is null || string.IsNullOrEmpty(ext)) return false;
 
+            (ulong? softwareId, ulong? compilationId) =
+                await SoftwareCoverOwner.ResolveFromReleaseAsync(context, releaseId);
+
             var cover = new SoftwareCover
             {
-                Id                = entry.Guid,
-                SoftwareReleaseId = releaseId,
-                Type              = (SoftwareCoverType)entry.Type!.Value,
-                Caption           = string.IsNullOrEmpty(entry.Caption) ? null : entry.Caption,
-                OriginalExtension = ext.TrimStart('.')
+                Id                    = entry.Guid,
+                SoftwareId            = softwareId,
+                SoftwareCompilationId = compilationId,
+                SoftwareReleaseId     = releaseId,
+                Type                  = (SoftwareCoverType)entry.Type!.Value,
+                Caption               = string.IsNullOrEmpty(entry.Caption) ? null : entry.Caption,
+                OriginalExtension     = ext.TrimStart('.')
             };
 
             await context.SoftwareCovers.AddAsync(cover);

@@ -901,13 +901,21 @@ public class SoftwareCoversController(MarechaiContext context, IConfiguration co
                 {
                     var ctx = scope.ServiceProvider
                                    .GetRequiredService<MarechaiContext>();
+
+                    // Covers must carry their owning software/compilation too; the per-software
+                    // cover listing filters on those columns, not on the release.
+                    (ulong? ownerSoftwareId, ulong? ownerCompilationId) =
+                        await SoftwareCoverOwner.ResolveFromReleaseAsync(ctx, releaseId);
+
                     var model = new SoftwareCover
                     {
-                        Id                = coverId,
-                        SoftwareReleaseId = releaseId,
-                        Type              = (SoftwareCoverType)(byte)item.Type,
-                        Caption           = string.IsNullOrWhiteSpace(item.Caption) ? null : item.Caption.Trim(),
-                        OriginalExtension = ext
+                        Id                    = coverId,
+                        SoftwareId            = ownerSoftwareId,
+                        SoftwareCompilationId = ownerCompilationId,
+                        SoftwareReleaseId     = releaseId,
+                        Type                  = (SoftwareCoverType)(byte)item.Type,
+                        Caption               = string.IsNullOrWhiteSpace(item.Caption) ? null : item.Caption.Trim(),
+                        OriginalExtension     = ext
                     };
 
                     await ctx.SoftwareCovers.AddAsync(model);
