@@ -92,12 +92,17 @@ public class ReviewImportService
             }
             catch(Exception ex)
             {
-                Console.WriteLine($" — \e[31mError: {ex.Message}\e[0m");
+                // DbUpdateException's own message is a generic wrapper; the real cause
+                // (constraint name, truncated column, ...) lives in the innermost exception.
+                Exception root    = ex.GetBaseException();
+                string    message = root == ex ? ex.Message : $"{ex.Message} → {root.GetType().Name}: {root.Message}";
+
+                Console.WriteLine($" — \e[31mError: {message}\e[0m");
 
                 await _reviewStateService.CreateOrUpdateStateAsync(
                     game.MobyGameId, game.SoftwareId,
                     MobyGamesReviewImportStatus.Failed,
-                    errorMessage: ex.Message.Length > 1024 ? ex.Message[..1024] : ex.Message);
+                    errorMessage: message.Length > 1024 ? message[..1024] : message);
             }
         }
 

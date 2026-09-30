@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Marechai.Data;
 
 namespace Marechai.Database.Models;
@@ -56,6 +57,7 @@ public class SoftwareCriticReview : BaseModel<long>
     [DefaultValue(DatePrecision.Full)]
     public DatePrecision ReviewDatePrecision { get; set; }
 
-    [StringLength(1024)]
+    // Some imported review URLs exceed 1024 chars; text avoids MySQL's row-size cap.
+    [Column(TypeName = "text")]
     public string ReviewUrl { get; set; }
 }
