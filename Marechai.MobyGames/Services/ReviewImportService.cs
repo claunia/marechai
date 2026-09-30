@@ -110,6 +110,104 @@ public class ReviewImportService
     }
 
     /// <summary>
+    ///     <c>import-reviews --software-id</c>: fetches the live MobyGames reviews page for every MobyGames
+    ///     game imported into our <paramref name="softwareId" /> (several after a merge) and imports only the
+    ///     critic reviews we don't have yet. On a real run the cached reviews chunk is replaced with the
+    ///     fresh page. Returns the number of reviews imported (or that would be, in dry-run).
+    /// </summary>
+    public async Task<int> RefreshLiveForSoftwareAsync(ulong softwareId, MobyGamesHttpClient http, bool dryRun)
+    {
+        Console.WriteLine("  Loading reference data...");
+        await _platformMatcher.LoadAsync();
+        await _magazineMatcher.LoadAsync();
+
+        if(_countryMatcher != null)
+            await _countryMatcher.LoadAsync();
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        string name = await context.Softwares.Where(s => s.Id == softwareId).Select(s => s.Name).FirstOrDefaultAsync();
+
+        if(name is null)
+        {
+            Console.WriteLine($"  \e[31mSoftware {softwareId} does not exist.\e[0m");
+
+            return 0;
+        }
+
+        List<MobyGamesImportState> states = await context.MobyGamesImportStates
+                                                         .Where(s => s.SoftwareId == softwareId &&
+                                                                     s.Status     == MobyGamesImportStatus.Imported)
+                                                         .OrderBy(s => s.MobyGameId)
+                                                         .ToListAsync();
+
+        Console.WriteLine($"  Software {softwareId}: {name}");
+
+        if(states.Count == 0)
+        {
+            Console.WriteLine($"  \e[31mNo MobyGames import linked to Software {softwareId}.\e[0m");
+
+            return 0;
+        }
+
+        int total = 0;
+
+        foreach(MobyGamesImportState state in states)
+        {
+            string slug = state.MobyGameId.TrimStart('-');
+
+            int? numericId = state.MobyNumericId;
+
+            if(numericId is null)
+            {
+                string cachedMain = await _sourceDb.GetChunkBodyAsync(state.MobyGameId, NewGameRawFetcher.ChunkMain);
+                numericId = MobyGamesHttpClient.ExtractNumericGameIdFromHtml(cachedMain);
+            }
+
+            numericId ??= await http.ResolveNumericGameIdAsync(slug);
+
+            if(numericId is null or <= 0)
+            {
+                Console.WriteLine($"\n  \e[31m{slug}: could not resolve the MobyGames numeric id — skipped.\e[0m");
+
+                continue;
+            }
+
+            Console.Write($"\n  \e[36;1m{slug}\e[0m (MobyGames #{numericId})");
+
+            string body = await http.FetchPageAsync($"https://www.mobygames.com/game/{numericId}/{slug}/reviews/");
+
+            if(string.IsNullOrWhiteSpace(body))
+            {
+                Console.WriteLine(" — reviews page unavailable (no reviews / removed?), cache untouched");
+
+                continue;
+            }
+
+            var rows = new List<MobyGamesRawRow>
+            {
+                new()
+                {
+                    Id    = state.MobyGameId,
+                    Chunk = NewGameRawFetcher.ChunkReviews,
+                    Body  = body
+                }
+            };
+
+            int imported = await ImportForGameAsync(state.MobyGameId, softwareId, rows, dryRun);
+
+            if(imported > 0) total += imported;
+
+            if(!dryRun)
+                await _sourceDb.UpsertRowAsync(state.MobyGameId, NewGameRawFetcher.ChunkReviews, body);
+        }
+
+        Console.WriteLine($"\n  Done. {(dryRun ? "Would import" : "Imported")} {total} new reviews for Software {softwareId}.");
+
+        return total;
+    }
+
+    /// <summary>
     ///     Per-game review import shared by the batch loop and by <c>update-year</c>. Finds the
     ///     Reviews tab in <paramref name="rows" /> (source DB or a live re-download held in memory),
     ///     parses it and imports every critic review not already present for the software

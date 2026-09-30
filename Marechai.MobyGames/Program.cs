@@ -205,8 +205,10 @@ class Program
             {
                 if(!GameScope.TryParse(args, out GameScope scope)) return 1;
 
-                int reviewBatchSize = config.GetValue("Import:BatchSize", 500);
-                int reviewDelayMs   = config.GetValue("MobyGames:DelayMs", 2000);
+                int    reviewBatchSize  = config.GetValue("Import:BatchSize", 500);
+                int    reviewDelayMs    = config.GetValue("MobyGames:DelayMs", 2000);
+                ulong? reviewSoftwareId = null;
+                bool   reviewDryRun     = false;
 
                 for(int i = 0; i < args.Length; i++)
                 {
@@ -215,6 +217,21 @@ class Program
 
                     if(args[i] == "--delay-ms" && i + 1 < args.Length && int.TryParse(args[i + 1], out int rdm))
                         reviewDelayMs = rdm;
+
+                    if(args[i] == "--software-id")
+                    {
+                        if(i + 1 >= args.Length || !ulong.TryParse(args[i + 1], out ulong sid))
+                        {
+                            Console.WriteLine("\e[31;1m--software-id needs a numeric Marechai Software ID\e[0m");
+
+                            return 1;
+                        }
+
+                        reviewSoftwareId = sid;
+                    }
+
+                    if(args[i] == "--dry-run")
+                        reviewDryRun = true;
                 }
 
                 using var reviewHttpClient = await MobyGamesHttpClient.CreateAsync(config, reviewDelayMs);
@@ -226,7 +243,11 @@ class Program
                     factory, sourceDb, platformMatcher, magazineMatcher,
                     reviewStateService, countryMatcher);
 
-                await reviewImportService.RunAsync(reviewBatchSize, scope);
+                if(reviewSoftwareId is not null)
+                    await reviewImportService.RefreshLiveForSoftwareAsync(reviewSoftwareId.Value, reviewHttpClient,
+                                                                          reviewDryRun);
+                else
+                    await reviewImportService.RunAsync(reviewBatchSize, scope);
 
                 break;
             }
@@ -1121,6 +1142,10 @@ class Program
                 Console.WriteLine("                                                  afterwards to propagate the fix onto SoftwareCover/SoftwareCoverGroup.");
                 Console.WriteLine("    import-reviews [--batch-size N] [--recent N] [--since DATE] [--force]");
                 Console.WriteLine("                                                  Import critic reviews for imported games");
+                Console.WriteLine("    import-reviews --software-id ID [--delay-ms N] [--dry-run]");
+                Console.WriteLine("                                                  Fetch the LIVE MobyGames reviews page for our Software ID (not the");
+                Console.WriteLine("                                                  MobyGames id) and add only the critic reviews it is missing. Refreshes");
+                Console.WriteLine("                                                  the cached reviews chunk. --dry-run reports without writing.");
                 Console.WriteLine("    status                                        Show import status counts");
                 Console.WriteLine("    cover-status                                  Show cover download status counts");
                 Console.WriteLine("    review-status                                 Show review import status counts");

@@ -111,6 +111,26 @@ public class SourceDatabaseService
     }
 
     /// <summary>
+    ///     Inserts a row, or replaces the body of an existing (id, chunk) row. Unlike
+    ///     <see cref="InsertRowAsync" />, a stale cached page is overwritten with the fresh one.
+    /// </summary>
+    public async Task UpsertRowAsync(string gameId, int chunk, string body)
+    {
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        await using var cmd = new MySqlCommand(
+            "INSERT INTO mobygames_raw (id, chunk, body) VALUES (@id, @chunk, @body) " +
+            "ON DUPLICATE KEY UPDATE body = VALUES(body)", connection);
+
+        cmd.Parameters.AddWithValue("@id",    gameId);
+        cmd.Parameters.AddWithValue("@chunk", chunk);
+        cmd.Parameters.AddWithValue("@body",  body);
+
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>
     ///     Moves a row from one chunk number to another. Used by the chunk migrator
     ///     to reassign dynamically-allocated chunks to their fixed slot numbers.
     ///     Returns the number of affected rows (0 if the source chunk didn't exist,
